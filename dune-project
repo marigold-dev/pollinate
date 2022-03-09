@@ -5,7 +5,7 @@
 (generate_opam_files true)
 
 (source
- (github rosalogia/pollinate))
+ (github marigold-dev/pollinate))
 
 (authors "Ambika Eshwar, Gauthier Sebille")
 

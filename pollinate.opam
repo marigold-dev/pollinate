@@ -8,8 +8,8 @@ maintainer: ["Ambika Eshwar, Gauthier Sebille"]
 authors: ["Ambika Eshwar, Gauthier Sebille"]
 license: "LICENSE"
 tags: ["p2p" "networking" "udp" "gossip protocol"]
-homepage: "https://github.com/rosalogia/pollinate"
-bug-reports: "https://github.com/rosalogia/pollinate/issues"
+homepage: "https://github.com/marigold-dev/pollinate"
+bug-reports: "https://github.com/marigold-dev/pollinate/issues"
 depends: [
   "ocaml"
   "dune" {>= "2.9"}
@@ -33,4 +33,4 @@ build: [
   ]
   ["dune" "install" "-p" name "--create-install-files" name]
 ]
-dev-repo: "git+https://github.com/rosalogia/pollinate.git"
+dev-repo: "git+https://github.com/marigold-dev/pollinate.git"

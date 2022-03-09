@@ -1,18 +1,18 @@
 {
-    "esy": {
-        "build": "dune build"
-    },
-    "devDependencies": {
-        "@opam/ocaml-lsp-server": "*",
-        "@opam/ocamlformat": "*",
-        "@opam/alcotest-lwt": "*"
-    },
-    "dependencies": {
-        "ocaml": "4.13.x",
-        "@opam/dune": "*",
-        "@opam/lwt": "*",
-        "@opam/bin_prot": "*",
-        "@opam/ppx_bin_prot": "*",
-        "@opam/lwt_ppx": "*"
-    }
+  "esy": {
+    "build": "dune build"
+  },
+  "devDependencies": {
+    "@opam/ocaml-lsp-server": "*",
+    "@opam/ocamlformat": "*",
+    "@opam/alcotest-lwt": "*"
+  },
+  "dependencies": {
+    "ocaml": "4.13.x",
+    "@opam/dune": "2.9.3",
+    "@opam/lwt": "*",
+    "@opam/bin_prot": "*",
+    "@opam/ppx_bin_prot": "*",
+    "@opam/lwt_ppx": "*"
+  }
 }
