@@ -1,7 +1,7 @@
-type t =
-  { address: string
-  ; port: int
-  }
+type t = {
+  address : string;
+  port : int;
+}
 
 let from_sockaddr sockaddr =
   let open Lwt_unix in
