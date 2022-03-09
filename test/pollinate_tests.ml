@@ -59,6 +59,24 @@ module Client_tests = struct
       | _ -> failwith "Incorrect response" in
 
     Lwt.return (res_a, res_b)
+  let test_insert () =
+    let _ = Client.peer_from !client_a in
+
+    let peer_b = Client.peer_from !client_b in
+
+    let req = Util.Encoding.pack bin_writer_request @@ Insert "something" in
+
+    let%lwt () = Client.send_to client_a req peer_b in
+    let%lwt res_a, _ = Client.recv_next client_a in
+
+    let res_a = Util.Encoding.unpack bin_read_response res_a in
+
+    let res_a =
+      match res_a with
+      | Success resp -> show_response @@ Success resp
+      | _ -> failwith "Incorrect response" in
+
+    Lwt.return res_a
   let ping_pong () =
     let peer_b = Client.peer_from !client_b in
 
@@ -82,6 +100,10 @@ let test_trade_messages _ () =
   >|= Alcotest.(check (pair string string)) "test2 and test1" ("test2", "test1")
 let test_ping_pong _ () =
   Client_tests.ping_pong () >|= Alcotest.(check string) "Ping pong" "Pong"
+let test_insert_value _ () =
+  Client_tests.test_insert ()
+  >|= Alcotest.(check string)
+        "Test insert value" "(Success \"Successfully added value to state\")"
 
 let () =
   Lwt_main.run
@@ -91,5 +113,6 @@ let () =
            [
              Alcotest_lwt.test_case "Trading Messages" `Quick test_trade_messages;
              Alcotest_lwt.test_case "Ping pong" `Quick test_ping_pong;
+             Alcotest_lwt.test_case "Insert value" `Quick test_insert_value;
            ] );
        ]
