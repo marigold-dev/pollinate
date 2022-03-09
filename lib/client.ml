@@ -18,6 +18,10 @@ let send_to client payload peer =
   let%lwt _ = sendto !client.socket payload 0 len [] addr in
   Lwt.return ()
 
+let send_to_peers client payload peers =
+  let _ = List.map (fun peer -> send_to client payload peer) peers in
+  Lwt.return ()
+
 let recv_next client =
   let open Lwt_unix in
   let open Util.Encoding in

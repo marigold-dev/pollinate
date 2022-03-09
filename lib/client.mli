@@ -15,6 +15,10 @@ val send_to : 'a t ref -> bytes -> Peer.t -> unit Lwt.t
 (** Sends a serialized payload via datagram from the given client
 to a specified peer *)
 
+val send_to_peers : 'a t ref -> bytes -> Peer.t list -> unit Lwt.t
+(** Sends a serialized payload via datagram from the given client
+to the specified peers *)
+
 val recv_next : 'a t ref -> (bytes * Peer.t) Lwt.t
 (** Waits for the next incoming datagram and returns the
 serialized payload along with the peer who sent the datagram *)
