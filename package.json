@@ -1,6 +1,11 @@
 {
+  "name": "pollinate",
   "esy": {
     "build": "dune build"
+  },
+  "scripts": {
+    "test": "dune test",
+    "format": "dune build @fmt --auto-promote"
   },
   "devDependencies": {
     "@opam/ocaml-lsp-server": "*",
@@ -13,6 +18,7 @@
     "@opam/lwt": "*",
     "@opam/bin_prot": "*",
     "@opam/ppx_bin_prot": "*",
-    "@opam/lwt_ppx": "*"
+    "@opam/lwt_ppx": "*",
+    "@opam/ppx_deriving": "5.2.1"
   }
 }
