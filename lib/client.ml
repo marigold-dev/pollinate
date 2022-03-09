@@ -10,7 +10,13 @@ type 'a t = {
 }
 
 let peer_from (client : 'a t) =
-  Peer.{ address = client.address; port = client.port }
+  Peer.
+    {
+      address = client.address;
+      port = client.port;
+      known_peers = [];
+      state = Alive;
+    }
 
 let send_to client payload peer =
   let len = Bytes.length payload in
