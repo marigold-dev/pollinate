@@ -41,14 +41,14 @@ module Client_tests = struct
 
     let peer_b = Client.peer_from !client_b in
 
-    let req = Util.Encoding.pack bin_writer_request Get in
+    let get = Util.Encoding.pack bin_writer_request Get in
 
-    let%lwt () = Client.send_to client_a req peer_b in
+    let%lwt () = Client.send_to client_a get peer_b in
     let%lwt res_a, _ = Client.recv_next client_a in
 
     let res_a = Util.Encoding.unpack bin_read_response res_a in
 
-    let%lwt () = Client.send_to client_b req peer_a in
+    let%lwt () = Client.send_to client_b get peer_a in
     let%lwt res_b, _ = Client.recv_next client_b in
 
     let res_b = Util.Encoding.unpack bin_read_response res_b in
@@ -71,12 +71,19 @@ module Client_tests = struct
 
     let res_a = Util.Encoding.unpack bin_read_response res_a in
 
-    let res_a =
-      match res_a with
-      | Success resp -> show_response @@ Success resp
+    let get = Util.Encoding.pack bin_writer_request Get in
+
+    let%lwt () = Client.send_to client_a get peer_b in
+    let%lwt status_of_b, _ = Client.recv_next client_a in
+
+    let status_of_b = Util.Encoding.unpack bin_read_response status_of_b in
+
+    let res_a, status_of_b =
+      match (res_a, status_of_b) with
+      | Success resp, List lb -> (show_response @@ Success resp, List.hd lb)
       | _ -> failwith "Incorrect response" in
 
-    Lwt.return res_a
+    Lwt.return (res_a, status_of_b)
   let ping_pong () =
     let peer_b = Client.peer_from !client_b in
 
@@ -102,8 +109,9 @@ let test_ping_pong _ () =
   Client_tests.ping_pong () >|= Alcotest.(check string) "Ping pong" "Pong"
 let test_insert_value _ () =
   Client_tests.test_insert ()
-  >|= Alcotest.(check string)
-        "Test insert value" "(Success \"Successfully added value to state\")"
+  >|= Alcotest.(check (pair string string))
+        "Test insert value"
+        ("(Success \"Successfully added value to state\")", "something")
 
 let () =
   Lwt_main.run
