@@ -10,5 +10,5 @@ Make sure you have [`esy`](https://esy.sh/) installed.
 # Build
 $ esy
 # Test
-$ esy test
+$ esy x dune test
 ```
