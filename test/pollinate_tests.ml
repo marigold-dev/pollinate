@@ -30,9 +30,9 @@ module Client_tests = struct
     Util.Encoding.pack bin_writer_response response
 
   let client_a =
-    Lwt_main.run @@ Client.init ~state:["test1"] ~msg_handler ("127.0.0.1", 3000)
+    Lwt_main.run (Client.init ~state:["test1"] ~msg_handler ("127.0.0.1", 3000))
   let client_b =
-    Lwt_main.run @@ Client.init ~state:["test2"] ~msg_handler ("127.0.0.1", 3005)
+    Lwt_main.run (Client.init ~state:["test2"] ~msg_handler ("127.0.0.1", 3005))
 
   (* Initializes two peers and has each one request the state
      of the other, returning the first element in the response of each *)
@@ -64,7 +64,7 @@ module Client_tests = struct
 
     let peer_b = Client.peer_from !client_b in
 
-    let req = Util.Encoding.pack bin_writer_request @@ Insert "something" in
+    let req = Util.Encoding.pack bin_writer_request (Insert "something") in
 
     let%lwt () = Client.send_to client_a req peer_b in
     let%lwt res_a, _ = Client.recv_next client_a in
@@ -80,7 +80,7 @@ module Client_tests = struct
 
     let res_a, status_of_b =
       match (res_a, status_of_b) with
-      | Success resp, List lb -> (show_response @@ Success resp, List.hd lb)
+      | Success resp, List lb -> (show_response (Success resp), List.hd lb)
       | _ -> failwith "Incorrect response" in
 
     Lwt.return (res_a, status_of_b)
@@ -111,7 +111,7 @@ let test_insert_value _ () =
   Client_tests.test_insert ()
   >|= Alcotest.(check (pair string string))
         "Test insert value"
-        ("(Success \"Successfully added value to state\")", "something")
+        (Client_tests.show_response Client_tests.Pong, "something")
 
 let () =
   Lwt_main.run

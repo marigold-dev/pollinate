@@ -24,21 +24,20 @@ let send_to client payload peer =
   let%lwt _ = sendto !client.socket payload 0 len [] addr in
   Lwt.return ()
 
-let send_to_peers client payload peers =
-  let _ = List.map (fun peer -> send_to client payload peer) peers in
+let naive_broadcast client payload peers =
+  let _ = List.map (send_to client payload) peers in
   Lwt.return ()
 
 let recv_next client =
   let open Lwt_unix in
   let open Util.Encoding in
+  let buffer_size = Bytes.create size_header_length in
   let%lwt () = Lwt_mutex.lock !client.recv_mutex in
   let%lwt _ =
-    recvfrom !client.socket bin_prot_buffer read_from_first_byte
-      bin_prot_buffer_size [MSG_PEEK] in
-  let msg_size = read_size_header bin_prot_buffer + bin_prot_buffer_size in
+    recvfrom !client.socket buffer_size 0 size_header_length [MSG_PEEK] in
+  let msg_size = read_size_header buffer_size + size_header_length in
   let msg_buff = Bytes.create msg_size in
-  let%lwt _, addr =
-    recvfrom !client.socket msg_buff read_from_first_byte msg_size [] in
+  let%lwt _, addr = recvfrom !client.socket msg_buff 0 msg_size [] in
   Lwt_mutex.unlock !client.recv_mutex;
   Lwt.return (msg_buff, Peer.from_sockaddr addr)
 

@@ -1,5 +1,5 @@
 {
-  "checksum": "5b5084dc1707dedace1f02e67f428df6",
+  "checksum": "c6be9ca15aa06a4c0b7ba0c1d2c13701",
   "root": "pollinate@link-dev:./package.json",
   "node": {
     "pollinate@link-dev:./package.json": {
@@ -20,7 +20,7 @@
         "@opam/bin_prot@opam:v0.14.0@2d7601e9"
       ],
       "devDependencies": [
-        "@opam/ocamlformat@opam:0.20.1@30a05b69",
+        "@opam/ocamlformat@opam:0.21.0@862af121",
         "@opam/ocaml-lsp-server@opam:1.10.3@c6767d5c",
         "@opam/alcotest-lwt@opam:1.5.0@f1f00af0"
       ]
@@ -863,20 +863,20 @@
         "@opam/dune@opam:2.9.3@f57a6d69", "@opam/csexp@opam:1.5.1@8a8fb3a7"
       ]
     },
-    "@opam/ocamlformat@opam:0.20.1@30a05b69": {
-      "id": "@opam/ocamlformat@opam:0.20.1@30a05b69",
+    "@opam/ocamlformat@opam:0.21.0@862af121": {
+      "id": "@opam/ocamlformat@opam:0.21.0@862af121",
       "name": "@opam/ocamlformat",
-      "version": "opam:0.20.1",
+      "version": "opam:0.21.0",
       "source": {
         "type": "install",
         "source": [
-          "archive:https://opam.ocaml.org/cache/sha256/7d/7d3a51645416fa78287344fa03af6b78450067a1a61e4790bf1b29779cd10235#sha256:7d3a51645416fa78287344fa03af6b78450067a1a61e4790bf1b29779cd10235",
-          "archive:https://github.com/ocaml-ppx/ocamlformat/releases/download/0.20.1/ocamlformat-0.20.1.tbz#sha256:7d3a51645416fa78287344fa03af6b78450067a1a61e4790bf1b29779cd10235"
+          "archive:https://opam.ocaml.org/cache/sha256/2a/2a1817f6bc581ff0cce9f0aa9687b897b02726e2ab75749ee98d57637057332d#sha256:2a1817f6bc581ff0cce9f0aa9687b897b02726e2ab75749ee98d57637057332d",
+          "archive:https://github.com/ocaml-ppx/ocamlformat/releases/download/0.21.0/ocamlformat-0.21.0.tbz#sha256:2a1817f6bc581ff0cce9f0aa9687b897b02726e2ab75749ee98d57637057332d"
         ],
         "opam": {
           "name": "ocamlformat",
-          "version": "0.20.1",
-          "path": "esy.lock/opam/ocamlformat.0.20.1"
+          "version": "0.21.0",
+          "path": "esy.lock/opam/ocamlformat.0.21.0"
         }
       },
       "overrides": [],

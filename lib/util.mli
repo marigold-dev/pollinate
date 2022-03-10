@@ -1,14 +1,8 @@
 (** Defines utilities for working with payloads
 that are or need to be serialized via Bin_prot *)
 module Encoding : sig
-  val bin_prot_buffer : bytes
-  (** Bin_prot buffer size is fixed to 8 bytes *)
-
-  val bin_prot_buffer_size : int
+  val size_header_length : int
   (** The int value of the buffer size *)
-
-  val read_from_first_byte : int
-  (** Position to start reading a datagram *)
 
   val read_size_header : bytes -> int
   (** Reads the value of the size header prepended
