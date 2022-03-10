@@ -35,12 +35,18 @@ let recv_next client =
      to read the Bin_prot size header. *)
   let size_buffer = Bytes.create Encoding.size_header_length in
   let%lwt () = Lwt_mutex.lock !client.recv_mutex in
+  (* Flag MSG_PEEK means: peeks at an incoming message.
+     The data is treated as unread and the next recvfrom()
+     or similar function shall still return this data.
+     Here, we only need the mg_size.
+  *)
   let%lwt _ =
     recvfrom !client.socket size_buffer 0 Encoding.size_header_length [MSG_PEEK]
   in
   let msg_size =
     Encoding.read_size_header size_buffer + Encoding.size_header_length in
   let msg_buffer = Bytes.create msg_size in
+  (* Now that we have read the header and the message size, we can read the message *)
   let%lwt _, addr = recvfrom !client.socket msg_buffer 0 msg_size [] in
   Lwt_mutex.unlock !client.recv_mutex;
   Lwt.return (msg_buffer, Peer.from_sockaddr addr)
