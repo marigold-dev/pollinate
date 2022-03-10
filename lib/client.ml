@@ -30,16 +30,20 @@ let naive_broadcast client payload peers =
 
 let recv_next client =
   let open Lwt_unix in
-  let open Util.Encoding in
-  let buffer_size = Bytes.create size_header_length in
+  let open Util in
+  (* Peek at the first 8 bytes of the incoming datagram
+     to read the Bin_prot size header. *)
+  let size_buffer = Bytes.create Encoding.size_header_length in
   let%lwt () = Lwt_mutex.lock !client.recv_mutex in
   let%lwt _ =
-    recvfrom !client.socket buffer_size 0 size_header_length [MSG_PEEK] in
-  let msg_size = read_size_header buffer_size + size_header_length in
-  let msg_buff = Bytes.create msg_size in
-  let%lwt _, addr = recvfrom !client.socket msg_buff 0 msg_size [] in
+    recvfrom !client.socket size_buffer 0 Encoding.size_header_length [MSG_PEEK]
+  in
+  let msg_size =
+    Encoding.read_size_header size_buffer + Encoding.size_header_length in
+  let msg_buffer = Bytes.create msg_size in
+  let%lwt _, addr = recvfrom !client.socket msg_buffer 0 msg_size [] in
   Lwt_mutex.unlock !client.recv_mutex;
-  Lwt.return (msg_buff, Peer.from_sockaddr addr)
+  Lwt.return (msg_buffer, Peer.from_sockaddr addr)
 
 let serve client msg_handler =
   let rec server () =
@@ -52,8 +56,8 @@ let serve client msg_handler =
   Lwt.async server
 
 let init ~state ~msg_handler (address, port) =
-  let open Util.Net in
-  let%lwt socket = create_socket port in
+  let open Util in
+  let%lwt socket = Net.create_socket port in
   let state = ref state in
   let recv_mutex = Lwt_mutex.create () in
   let state_mutex = Lwt_mutex.create () in
