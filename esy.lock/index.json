@@ -1,5 +1,5 @@
 {
-  "checksum": "a52ce9e0f600100e5acb7a57ce7f1ded",
+  "checksum": "c6be9ca15aa06a4c0b7ba0c1d2c13701",
   "root": "pollinate@link-dev:./package.json",
   "node": {
     "pollinate@link-dev:./package.json": {
@@ -13,7 +13,7 @@
       },
       "overrides": [],
       "dependencies": [
-        "ocaml@4.13.1000@d41d8cd9",
+        "ocaml@4.13.1000@d41d8cd9", "@opam/ppx_deriving@opam:5.2.1@089e5dd3",
         "@opam/ppx_bin_prot@opam:v0.14.0@4a83bcd2",
         "@opam/lwt_ppx@opam:2.0.3@125707d0", "@opam/lwt@opam:5.5.0@30354e4c",
         "@opam/dune@opam:2.9.3@f57a6d69",
@@ -575,6 +575,39 @@
         "ocaml@4.13.1000@d41d8cd9", "@opam/ppxlib@opam:0.25.0@8553d2e8",
         "@opam/fieldslib@opam:v0.14.0@5bb0d853",
         "@opam/dune@opam:2.9.3@f57a6d69", "@opam/base@opam:v0.14.3@b3ddb868"
+      ]
+    },
+    "@opam/ppx_deriving@opam:5.2.1@089e5dd3": {
+      "id": "@opam/ppx_deriving@opam:5.2.1@089e5dd3",
+      "name": "@opam/ppx_deriving",
+      "version": "opam:5.2.1",
+      "source": {
+        "type": "install",
+        "source": [
+          "archive:https://opam.ocaml.org/cache/sha256/e9/e96b5fb25b7632570e4b329e22e097fcd4b8e8680d1e43ef003a8fbd742b0786#sha256:e96b5fb25b7632570e4b329e22e097fcd4b8e8680d1e43ef003a8fbd742b0786",
+          "archive:https://github.com/ocaml-ppx/ppx_deriving/releases/download/v5.2.1/ppx_deriving-v5.2.1.tbz#sha256:e96b5fb25b7632570e4b329e22e097fcd4b8e8680d1e43ef003a8fbd742b0786"
+        ],
+        "opam": {
+          "name": "ppx_deriving",
+          "version": "5.2.1",
+          "path": "esy.lock/opam/ppx_deriving.5.2.1"
+        }
+      },
+      "overrides": [],
+      "dependencies": [
+        "ocaml@4.13.1000@d41d8cd9", "@opam/result@opam:1.5@1c6a6533",
+        "@opam/ppxlib@opam:0.25.0@8553d2e8",
+        "@opam/ppx_derivers@opam:1.2.1@e2cbad12",
+        "@opam/ocamlfind@opam:1.9.3@781b30f3",
+        "@opam/dune@opam:2.9.3@f57a6d69", "@opam/cppo@opam:1.6.8@7e48217d",
+        "@esy-ocaml/substs@0.0.1@d41d8cd9"
+      ],
+      "devDependencies": [
+        "ocaml@4.13.1000@d41d8cd9", "@opam/result@opam:1.5@1c6a6533",
+        "@opam/ppxlib@opam:0.25.0@8553d2e8",
+        "@opam/ppx_derivers@opam:1.2.1@e2cbad12",
+        "@opam/ocamlfind@opam:1.9.3@781b30f3",
+        "@opam/dune@opam:2.9.3@f57a6d69"
       ]
     },
     "@opam/ppx_derivers@opam:1.2.1@e2cbad12": {
