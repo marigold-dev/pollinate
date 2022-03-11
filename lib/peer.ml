@@ -26,7 +26,7 @@ let to_sockaddr peer =
   Lwt_unix.ADDR_INET (Unix.inet_addr_of_string peer.address, peer.port)
 
 (* Basic Knuth shuffle => https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle *)
-let knuth_shuffle pknown_peers =
+let knuth_shuffle known_peers =
   let initial_array = Array.length (Array.of_list known_peers) in
   let shuffled_array = Array.copy (Array.of_list known_peers) in
   for i = initial_array - 1 downto 1 do
