@@ -21,3 +21,4 @@ let-and = sparse
 type-decl = sparse
 sequence-blank-line=preserve-one
 module-item-spacing=preserve
+doc-comments=before
