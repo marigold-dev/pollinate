@@ -3,19 +3,19 @@ type state =
   | Suspicious
   | Faulty
 
+(** Our representation of a Peer *)
 type t = {
   address : string;
   port : int;
   known_peers : t list;
   state : state;
 }
-(** Our representation of a Peer *)
 
-val from_sockaddr : Unix.sockaddr -> t
 (** Obtain a Pollinate.Peer from a Unix.sockaddr *)
+val from_sockaddr : Unix.sockaddr -> t
 
-val to_sockaddr : t -> Unix.sockaddr
 (** Obtain a Unix.sockaddr from a Pollinate.Peer *)
+val to_sockaddr : t -> Unix.sockaddr
 
 val add_peer : t -> t -> t
 
