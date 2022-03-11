@@ -7,6 +7,7 @@ type 'a t = {
   state : 'a ref;
   recv_mutex : Lwt_mutex.t;
   state_mutex : Lwt_mutex.t;
+  know_clients : 'a t list;
 }
 
 let peer_from (client : 'a t) =
@@ -31,7 +32,7 @@ let naive_broadcast client payload peers =
 let recv_next client =
   let open Lwt_unix in
   let open Util in
-  (* Peek at the first 8 bytes of the incoming datagram
+  (* Peek the first 8 bytes of the incoming datagram
      to read the Bin_prot size header. *)
   let size_buffer = Bytes.create Encoding.size_header_length in
   let%lwt () = Lwt_mutex.lock !client.recv_mutex in
@@ -67,6 +68,16 @@ let init ~state ~msg_handler (address, port) =
   let state = ref state in
   let recv_mutex = Lwt_mutex.create () in
   let state_mutex = Lwt_mutex.create () in
-  let client = ref { address; port; socket; state; recv_mutex; state_mutex } in
+  let client =
+    ref
+      {
+        address;
+        port;
+        socket;
+        state;
+        recv_mutex;
+        state_mutex;
+        know_clients = [];
+      } in
   serve client msg_handler;
   Lwt.return client

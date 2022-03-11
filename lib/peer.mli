@@ -16,3 +16,9 @@ val from_sockaddr : Unix.sockaddr -> t
 
 val to_sockaddr : t -> Unix.sockaddr
 (** Obtain a Unix.sockaddr from a Pollinate.Peer *)
+
+val add_peer : t -> t -> t
+
+val knuth_shuffle : t list -> t list
+
+val pick_random_member : t -> t
