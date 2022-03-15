@@ -34,10 +34,7 @@ val pick_random_peer : t -> Peer.t
 val knuth_shuffle : Peer.t list -> Peer.t list
 
 (** Util function to send the Ping message *)
-val send_ping_to : 'a Client.t ref -> Peer.t -> unit Lwt.t
+val send_ping_to : 'a Client.t ref -> Peer.address -> unit Lwt.t
 
 (** Util function to send the Acknowledge message *)
-val send_acknowledge_to : 'a Client.t ref -> Peer.t -> unit Lwt.t
-
-(** Util function to send the PingRequest message *)
-val send_ping_request_to : 'a Client.t ref -> Peer.t -> unit Lwt.t
+val send_acknowledge_to : 'a Client.t ref -> Peer.address -> unit Lwt.t
