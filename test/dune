@@ -1,6 +1,6 @@
 (tests
- (names client_tests peer_tests)
- (modules client_tests peer_tests commons)
+ (names client_tests swim_tests)
+ (modules client_tests swim_tests commons)
  (libraries pollinate bin_prot lwt alcotest-lwt)
  (preprocess
   (pps ppx_bin_prot lwt_ppx ppx_deriving.show)))

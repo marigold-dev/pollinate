@@ -7,21 +7,26 @@ type 'a t = {
   state : 'a ref;
   recv_mutex : Lwt_mutex.t;
   state_mutex : Lwt_mutex.t;
-  know_clients : 'a t list;
 }
 
-let peer_from (client : 'a t) =
-  Peer.
-    {
-      address = client.address;
-      port = client.port;
-      known_peers = [];
-      state = Alive;
-    }
+let retrieve_peer_from_address (peers : Peer.t list) (client : 'a t) =
+  let open Peer in
+  let address_to_find = client.address in
+  let port_to_find = client.port in
+  List.find
+    (fun p ->
+      p.socket_address.address == address_to_find
+      && p.socket_address.port == port_to_find)
+    peers
 
-let send_to client payload peer =
+let peer_from (client : 'a t) =
+  let open Peer in
+  let peer_address = { address = client.address; port = client.port } in
+  { socket_address = peer_address; status = Alive }
+
+let send_to client payload socket_address =
   let len = Bytes.length payload in
-  let addr = Peer.to_sockaddr peer in
+  let addr = Peer.to_sockaddr socket_address in
   let%lwt _ = sendto !client.socket payload 0 len [] addr in
   Lwt.return ()
 
@@ -68,16 +73,6 @@ let init ~state ~msg_handler (address, port) =
   let state = ref state in
   let recv_mutex = Lwt_mutex.create () in
   let state_mutex = Lwt_mutex.create () in
-  let client =
-    ref
-      {
-        address;
-        port;
-        socket;
-        state;
-        recv_mutex;
-        state_mutex;
-        know_clients = [];
-      } in
+  let client = ref { address; port; socket; state; recv_mutex; state_mutex } in
   serve client msg_handler;
   Lwt.return client

@@ -1,6 +1,7 @@
 module Commons = struct
   open Bin_prot.Std
   open Pollinate
+  open Base.Hashtbl
   type request =
     | Ping
     | Get
@@ -14,6 +15,14 @@ module Commons = struct
   [@@deriving bin_io, show { with_path = false }]
 
   type state = string list
+
+  let protocol : Swim.t =
+    {
+      config = { protocol_period = 5; round_trip_time = 2; timeout = 2 };
+      acknowledges = Poly.create ();
+      peers = [];
+      sequence_number = 0;
+    }
 
   let msg_handler state _ request =
     let request = Util.Encoding.unpack bin_read_request request in

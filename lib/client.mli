@@ -11,17 +11,20 @@ type 'a t
 (** Constructs a Peer.t from an 'a Client.t*)
 val peer_from : 'a t -> Peer.t
 
+(** This function will be useful for SWIM protocol *)
+val retrieve_peer_from_address : Peer.t list -> 'a t -> Peer.t
+
 (** Sends a serialized payload via datagram from the given client
 to a specified peer *)
-val send_to : 'a t ref -> bytes -> Peer.t -> unit Lwt.t
+val send_to : 'a t ref -> bytes -> Peer.address -> unit Lwt.t
 
 (** Sends a serialized payload via datagram from the given client
 to the specified peers *)
-val naive_broadcast : 'a t ref -> bytes -> Peer.t list -> unit Lwt.t
+val naive_broadcast : 'a t ref -> bytes -> Peer.address list -> unit Lwt.t
 
 (** Waits for the next incoming datagram and returns the
 serialized payload along with the peer who sent the datagram *)
-val recv_next : 'a t ref -> (bytes * Peer.t) Lwt.t
+val recv_next : 'a t ref -> (bytes * Peer.address) Lwt.t
 
 (** Initializes the client with an initial state and a message
 handler that acts on the current state, the peer sending the message,
@@ -30,6 +33,6 @@ to initialize a server that runs asynchronously. Returns
 a reference to the client. *)
 val init :
   state:'a ->
-  msg_handler:('a ref -> Peer.t -> bytes -> bytes) ->
+  msg_handler:('a ref -> Peer.address -> bytes -> bytes) ->
   string * int ->
   'a t ref Lwt.t
