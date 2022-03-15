@@ -10,6 +10,7 @@ module Client_tests = struct
     let open Commons in
     let get = Util.Encoding.pack bin_writer_message (Request Get) in
 
+    let%lwt () = Lwt_io.write Lwt_io.stderr "Requesting\n" in
     let%lwt { payload = res_from_b; _ } = Client.request client_a get peer_b in
     let res_from_b = Encoding.unpack bin_read_response res_from_b in
 
@@ -72,7 +73,9 @@ let test_insert_value _ () =
 
 let () =
   Lwt_main.run
-  @@ Alcotest_lwt.run "Client tests"
+  @@ Alcotest_lwt.run
+       ~argv:[|"--verbose"; "--show-errors"; "--tail-errors=10"|]
+       "Client tests"
        [
          ( "communication",
            [

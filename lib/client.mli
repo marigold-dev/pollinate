@@ -45,7 +45,7 @@ val recv_next : 'a t ref -> (bytes * Peer.t) Lwt.t
 
 (** Removes and returns the latest response from the =
 client's inbox *)
-val next_response : 'a t ref -> Message.t option
+val next_response : 'a t ref -> Message.t option Lwt.t
 
 (** Sends a request to the specified peer and
 returns a promise holding the response from the peer *)

@@ -16,9 +16,8 @@ type 'a t = {
   address : Address.t;
   socket : file_descr;
   state : 'a ref;
-  request_inbox : Message.t Queue.t;
-      (* note: queues aren't thread safe so account for this at some point *)
-  response_inbox : Message.t Queue.t;
+  request_inbox : Message.t Tqueue.t;
+  response_inbox : Message.t Tqueue.t;
   recv_mutex : Lwt_mutex.t;
   state_mutex : Lwt_mutex.t;
 }
@@ -61,38 +60,26 @@ let recv_next client =
   Lwt_mutex.unlock !client.recv_mutex;
   Lwt.return (msg_buffer, Peer.from_socket_address addr)
 
-let next_request client = Queue.take_opt !client.request_inbox
-let next_response client = Queue.take_opt !client.response_inbox
+let next_request client = Tqueue.take_opt !client.request_inbox
+let next_response client = Tqueue.take_opt !client.response_inbox
 
 let request client request peer =
   let%lwt () = send_to client request peer in
-  let response, resolver = Lwt.wait () in
-  let rec wait () =
-    print_endline "Waiting";
-    if Queue.is_empty !client.response_inbox then
-      wait ()
-    else
-      Lwt.return (Lwt.wakeup resolver (next_response client)) in
-  Lwt.async wait;
-  Lwt.bind response (fun res -> Option.get res |> Lwt.return)
+  Tqueue.take_block !client.response_inbox
 
 let route client peer msg router =
   let open Message in
   let msg = router peer msg in
   match msg.label with
-  | Message.Request ->
-    Queue.add msg !client.request_inbox;
-    Printf.printf "Queue length: %d\n" (Queue.length !client.request_inbox)
-  | Message.Response ->
-    Queue.add msg !client.response_inbox;
-    Printf.printf "Queue length: %d\n" (Queue.length !client.response_inbox)
+  | Message.Request -> Tqueue.add msg !client.request_inbox
+  | Message.Response -> Tqueue.add msg !client.response_inbox
 
 let serve client router msg_handler =
   let rec server () =
     let%lwt message, peer = recv_next client in
-    route client peer message router;
+    let%lwt () = route client peer message router in
 
-    let request = next_request client in
+    let%lwt request = next_request client in
 
     let%lwt () =
       match request with
@@ -125,8 +112,8 @@ let init ~state ?router ~msg_handler (address, port) =
         address = Address.create address port;
         socket;
         state;
-        request_inbox = Queue.create ();
-        response_inbox = Queue.create ();
+        request_inbox = Tqueue.create ();
+        response_inbox = Tqueue.create ();
         recv_mutex;
         state_mutex;
       } in
