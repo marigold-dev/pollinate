@@ -2,7 +2,7 @@
 type message =
   | Ping
   | Acknowledge
-  | PingRequest of Peer.address
+  | PingRequest of Address.t
 
 (** Here is the definition of the SWIM protocol *)
 type config = {

@@ -3,7 +3,7 @@ open Base.Hashtbl
 type message =
   | Ping
   | Acknowledge
-  | PingRequest of Peer.address
+  | PingRequest of Address.t
 [@@deriving bin_io]
 
 type config = {
@@ -29,7 +29,7 @@ let next_seq_no t =
 
 let send_message client (recipient : Peer.t) message =
   let message = Util.Encoding.pack bin_writer_message message in
-  Client.send_to client message recipient.socket_address
+  Client.send_to client message recipient
 
 let send_ping_to client recipient = send_message client recipient Ping
 
@@ -42,7 +42,7 @@ let send_ping_request_to client recipient =
 (* TODO: Totally not sure about this...
    I don't know if I can get rid of it and only use `wait_ack_timeout` instead
     But I feel like Lwt_condition allows ms to manage async thread and could be useful *)
-let rec wait_ack t sequence_number =
+let [@warning "-32"][@warning "-39"] rec wait_ack t sequence_number =
   let cond =
     find_or_add t.acknowledges sequence_number ~default:Lwt_condition.create
   in
@@ -50,7 +50,7 @@ let rec wait_ack t sequence_number =
 
 (* TODO: An async thread should be started here, with a basic sleep, but not sure at all...
      And we should return Either Ok Timeout *)
-let wait_ack_timeout t sequence_number timeout = failwith "undefined"
+let wait_ack_timeout _t _sequence_number _timeout = failwith "undefined"
 
 (* Basic Knuth shuffle => https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle *)
 let knuth_shuffle known_peers =
@@ -86,10 +86,10 @@ let rec pick_random_peers (peers : Peer.t list) number_of_peers =
       elem :: pick_random_peers list (number_of_peers - 1)
 
 (* TODO: This function will update the status of the peer to Suspicious or Faulty *)
-let update_peer t client peer = failwith "undefined"
+let update_peer _t _client _peer = failwith "undefined"
 
 (* How should I use this function? Let the client of the library defines a `peer.init` using it at `msg_handler`? *)
-let handle_payload t client (peer : Peer.t) msg =
+let [@warning "-32"] handle_payload t client (peer : Peer.t) msg =
   let _ =
     update_peer t client
       Peer.{ status = Alive; socket_address = peer.socket_address } in
@@ -113,7 +113,7 @@ let handle_payload t client (peer : Peer.t) msg =
 
 (* TODO: This function should be call in a never endling loop to send the message each N seconds/minutes
    and also update peer status *)
-let probe_node t client (peer : Peer.t) =
+let [@warning "-32"] probe_node t client (peer : Peer.t) =
   let seq_no = next_seq_no t in
   match%lwt wait_ack_timeout t seq_no t.config.round_trip_time with
   | Ok _ -> Lwt.return ()
@@ -127,5 +127,5 @@ let probe_node t client (peer : Peer.t) =
     | Error _ ->
       let peer : Peer.t =
         { status = Faulty; socket_address = peer.socket_address } in
-      update_peer t !client [peer];
+      let [@warning "-21"] _ =  update_peer t !client [peer] in
       Lwt.return ())

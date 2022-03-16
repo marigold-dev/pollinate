@@ -9,8 +9,8 @@ module Swim_tests = struct
 
   let pick_random_test () =
     let _ = Swim.add_peer Commons.peer_a Commons.protocol in
-    let peer = Swim.pick_random_peer Commons.protocol in
-    Lwt.return @@ peer.socket_address.port
+    let peers = Swim.pick_random_peers Commons.protocol.peers 1 in
+    Lwt.return @@ List.length peers
 
   let knuth_shuffle_test () =
     let final_list = Swim.knuth_shuffle Commons.protocol.peers in
@@ -29,7 +29,7 @@ let test_knuth_shuffle _ () =
 let test_pick_random _ () =
   Swim_tests.pick_random_test ()
   >|= Alcotest.(check int)
-        "Pick_random on a list with one element, returns this element" 3000
+        "pick_random_peers on a list with one element, length is esual to 1" 1
 
 let () =
   Lwt_main.run

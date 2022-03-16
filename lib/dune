@@ -2,4 +2,4 @@
  (name pollinate)
  (libraries bin_prot lwt lwt.unix)
  (preprocess
-  (pps ppx_bin_prot lwt_ppx ppx_deriving.show)))
+  (pps ppx_bin_prot lwt_ppx ppx_deriving.show ppx_deriving.eq)))

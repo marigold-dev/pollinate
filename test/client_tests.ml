@@ -9,12 +9,12 @@ module Client_tests = struct
     let open Commons in
     let get = Util.Encoding.pack bin_writer_request Get in
 
-    let%lwt () = Client.send_to client_a get peer_b.socket_address in
+    let%lwt () = Client.send_to client_a get peer_b in
     let%lwt res_a, _ = Client.recv_next client_a in
 
     let res_a = Util.Encoding.unpack bin_read_response res_a in
 
-    let%lwt () = Client.send_to client_b get peer_a.socket_address in
+    let%lwt () = Client.send_to client_b get peer_a in
     let%lwt res_b, _ = Client.recv_next client_b in
 
     let res_b = Util.Encoding.unpack bin_read_response res_b in
@@ -30,14 +30,14 @@ module Client_tests = struct
     let open Commons in
     let req = Util.Encoding.pack bin_writer_request (Insert "something") in
 
-    let%lwt () = Client.send_to client_a req peer_b.socket_address in
+    let%lwt () = Client.send_to client_a req peer_b in
     let%lwt res_a, _ = Client.recv_next client_a in
 
     let res_a = Util.Encoding.unpack bin_read_response res_a in
 
     let get = Util.Encoding.pack bin_writer_request Get in
 
-    let%lwt () = Client.send_to client_a get peer_b.socket_address in
+    let%lwt () = Client.send_to client_a get peer_b in
     let%lwt status_of_b, _ = Client.recv_next client_a in
 
     let status_of_b = Util.Encoding.unpack bin_read_response status_of_b in
@@ -53,7 +53,7 @@ module Client_tests = struct
     let open Commons in
     let ping = Util.Encoding.pack bin_writer_request Ping in
 
-    let%lwt () = Client.send_to client_a ping peer_b.socket_address in
+    let%lwt () = Client.send_to client_a ping peer_b in
     let%lwt pong, _ = Client.recv_next client_a in
 
     let pong = Util.Encoding.unpack bin_read_response pong in

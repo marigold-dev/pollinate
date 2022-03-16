@@ -1,22 +1,23 @@
 open Lwt_unix
 
 type 'a t = {
-  address : string;
-  port : int;
+  address : Address.t;
   socket : file_descr;
   state : 'a ref;
   recv_mutex : Lwt_mutex.t;
   state_mutex : Lwt_mutex.t;
 }
 
-let peer_from (client : 'a t) =
-  let open Peer in
-  let peer_address = { address = client.address; port = client.port } in
-  { socket_address = peer_address; status = Alive }
+let address_of client =
+  match client with
+  | t -> t.address
+let peer_from (address : Address.t) =
+  Peer.{ socket_address = address; status = Alive }
 
-let send_to client payload socket_address =
+let send_to client payload peer =
+  let open Peer in
   let len = Bytes.length payload in
-  let addr = Peer.to_sockaddr socket_address in
+  let addr = Address.to_sockaddr peer.socket_address in
   let%lwt _ = sendto !client.socket payload 0 len [] addr in
   Lwt.return ()
 
@@ -45,14 +46,14 @@ let recv_next client =
   (* Now that we have read the header and the message size, we can read the message *)
   let%lwt _, addr = recvfrom !client.socket msg_buffer 0 msg_size [] in
   Lwt_mutex.unlock !client.recv_mutex;
-  Lwt.return (msg_buffer, Peer.from_sockaddr addr)
+  Lwt.return (msg_buffer, Address.from_sockaddr addr)
 
 let serve client msg_handler =
   let rec server () =
-    let%lwt request, peer = recv_next client in
+    let%lwt request, addr = recv_next client in
     let%lwt () = Lwt_mutex.lock !client.state_mutex in
-    let response = msg_handler !client.state peer request in
-    let%lwt () = send_to client response peer in
+    let response = msg_handler !client.state addr request in
+    let%lwt () = send_to client response ( peer_from addr) in
     Lwt_mutex.unlock !client.state_mutex;
     server () in
   Lwt.async server
@@ -63,6 +64,9 @@ let init ~state ~msg_handler (address, port) =
   let state = ref state in
   let recv_mutex = Lwt_mutex.create () in
   let state_mutex = Lwt_mutex.create () in
-  let client = ref { address; port; socket; state; recv_mutex; state_mutex } in
+  let client_address = Address.create_address address port in
+  let client =
+    ref { address = client_address; socket; state; recv_mutex; state_mutex }
+  in
   serve client msg_handler;
   Lwt.return client
