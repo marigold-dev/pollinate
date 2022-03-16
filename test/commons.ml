@@ -16,7 +16,7 @@ module Commons = struct
 
   type state = string list
 
-  let protocol : Swim.t =
+  let protocol : Failure_detector.t =
     {
       config = { protocol_period = 5; round_trip_time = 2; timeout = 2; peers_to_ping = 1;};
       acknowledges = Poly.create ();
