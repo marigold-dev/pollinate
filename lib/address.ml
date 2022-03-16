@@ -8,6 +8,7 @@ type t = {
 
 let address_of address = match address with
   | t -> t.address
+
 let port_of address = match address with
   | t -> t.port
 
@@ -17,7 +18,7 @@ let create_address address port =
 let from_sockaddr sockaddr =
   let open Lwt_unix in
   match sockaddr with
-  | ADDR_UNIX _ -> failwith "Unix socket addresses not supported"
+  | ADDR_UNIX _ -> failwith "Unix socket addresses are not supported"
   | ADDR_INET (inet, port) -> { address = Unix.string_of_inet_addr inet; port }
 
 let to_sockaddr socket_address =

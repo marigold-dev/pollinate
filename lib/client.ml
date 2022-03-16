@@ -11,6 +11,7 @@ type 'a t = {
 let address_of client =
   match client with
   | t -> t.address
+
 let peer_from (address : Address.t) =
   Peer.{ socket_address = address; status = Alive }
 
@@ -53,7 +54,7 @@ let serve client msg_handler =
     let%lwt request, addr = recv_next client in
     let%lwt () = Lwt_mutex.lock !client.state_mutex in
     let response = msg_handler !client.state addr request in
-    let%lwt () = send_to client response ( peer_from addr) in
+    let%lwt () = send_to client response (peer_from addr) in
     Lwt_mutex.unlock !client.state_mutex;
     server () in
   Lwt.async server

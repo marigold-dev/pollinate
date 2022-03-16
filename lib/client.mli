@@ -8,7 +8,10 @@ receive a message (sending is non-blocking), or when the
 state is being read from or written to by the server. *)
 type 'a t
 
-(** Constructs a Peer.t from an 'a Client.t*)
+(** Retrieve the Address.t of the given Client.t *)
+val address_of : 'a t -> Address.t
+
+(** Constructs a Peer.t from an Address.t *)
 val peer_from : Address.t -> Peer.t
 
 (** Sends a serialized payload via datagram from the given client
@@ -33,5 +36,3 @@ val init :
   msg_handler:('a ref -> Address.t -> bytes -> bytes) ->
   string * int ->
   'a t ref Lwt.t
-
-val address_of : 'a t -> Address.t

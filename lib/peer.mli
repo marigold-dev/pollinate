@@ -13,4 +13,5 @@ type t = {
   mutable status : status;
 }
 
+(** Obtain the Peer.t from the given list, matching the provided Address.t *)
 val retrieve_peer_from_address : t list -> Address.t -> t
