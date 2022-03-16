@@ -9,16 +9,6 @@ type 'a t = {
   state_mutex : Lwt_mutex.t;
 }
 
-let retrieve_peer_from_address (peers : Peer.t list) (client : 'a t) =
-  let open Peer in
-  let address_to_find = client.address in
-  let port_to_find = client.port in
-  List.find
-    (fun p ->
-      p.socket_address.address == address_to_find
-      && p.socket_address.port == port_to_find)
-    peers
-
 let peer_from (client : 'a t) =
   let open Peer in
   let peer_address = { address = client.address; port = client.port } in

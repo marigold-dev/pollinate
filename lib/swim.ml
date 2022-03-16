@@ -10,6 +10,7 @@ type config = {
   protocol_period : int;
   round_trip_time : int;
   timeout : int;
+  mutable peers_to_ping : int;
 }
 
 type t = {
@@ -17,8 +18,6 @@ type t = {
   (* TODO: I am totally not sure about this type *)
   acknowledges : (int, unit Lwt_condition.t) Poly.t;
   mutable peers : Peer.t list;
-  (* TODO: I am not sure this is useful, it's just a counter to know what is the current round
-     I would like to send it with the message payload, what do you think? *)
   mutable sequence_number : int;
 }
 
@@ -28,18 +27,17 @@ let next_seq_no t =
   t.sequence_number <- t.sequence_number + 1;
   sequence_number
 
-let send_ping_to client (peer_address : Peer.address) =
-  let ping = Util.Encoding.pack bin_writer_message Ping in
-  Client.send_to client ping peer_address
+let send_message client (recipient : Peer.t) message =
+  let message = Util.Encoding.pack bin_writer_message message in
+  Client.send_to client message recipient.socket_address
 
-let send_acknowledge_to client (peer_address : Peer.address) =
-  let acknowledge = Util.Encoding.pack bin_writer_message Acknowledge in
-  Client.send_to client acknowledge peer_address
+let send_ping_to client recipient = send_message client recipient Ping
 
-let send_ping_request_to client (peer_address : Peer.address) =
-  let ping_request =
-    Util.Encoding.pack bin_writer_message (PingRequest peer_address) in
-  Client.send_to client ping_request peer_address
+let send_acknowledge_to client recipient =
+  send_message client recipient Acknowledge
+
+let send_ping_request_to client recipient =
+  send_message client recipient (PingRequest recipient.socket_address)
 
 (* TODO: Totally not sure about this...
    I don't know if I can get rid of it and only use `wait_ack_timeout` instead
@@ -78,27 +76,32 @@ let add_peer peer_to_add t =
    A randomly picks one (or several, should it also be randomly determined?) peer(s) from its list
    and ask him/them to ping B.*)
 (* This function return the random peer, to which we will ask to ping the first peer *)
-let pick_random_peer t =
-  let random_int = Random.int (List.length t.peers) - 1 in
-  List.nth t.peers random_int
+let rec pick_random_peers (peers : Peer.t list) number_of_peers =
+  match peers with
+  | [] -> failwith "pick_random_peers"
+  | elem :: list ->
+    if number_of_peers = 1 then
+      [elem]
+    else
+      elem :: pick_random_peers list (number_of_peers - 1)
 
 (* TODO: This function will update the status of the peer to Suspicious or Faulty *)
 let update_peer t client peer = failwith "undefined"
 
 (* How should I use this function? Let the client of the library defines a `peer.init` using it at `msg_handler`? *)
-let handle_payload t client src_addr msg =
+let handle_payload t client (peer : Peer.t) msg =
   let _ =
     update_peer t client
-      ({ status = Alive; socket_address = src_addr } : Peer.t) in
+      Peer.{ status = Alive; socket_address = peer.socket_address } in
   match msg with
-  | Ping -> send_acknowledge_to client src_addr
+  | Ping -> send_acknowledge_to client peer
   | PingRequest addr -> (
     let seq_no = next_seq_no t in
-    let _ = send_ping_to client addr in
+    let _ = send_ping_to client (Peer.retrieve_peer_from_address t.peers addr) in
     match%lwt wait_ack_timeout t seq_no t.config.protocol_period with
     (* TODO: I am not sure about using the backtick character, I think it makes it polymorphic, should we do something like that here? *)
-    | `Timeout -> Lwt.return ()
-    | `Ok -> send_acknowledge_to client src_addr)
+    | Ok _ -> Lwt.return ()
+    | Error _ -> send_acknowledge_to client peer)
   | Acknowledge ->
   match find t.acknowledges t.sequence_number with
   | Some cond ->
@@ -113,14 +116,15 @@ let handle_payload t client src_addr msg =
 let probe_node t client (peer : Peer.t) =
   let seq_no = next_seq_no t in
   match%lwt wait_ack_timeout t seq_no t.config.round_trip_time with
-  | `Ok -> Lwt.return ()
-  | `Timeout -> (
-    let helper : Peer.t = pick_random_peer t in
-    let _ = send_ping_request_to client helper.socket_address in
+  | Ok _ -> Lwt.return ()
+  | Error _ -> (
+    let helpers : Peer.t list =
+      pick_random_peers t.peers t.config.peers_to_ping in
+    let _ = List.map (send_ping_request_to client) helpers in
     let wait_time = t.config.protocol_period - t.config.round_trip_time in
     match%lwt wait_ack_timeout t seq_no wait_time with
-    | `Ok -> Lwt.return ()
-    | `Timeout ->
+    | Ok _ -> Lwt.return ()
+    | Error _ ->
       let peer : Peer.t =
         { status = Faulty; socket_address = peer.socket_address } in
       update_peer t !client [peer];

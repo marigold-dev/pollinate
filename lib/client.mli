@@ -11,9 +11,6 @@ type 'a t
 (** Constructs a Peer.t from an 'a Client.t*)
 val peer_from : 'a t -> Peer.t
 
-(** This function will be useful for SWIM protocol *)
-val retrieve_peer_from_address : Peer.t list -> 'a t -> Peer.t
-
 (** Sends a serialized payload via datagram from the given client
 to a specified peer *)
 val send_to : 'a t ref -> bytes -> Peer.address -> unit Lwt.t

@@ -25,3 +25,5 @@ val from_sockaddr : Unix.sockaddr -> address
 
 (** Obtain a Unix.sockaddr from a Pollinate.Peer *)
 val to_sockaddr : address -> Unix.sockaddr
+
+val retrieve_peer_from_address : t list -> address -> t
