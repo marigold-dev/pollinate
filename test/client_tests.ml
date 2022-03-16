@@ -10,7 +10,6 @@ module Client_tests = struct
     let open Commons in
     let get = Util.Encoding.pack bin_writer_message (Request Get) in
 
-    let%lwt () = Lwt_io.write Lwt_io.stderr "Requesting\n" in
     let%lwt { payload = res_from_b; _ } = Client.request client_a get peer_b in
     let res_from_b = Encoding.unpack bin_read_response res_from_b in
 
@@ -32,16 +31,17 @@ module Client_tests = struct
     let%lwt { payload = res_a; _ } = Client.request client_a insert_req peer_b in
     let res_a = Encoding.unpack bin_read_response res_a in
 
-    let get = Encoding.pack bin_writer_request Get in
+    let get = Encoding.pack bin_writer_message (Request Get) in
     let%lwt { payload = b_state; _ } = Client.request client_a get peer_b in
     let b_state = Encoding.unpack bin_read_response b_state in
 
     let res_a, b_state =
       match (res_a, b_state) with
-      | Success resp, List lb -> (show_response (Success resp), List.hd lb)
+      | Success _, List lb -> ("Success", List.hd lb)
       | _ -> failwith "Incorrect response" in
 
     Lwt.return (res_a, b_state)
+
   let ping_pong () =
     let open Commons in
     let ping = Encoding.pack bin_writer_message (Request Ping) in
@@ -65,22 +65,18 @@ let test_ping_pong _ () =
   Client_tests.ping_pong () >|= Alcotest.(check string) "Ping pong" "Pong"
 
 let test_insert_value _ () =
-  let open Commons in
   Client_tests.test_insert ()
   >|= Alcotest.(check (pair string string))
-        "Test insert value"
-        (show_response Pong, "something")
+        "Test insert value" ("Success", "something")
 
 let () =
   Lwt_main.run
-  @@ Alcotest_lwt.run
-       ~argv:[|"--verbose"; "--show-errors"; "--tail-errors=10"|]
-       "Client tests"
+  @@ Alcotest_lwt.run "Client tests"
        [
          ( "communication",
            [
              Alcotest_lwt.test_case "Trading Messages" `Quick test_trade_messages;
-             Alcotest_lwt.test_case "Ping pong" `Quick test_ping_pong
-             (* Alcotest_lwt.test_case "Insert value" `Quick test_insert_value; *);
+             Alcotest_lwt.test_case "Ping pong" `Quick test_ping_pong;
+             Alcotest_lwt.test_case "Insert value" `Quick test_insert_value;
            ] );
        ]
