@@ -30,6 +30,14 @@ module Encoding = struct
   let unpack reader payload =
     let buf = prepare_buff payload in
     read_all reader buf
+
+  let str_dump payload =
+    payload
+    |> Bytes.to_seq
+    |> Seq.map int_of_char
+    |> Seq.map string_of_int
+    |> List.of_seq
+    |> String.concat " ; "
 end
 
 module Net = struct

@@ -17,6 +17,10 @@ module Encoding : sig
   MUST have an 8 byte size header, or this function will
   behave incorrectly *)
   val unpack : 'a Bin_prot.Read.reader -> bytes -> 'a
+
+  (** Produces a string consisting of semi-colon (;) separated
+integer-representations of each byte in the input bytes *)
+  val str_dump : bytes -> string
 end
 
 (** Defines utilities for working with UDP sockets *)

@@ -65,7 +65,7 @@ let next_response client = Tqueue.take_opt !client.response_inbox
 
 let request client request peer =
   let%lwt () = send_to client request peer in
-  Tqueue.take_block !client.response_inbox
+  Tqueue.wait_to_take !client.response_inbox
 
 let route client peer msg router =
   let open Message in
@@ -84,7 +84,6 @@ let serve client router msg_handler =
     let%lwt () =
       match request with
       | Some request ->
-        print_endline (Bytes.to_string request.payload);
         let%lwt () = Lwt_mutex.lock !client.state_mutex in
         let response = msg_handler !client.state request in
         let%lwt () = send_to client response peer in
