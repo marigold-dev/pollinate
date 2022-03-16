@@ -47,14 +47,14 @@ let recv_next client =
   (* Now that we have read the header and the message size, we can read the message *)
   let%lwt _, addr = recvfrom !client.socket msg_buffer 0 msg_size [] in
   Lwt_mutex.unlock !client.recv_mutex;
-  Lwt.return (msg_buffer, Address.from_sockaddr addr)
+  Lwt.return (msg_buffer, peer_from (Address.from_sockaddr addr))
 
 let serve client msg_handler =
   let rec server () =
-    let%lwt request, addr = recv_next client in
+    let%lwt request, peer = recv_next client in
     let%lwt () = Lwt_mutex.lock !client.state_mutex in
-    let response = msg_handler !client.state addr request in
-    let%lwt () = send_to client response (peer_from addr) in
+    let response = msg_handler !client.state peer request in
+    let%lwt () = send_to client response peer in
     Lwt_mutex.unlock !client.state_mutex;
     server () in
   Lwt.async server

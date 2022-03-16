@@ -24,7 +24,7 @@ val naive_broadcast : 'a t ref -> bytes -> Peer.t list -> unit Lwt.t
 
 (** Waits for the next incoming datagram and returns the
 serialized payload along with the peer who sent the datagram *)
-val recv_next : 'a t ref -> (bytes * Address.t) Lwt.t
+val recv_next : 'a t ref -> (bytes * Peer.t) Lwt.t
 
 (** Initializes the client with an initial state and a message
 handler that acts on the current state, the peer sending the message,
@@ -33,6 +33,6 @@ to initialize a server that runs asynchronously. Returns
 a reference to the client. *)
 val init :
   state:'a ->
-  msg_handler:('a ref -> Address.t -> bytes -> bytes) ->
+  msg_handler:('a ref -> Peer.t -> bytes -> bytes) ->
   string * int ->
   'a t ref Lwt.t
