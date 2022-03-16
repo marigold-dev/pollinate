@@ -6,14 +6,15 @@ type t = {
 }
 [@@deriving bin_io, eq]
 
-let address_of address = match address with
+let address_of address =
+  match address with
   | t -> t.address
 
-let port_of address = match address with
+let port_of address =
+  match address with
   | t -> t.port
 
-let create_address address port =
-  {address; port;}
+let create_address address port = { address; port }
 
 let from_sockaddr sockaddr =
   let open Lwt_unix in

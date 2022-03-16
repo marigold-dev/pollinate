@@ -9,7 +9,4 @@ type t = {
 }
 
 let retrieve_peer_from_address (peers : t list) (address : Address.t) =
-  List.find
-    (fun p ->
-      p.socket_address = address)
-    peers
+  List.find (fun p -> p.socket_address = address) peers

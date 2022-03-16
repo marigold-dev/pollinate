@@ -16,7 +16,7 @@ type config = {
 type t = {
   config : config;
   (* TODO: I am totally not sure about this type *)
-  acknowledges : (int, unit Lwt_condition.t) Poly.t;
+  acknowledges : (int, unit Lwt_condition.t) Base.Hashtbl.t;
   mutable peers : Peer.t list;
   mutable sequence_number : int;
 }
@@ -42,7 +42,7 @@ let send_ping_request_to client recipient =
 (* TODO: Totally not sure about this...
    I don't know if I can get rid of it and only use `wait_ack_timeout` instead
     But I feel like Lwt_condition allows ms to manage async thread and could be useful *)
-let [@warning "-32"][@warning "-39"] rec wait_ack t sequence_number =
+let[@warning "-32"] [@warning "-39"] rec wait_ack t sequence_number =
   let cond =
     find_or_add t.acknowledges sequence_number ~default:Lwt_condition.create
   in
@@ -89,7 +89,7 @@ let rec pick_random_peers (peers : Peer.t list) number_of_peers =
 let update_peer _t _client _peer = failwith "undefined"
 
 (* How should I use this function? Let the client of the library defines a `peer.init` using it at `msg_handler`? *)
-let [@warning "-32"] handle_payload t client (peer : Peer.t) msg =
+let[@warning "-32"] handle_payload t client (peer : Peer.t) msg =
   let _ =
     update_peer t client
       Peer.{ status = Alive; socket_address = peer.socket_address } in
@@ -113,7 +113,7 @@ let [@warning "-32"] handle_payload t client (peer : Peer.t) msg =
 
 (* TODO: This function should be call in a never endling loop to send the message each N seconds/minutes
    and also update peer status *)
-let [@warning "-32"] probe_node t client (peer : Peer.t) =
+let[@warning "-32"] probe_node t client (peer : Peer.t) =
   let seq_no = next_seq_no t in
   match%lwt wait_ack_timeout t seq_no t.config.round_trip_time with
   | Ok _ -> Lwt.return ()
@@ -127,5 +127,5 @@ let [@warning "-32"] probe_node t client (peer : Peer.t) =
     | Error _ ->
       let peer : Peer.t =
         { status = Faulty; socket_address = peer.socket_address } in
-      let [@warning "-21"] _ =  update_peer t !client [peer] in
+      let[@warning "-21"] _ = update_peer t !client [peer] in
       Lwt.return ())

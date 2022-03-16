@@ -65,9 +65,8 @@ let init ~state ~msg_handler (address, port) =
   let state = ref state in
   let recv_mutex = Lwt_mutex.create () in
   let state_mutex = Lwt_mutex.create () in
-  let client_address = Address.create_address address port in
   let client =
-    ref { address = client_address; socket; state; recv_mutex; state_mutex }
+    ref { address = Address.create_address address port; socket; state; recv_mutex; state_mutex }
   in
   serve client msg_handler;
   Lwt.return client
