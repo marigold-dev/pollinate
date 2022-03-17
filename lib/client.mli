@@ -1,22 +1,5 @@
 (** Types and functions pertaining to clients in a P2P application *)
 
-module Message : sig
-  (** Messages are requests or responses,
-  determining how they're stored and
-  where they're handled *)
-  type label =
-    | Request
-    | Response
-
-  (** Messages received from peers which are
-stored in the client's inbox *)
-  type t = {
-    label : label;
-    sender : Peer.t;
-    payload : bytes;
-  }
-end
-
 (** Clients are defined by a UDP socket bound
 to an address and port, a reference to some state
 whose type is user-defined, a mutex that gets

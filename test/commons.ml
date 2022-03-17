@@ -34,22 +34,22 @@ module Commons = struct
     let msg = Encoding.unpack bin_read_message msg in
     match msg with
     | Request r ->
-      Client.Message.
+      Message.
         {
-          label = Client.Message.Request;
+          label = Message.Request;
           sender;
           payload = Encoding.pack bin_writer_request r;
         }
     | Response r ->
-      Client.Message.
+      Message.
         {
-          label = Client.Message.Response;
+          label = Message.Response;
           sender;
           payload = Encoding.pack bin_writer_response r;
         }
 
   let msg_handler state request =
-    let open Client.Message in
+    let open Message in
     let request = Encoding.unpack bin_read_request request.payload in
     let response =
       match request with
