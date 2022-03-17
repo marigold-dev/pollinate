@@ -48,8 +48,8 @@ let recv_next client =
   Lwt_mutex.unlock !client.recv_mutex;
   Lwt.return (msg_buffer, Peer.from_socket_address addr)
 
-let next_request client = Tqueue.take_opt !client.request_inbox
-let next_response client = Tqueue.take_opt !client.response_inbox
+let next_request client = Tqueue.take !client.request_inbox
+let next_response client = Tqueue.take !client.response_inbox
 
 let request client request peer =
   let%lwt () = send_to client request peer in

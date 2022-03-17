@@ -24,9 +24,6 @@ let add x { queue; lock; has_elt } =
 let push = add
 
 let take { queue; lock; _ } =
-  Lwt_mutex.with_lock lock (fun () -> Lwt.return (Queue.take queue))
-
-let take_opt { queue; lock; _ } =
   Lwt_mutex.with_lock lock (fun () -> Lwt.return (Queue.take_opt queue))
 
 let wait_to_take { queue; lock; has_elt } =
@@ -41,9 +38,6 @@ let wait_to_take { queue; lock; has_elt } =
 let pop = take
 
 let peek { queue; lock; _ } =
-  Lwt_mutex.with_lock lock (fun () -> Lwt.return (Queue.peek queue))
-
-let peek_opt { queue; lock; _ } =
   Lwt_mutex.with_lock lock (fun () -> Lwt.return (Queue.peek_opt queue))
 
 let top = peek
