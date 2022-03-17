@@ -51,13 +51,13 @@ let[@warning "-32"] [@warning "-39"] rec wait_ack t sequence_number =
 (* TODO: An async thread should be started here, with a basic sleep, but not sure at all...
      And we should return Either Ok Timeout *)
 let wait_ack_timeout t sequence_number timeout =
-    Lwt.pick [
-      (let _ = Lwt_unix.sleep (Float.of_int timeout) in 
-        Lwt.return @@ Result.Error "timeout");
-      (let _ = wait_ack t sequence_number in 
-        Lwt.return @@ Result.ok "received ACK")
+  Lwt.pick
+    [
+      (let _ = Lwt_unix.sleep (Float.of_int timeout) in
+       Lwt.return @@ Result.Error "timeout");
+      (let _ = wait_ack t sequence_number in
+       Lwt.return @@ Result.ok "received ACK");
     ]
-
 
 (* Basic Knuth shuffle => https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle *)
 let knuth_shuffle known_peers =

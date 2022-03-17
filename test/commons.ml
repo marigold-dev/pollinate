@@ -1,12 +1,15 @@
+(** Utils function shared by the different tests modules *)
 module Commons = struct
   open Bin_prot.Std
   open Pollinate
   open Base.Hashtbl
+
   type request =
     | Ping
     | Get
     | Insert of string
   [@@deriving bin_io, show { with_path = false }]
+
   type response =
     | Pong
     | List    of string list
@@ -41,6 +44,7 @@ module Commons = struct
         Success "Successfully added value to state" in
     Util.Encoding.pack bin_writer_response response
 
+  (* Initializes four clients and the related four peers *)
   let client_a =
     Lwt_main.run (Client.init ~state:["test1"] ~msg_handler ("127.0.0.1", 3000))
   let peer_a =
