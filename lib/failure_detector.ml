@@ -93,8 +93,8 @@ let rec pick_random_peer_addresses (peers : (Address.t, Peer.t) Base.Hashtbl.t)
     else
       elem :: pick_random_peer_addresses peers (number_of_peers - 1)
 
-(* TODO: This function will update the status of the peer to Suspicious or Faulty *)
-let update_peer _t _peer = failwith "undefined"
+(* Set the  *)
+let update_peer t (peer : Peer.t) = Base.Hashtbl.update t.peers peer.address ~f:(fun _ -> peer)
 
 (* How should I use this function? Let the client of the library defines a `peer.init` using it at `msg_handler`? *)
 let[@warning "-32"] handle_payload t client (peer : Peer.t) msg =
@@ -131,6 +131,5 @@ let[@warning "-32"] probe_node t client (peer : Peer.t) =
     match%lwt wait_ack_timeout t new_seq_no wait_time with
     | Ok _ -> Lwt.return ()
     | Error _ ->
-      let peer : Peer.t = { status = Faulty; address = peer.address } in
-      let[@warning "-21"] _ = update_peer t [peer] in
+      let _ = update_peer t Peer.{ status = Faulty; address = peer.address } in
       Lwt.return ())
