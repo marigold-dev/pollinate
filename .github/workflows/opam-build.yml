@@ -1,0 +1,54 @@
+name: OPAM build
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  schedule:
+    # Prime the caches every Monday
+    - cron: 0 1 * * MON
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+        # Just adding lower and upper bound what we want to support
+        ocaml-compiler:
+          - 4.13.x
+          - 4.08.x
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Use OCaml ${{ matrix.ocaml-compiler }}
+        uses: ocaml/setup-ocaml@v2
+        with:
+          ocaml-compiler: ${{ matrix.ocaml-compiler }}
+
+      - run: opam install . --deps-only --with-test
+
+      - run: opam exec -- dune build
+
+      - run: opam exec -- dune runtest
+
+      # We only want to run the lints once, since Linux is the cheapest we run it there
+      - name: Lint doc
+        if: ${{ matrix.os == 'ubuntu-latest' && matrix.ocaml-compiler == '4.13.x' }}
+        uses: ocaml/setup-ocaml/lint-doc@v2
+
+      - name: Lint fmt
+        if: ${{ matrix.os == 'ubuntu-latest' && matrix.ocaml-compiler == '4.13.x' }}
+        uses: ocaml/setup-ocaml/lint-fmt@v2
+
+      # Claims that some dependencies should be test dependencies when they are used in the lib
+      # - name: Lint opam
+      #   if: ${{ matrix.os == 'ubuntu-latest' && matrix.ocaml-compiler == '4.13.x' }}
+      #   uses: ocaml/setup-ocaml/lint-opam@v2

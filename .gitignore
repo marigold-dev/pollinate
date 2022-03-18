@@ -2,3 +2,6 @@ _esy
 .vscode
 _build
 bin
+
+# nix
+.direnv
