@@ -12,7 +12,7 @@ type 'a t
 val address_of : 'a t -> Address.t
 
 (** Constructs a Peer.t from an Address.t *)
-val peer_from : Address.t -> Peer.t
+val peer_from : 'a t -> Peer.t
 
 (** Sends a serialized payload via datagram from the given client
 to a specified peer *)

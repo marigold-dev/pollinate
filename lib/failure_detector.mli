@@ -19,7 +19,7 @@ type config = {
 type t = {
   config : config;
   acknowledges : (int, unit Lwt_condition.t) Base.Hashtbl.t;
-  mutable peers : Peer.t list;
+  mutable peers : (Address.t, Peer.t) Base.Hashtbl.t;
   mutable sequence_number : int;
 }
 
@@ -29,10 +29,11 @@ val add_peer : Peer.t -> t -> unit
 (** At each round, the protocol will randomly pick two peers:
   - First one: will be the sender of the Ping
   - Second one: the recipient *)
-val pick_random_peers : Peer.t list -> int -> Peer.t list
+val pick_random_peer_addresses :
+  (Address.t, Peer.t) Base.Hashtbl.t -> int -> Address.t list
 
 (** Basic random shuffle, see https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle*)
-val knuth_shuffle : Peer.t list -> Peer.t list
+val knuth_shuffle : Address.t list -> Address.t list
 
 (** Send the provided message to the provided peer, using the provided Client *)
-val send_message : 'a Client.t ref -> Peer.t -> message -> unit Lwt.t
+val send_message : message -> 'a Client.t ref -> Peer.t -> unit Lwt.t

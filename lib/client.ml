@@ -8,17 +8,16 @@ type 'a t = {
   state_mutex : Lwt_mutex.t;
 }
 
-let address_of client =
-  match client with
-  | t -> t.address
+let address_of {address; _} = address
 
-let peer_from (address : Address.t) =
-  Peer.{ socket_address = address; status = Alive }
+let peer_from { address ; _ } =
+  let open Peer in
+  { address = address ; status = Alive }
 
 let send_to client payload peer =
   let open Peer in
   let len = Bytes.length payload in
-  let addr = Address.to_sockaddr peer.socket_address in
+  let addr = Address.to_sockaddr peer.address in
   let%lwt _ = sendto !client.socket payload 0 len [] addr in
   Lwt.return ()
 
@@ -47,7 +46,7 @@ let recv_next client =
   (* Now that we have read the header and the message size, we can read the message *)
   let%lwt _, addr = recvfrom !client.socket msg_buffer 0 msg_size [] in
   Lwt_mutex.unlock !client.recv_mutex;
-  Lwt.return (msg_buffer, peer_from (Address.from_sockaddr addr))
+  Lwt.return (msg_buffer, Peer.peer_from_socket_address addr)
 
 let serve client msg_handler =
   let rec server () =
