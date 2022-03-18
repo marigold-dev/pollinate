@@ -1,7 +1,6 @@
 { pkgs, stdenv, lib, ocamlPackages, static ? false, doCheck }:
 
-with ocamlPackages;
-rec {
+with ocamlPackages; rec {
   pollinate = buildDunePackage {
     pname = "pollinate";
     version = "0.1.0";
@@ -12,23 +11,15 @@ rec {
       files = [ "dune-project" "pollinate.opam" ];
     };
 
-    checkInputs = [
-      alcotest
-      alcotest-lwt
-    ];
+    checkInputs = [ alcotest alcotest-lwt ];
 
-    propagatedBuildInputs = [
-      lwt
-      lwt_ppx
-      bin_prot
-      ppx_bin_prot
-      ppx_deriving
-    ];
+    propagatedBuildInputs = [ lwt lwt_ppx bin_prot ppx_bin_prot ppx_deriving ];
 
     inherit doCheck;
 
     meta = {
-      description = "A platform agnostic library for P2P communications using UDP and Bin_prot";
+      description =
+        "A platform agnostic library for P2P communications using UDP and Bin_prot";
     };
   };
 }
