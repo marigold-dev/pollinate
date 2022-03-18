@@ -13,4 +13,4 @@ val address_of : t -> string
 val port_of : t -> int
 
 (** Create a Address.t from address as string and port as int *)
-val create_address : string -> int -> t
+val create : string -> int -> t

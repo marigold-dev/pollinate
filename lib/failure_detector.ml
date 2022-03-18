@@ -61,9 +61,9 @@ let wait_ack_timeout t sequence_number timeout =
 
 (** Basic random shuffle, see https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle*)
 let knuth_shuffle known_peers =
-  let initial_array = Array.length (Array.of_list known_peers) in
   let shuffled_array = Array.copy (Array.of_list known_peers) in
-  for i = initial_array - 1 downto 1 do
+  let initial_array_length = Array.length shuffled_array in
+  for i = initial_array_length - 1 downto 1 do
     let k = Random.int (i + 1) in
     let x = shuffled_array.(k) in
     shuffled_array.(k) <- shuffled_array.(i);

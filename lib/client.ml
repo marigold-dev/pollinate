@@ -67,7 +67,7 @@ let init ~state ~msg_handler (address, port) =
   let client =
     ref
       {
-        address = Address.create_address address port;
+        address = Address.create address port;
         socket;
         state;
         recv_mutex;

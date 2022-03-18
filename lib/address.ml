@@ -14,7 +14,7 @@ let port_of address =
   match address with
   | t -> t.port
 
-let create_address address port = { address; port }
+let create address port = { address; port }
 
 let from_sockaddr sockaddr =
   let open Lwt_unix in
