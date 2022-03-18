@@ -17,9 +17,19 @@
 
 (package
  (name pollinate)
- (synopsis "A platform agnostic library for P2P communications using UDP and Bin_prot")
- (description "A platform agnostic library for P2P communications using UDP and Bin_prot")
- (depends ocaml dune lwt bin_prot)
+ (synopsis
+  "A platform agnostic library for P2P communications using UDP and Bin_prot")
+ (description
+  "A platform agnostic library for P2P communications using UDP and Bin_prot")
+ (depends
+  ocaml
+  dune
+  lwt
+  lwt_ppx
+  bin_prot
+  ppx_bin_prot
+  (alcotest-lwt :with-test)
+  (ppx_deriving :with-test))
  (tags
   (p2p networking udp "gossip protocol")))
 
