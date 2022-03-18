@@ -17,7 +17,6 @@ jobs:
         os:
           - macos-latest
           - ubuntu-latest
-          - windows-latest
         # Just adding lower and upper bound what we want to support
         ocaml-compiler:
           - 4.13.x
@@ -49,6 +48,7 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-latest' && matrix.ocaml-compiler == '4.13.x' }}
         uses: ocaml/setup-ocaml/lint-fmt@v2
 
-      - name: Lint opam
-        if: ${{ matrix.os == 'ubuntu-latest' && matrix.ocaml-compiler == '4.13.x' }}
-        uses: ocaml/setup-ocaml/lint-opam@v2
+      # Claims that some dependencies should be test dependencies when they are used in the lib
+      # - name: Lint opam
+      #   if: ${{ matrix.os == 'ubuntu-latest' && matrix.ocaml-compiler == '4.13.x' }}
+      #   uses: ocaml/setup-ocaml/lint-opam@v2

@@ -14,7 +14,11 @@ depends: [
   "ocaml"
   "dune" {>= "2.9"}
   "lwt"
+  "lwt_ppx"
   "bin_prot"
+  "ppx_bin_prot"
+  "alcotest-lwt" {with-test}
+  "ppx_deriving" {with-test}
   "odoc" {with-doc}
 ]
 build: [
