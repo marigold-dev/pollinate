@@ -12,6 +12,7 @@ on:
 jobs:
   build:
     strategy:
+      max-parallel: 1
       fail-fast: false
       matrix:
         os:
