@@ -8,11 +8,11 @@ type 'a t = {
   state_mutex : Lwt_mutex.t;
 }
 
-let address_of {address; _} = address
+let address_of { address; _ } = address
 
-let peer_from { address ; _ } =
+let peer_from { address; _ } =
   let open Peer in
-  { address = address ; status = Alive }
+  { address; status = Alive }
 
 let send_to client payload peer =
   let open Peer in

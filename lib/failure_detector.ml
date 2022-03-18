@@ -25,16 +25,16 @@ let next_seq_no t =
   t.sequence_number <- t.sequence_number + 1;
   sequence_number
 
-let send_message message client (recipient : Peer.t)  =
+let send_message message client (recipient : Peer.t) =
   let message = Util.Encoding.pack bin_writer_message message in
   Client.send_to client message recipient
 
-let send_ping_to client peer = match peer with
+let send_ping_to client peer =
+  match peer with
   | None -> failwith "Trying to send message to nobody)"
-  | Some peer ->  send_message Ping client peer
+  | Some peer -> send_message Ping client peer
 
-let send_acknowledge_to =
-  send_message Acknowledge
+let send_acknowledge_to = send_message Acknowledge
 
 let send_ping_request_to client (recipient : Peer.t) =
   send_message (PingRequest recipient.address) client recipient
@@ -44,8 +44,8 @@ let send_ping_request_to client (recipient : Peer.t) =
     But I feel like Lwt_condition allows ms to manage async thread and could be useful *)
 let wait_ack t sequence_number =
   let cond =
-    Base.Hashtbl.find_or_add t.acknowledges sequence_number ~default:Lwt_condition.create
-  in
+    Base.Hashtbl.find_or_add t.acknowledges sequence_number
+      ~default:Lwt_condition.create in
   Lwt_condition.wait cond
 
 (* TODO: An async thread should be started here, with a basic sleep, but not sure at all...
@@ -82,7 +82,8 @@ let add_peer (peer_to_add : Peer.t) t =
    A randomly picks one (or several, should it also be randomly determined?) peer(s) from its list
    and ask him/them to ping B.*)
 (* This function return the random peer, to which we will ask to ping the first peer *)
-let rec pick_random_peer_addresses (peers : (Address.t, Peer.t) Base.Hashtbl.t) number_of_peers =
+let rec pick_random_peer_addresses (peers : (Address.t, Peer.t) Base.Hashtbl.t)
+    number_of_peers =
   let addresses = knuth_shuffle @@ Base.Hashtbl.keys peers in
   match addresses with
   | [] -> failwith "pick_random_peers"
@@ -102,7 +103,9 @@ let[@warning "-32"] handle_payload t client (peer : Peer.t) msg =
   | Ping -> send_acknowledge_to client peer
   | PingRequest addr -> (
     let new_seq_no = next_seq_no t in
-    let _ = send_ping_to client (Peer.retrieve_peer_from_address_opt t.peers addr) in
+    let _ =
+      send_ping_to client (Peer.retrieve_peer_from_address_opt t.peers addr)
+    in
     match%lwt wait_ack_timeout t new_seq_no t.config.protocol_period with
     | Ok _ -> Lwt.return ()
     | Error _ -> send_acknowledge_to client peer)
@@ -120,14 +123,14 @@ let[@warning "-32"] probe_node t client (peer : Peer.t) =
   match%lwt wait_ack_timeout t new_seq_no t.config.round_trip_time with
   | Ok _ -> Lwt.return ()
   | Error _ -> (
-    let indirect_pingers : Address.t list = (pick_random_peer_addresses t.peers t.config.peers_to_ping) in
+    let indirect_pingers : Address.t list =
+      pick_random_peer_addresses t.peers t.config.peers_to_ping in
     let pingers = List.map Peer.peer_from indirect_pingers in
     let _ = List.map (send_ping_request_to client) pingers in
     let wait_time = t.config.protocol_period - t.config.round_trip_time in
     match%lwt wait_ack_timeout t new_seq_no wait_time with
     | Ok _ -> Lwt.return ()
     | Error _ ->
-      let peer : Peer.t =
-        { status = Faulty; address = peer.address } in
+      let peer : Peer.t = { status = Faulty; address = peer.address } in
       let[@warning "-21"] _ = update_peer t [peer] in
       Lwt.return ())
