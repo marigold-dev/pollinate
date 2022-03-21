@@ -6,12 +6,11 @@ type status =
   | Suspicious
   | Faulty
 
-(** Our representation of a Peer
-  See Client.peer_from to construct one *)
+(** Our representation of a Peer *)
 type t = {
   address : Address.t;
   mutable status : status;
-  mutable peers : (Address.t, t) Base.Hashtbl.t;
+  peers : (Address.t, t) Base.Hashtbl.t;
 }
 
 (** Obtain the Peer.t from the given list, matching the provided Address.t *)
@@ -19,6 +18,6 @@ val retrieve_peer_from_address_opt :
   (Address.t, t) Base.Hashtbl.t -> Address.t -> t option
 
 (** Constructs a Peer.t from an Address.t *)
-val peer_from : Address.t -> t
+val from : Address.t -> t
 
-val peer_from_socket_address : Unix.sockaddr -> t
+val from_socket_address : Unix.sockaddr -> t

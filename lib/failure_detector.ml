@@ -81,7 +81,7 @@ let add_peer (peer : Peer.t) (peer_to_add : Peer.t) =
 (* This function return the random peer, to which we will ask to ping the first peer *)
 let rec pick_random_peer_addresses (peers : (Address.t, Peer.t) Base.Hashtbl.t)
     number_of_peers =
-  let addresses = knuth_shuffle @@ Base.Hashtbl.keys peers in
+  let addresses = peers |> Base.Hashtbl.keys |> knuth_shuffle in
   match addresses with
   | [] -> failwith "pick_random_peers"
   | elem :: _ ->
@@ -90,7 +90,8 @@ let rec pick_random_peer_addresses (peers : (Address.t, Peer.t) Base.Hashtbl.t)
     else
       elem :: pick_random_peer_addresses peers (number_of_peers - 1)
 
-(* Set the  *)
+(* Retrieve the peer_to_update from the peers of the given peer
+   and update its status to the provided one *)
 let update_peer (peer : Peer.t) (peer_to_update : Peer.t) (status : Peer.status)
     =
   let updated_peer =
@@ -132,7 +133,7 @@ let[@warning "-32"] probe_node t client (peer_to_update : Peer.t) =
   | Error _ -> (
     let indirect_pingers : Address.t list =
       pick_random_peer_addresses peer_from.peers t.config.peers_to_ping in
-    let pingers = List.map Peer.peer_from indirect_pingers in
+    let pingers = List.map Peer.from indirect_pingers in
     let _ = List.map (send_ping_request_to client) pingers in
     let wait_time = t.config.protocol_period - t.config.round_trip_time in
     match%lwt wait_ack_timeout t new_seq_no wait_time with
