@@ -25,6 +25,7 @@
   ocaml
   dune
   lwt
+  sexplib
   lwt_ppx
   bin_prot
   ppx_bin_prot
