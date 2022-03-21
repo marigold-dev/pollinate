@@ -28,6 +28,9 @@
   lwt_ppx
   bin_prot
   ppx_bin_prot
+  ppx_compare
+  ppx_hash
+  ppx_sexp_conv
   (alcotest-lwt :with-test)
   (ppx_deriving :with-test))
  (tags
