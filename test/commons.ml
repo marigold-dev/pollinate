@@ -2,7 +2,6 @@
 module Commons = struct
   open Bin_prot.Std
   open Pollinate
-  open Base.Hashtbl
 
   type request =
     | Ping
@@ -21,15 +20,8 @@ module Commons = struct
 
   let protocol : Failure_detector.t =
     {
-      config =
-        {
-          protocol_period = 5;
-          round_trip_time = 2;
-          timeout = 2;
-          peers_to_ping = 1;
-        };
-      acknowledges = Poly.create ();
-      peers = Poly.create ();
+      config = { protocol_period = 5; round_trip_time = 2; peers_to_ping = 1 };
+      acknowledges = Base.Hashtbl.Poly.create ();
       sequence_number = 0;
     }
 

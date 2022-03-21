@@ -10,21 +10,19 @@ type config = {
   protocol_period : int;
   (* The round trip should be around the 99th percentile *)
   round_trip_time : int;
-  (* Timeout for Acknowledge message *)
-  timeout : int;  (** NUmber of peers to pick at each round *)
-  mutable peers_to_ping : int;
+  (* NUmber of peers to pick at each round *)
+  peers_to_ping : int;
 }
 
 (** Type holding all the necessary information for the SWIM protocol *)
 type t = {
   config : config;
   acknowledges : (int, unit Lwt_condition.t) Base.Hashtbl.t;
-  mutable peers : (Address.t, Peer.t) Base.Hashtbl.t;
   mutable sequence_number : int;
 }
 
 (** Add the provided peer to the known peers from the protocol *)
-val add_peer : Peer.t -> t -> unit
+val add_peer : Peer.t -> Peer.t -> [`Duplicate | `Ok]
 
 (** At each round, the protocol will randomly pick two peers:
   - First one: will be the sender of the Ping

@@ -1,20 +1,20 @@
 open Bin_prot.Std
+open Ppx_compare_lib.Builtin
+open Ppx_hash_lib.Std
+open Hash.Builtin
+open Ppx_sexp_conv_lib.Conv
 
 type t = {
   address : string;
   port : int;
 }
-[@@deriving bin_io, eq]
-
-let address_of address =
-  match address with
-  | t -> t.address
-
-let port_of address =
-  match address with
-  | t -> t.port
+[@@deriving bin_io, eq, compare, hash, sexp]
 
 let create address port = { address; port }
+
+let address_of { address; _ } = address
+
+let port_of { port; _ } = port
 
 let from_sockaddr sockaddr =
   let open Lwt_unix in

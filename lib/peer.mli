@@ -11,6 +11,7 @@ type status =
 type t = {
   address : Address.t;
   mutable status : status;
+  mutable peers : (Address.t, t) Base.Hashtbl.t;
 }
 
 (** Obtain the Peer.t from the given list, matching the provided Address.t *)

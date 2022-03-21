@@ -6,16 +6,16 @@ module Failure_detector_tests = struct
   open Failure_detector
 
   let add_peer_test () =
-    let _ = add_peer Commons.peer_a Commons.protocol in
-    Lwt.return @@ Base.Hashtbl.length Commons.protocol.peers
+    let _ = add_peer Commons.peer_b Commons.peer_a in
+    Lwt.return @@ Base.Hashtbl.length Commons.peer_b.peers
 
   let pick_random_test () =
-    let _ = add_peer Commons.peer_a Commons.protocol in
-    let peers = pick_random_peer_addresses Commons.protocol.peers 1 in
+    let _ = add_peer Commons.peer_b Commons.peer_a in
+    let peers = pick_random_peer_addresses Commons.peer_b.peers 1 in
     Lwt.return @@ List.length peers
 
   let knuth_shuffle_test () =
-    let final_list = knuth_shuffle @@ Base.Hashtbl.keys Commons.protocol.peers in
+    let final_list = knuth_shuffle @@ Base.Hashtbl.keys Commons.peer_b.peers in
     Lwt.return @@ List.length final_list
 end
 
