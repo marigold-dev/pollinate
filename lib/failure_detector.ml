@@ -27,10 +27,7 @@ let send_message message client (recipient : Peer.t) =
   let message = Util.Encoding.pack bin_writer_message message in
   Client.send_to client message recipient
 
-let send_ping_to client peer =
-  match peer with
-  | None -> failwith "Trying to send message to nobody)"
-  | Some peer -> send_message Ping client peer
+let send_ping_to client peer = send_message Ping client peer
 
 let send_acknowledge_to = send_message Acknowledge
 
@@ -110,9 +107,10 @@ let[@warning "-32"] handle_payload t (client : 'a Client.t ref) (peer : Peer.t)
   | Ping -> send_acknowledge_to client peer
   | PingRequest addr -> (
     let new_seq_no = next_seq_no t in
-    let _ =
-      send_ping_to client
-        (Peer.retrieve_peer_from_address_opt peer_from.peers addr) in
+    let peer_opt = Peer.retrieve_peer_from_address_opt peer_from.peers addr in
+    match peer_opt with
+    | Some peer -> send_ping_to client peer
+    | None -> Printf.printf "No peer from address: %s" (Address.show addr);
     match%lwt wait_ack_timeout t new_seq_no t.config.protocol_period with
     | Ok _ -> Lwt.return ()
     | Error _ -> send_acknowledge_to client peer)

@@ -1,4 +1,4 @@
-type t [@@deriving bin_io, eq, compare, hash, sexp]
+type t [@@deriving bin_io, eq, compare, hash, sexp, show { with_path = false }]
 
 (** Create a Address.t from address as string and port as int *)
 val create : string -> int -> t

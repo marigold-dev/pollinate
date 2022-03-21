@@ -8,7 +8,7 @@ type t = {
   address : string;
   port : int;
 }
-[@@deriving bin_io, eq, compare, hash, sexp]
+[@@deriving bin_io, eq, compare, hash, sexp, show { with_path = false }]
 
 let create address port = { address; port }
 
