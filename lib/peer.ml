@@ -2,6 +2,7 @@ type status =
   | Alive
   | Suspicious
   | Faulty
+[@@deriving show { with_path = false }, eq]
 
 type t = {
   address : Address.t;

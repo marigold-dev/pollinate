@@ -5,6 +5,7 @@ type status =
   | Alive
   | Suspicious
   | Faulty
+[@@deriving show { with_path = false }, eq]
 
 (** Our representation of a Peer *)
 type t = {

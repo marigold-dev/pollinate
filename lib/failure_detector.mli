@@ -21,8 +21,11 @@ type t = {
   mutable sequence_number : int;
 }
 
-(** Add the provided peer to the known peers from the protocol *)
+(** Add the provided peer to the known peers *)
 val add_peer : Peer.t -> Peer.t -> [`Duplicate | `Ok]
+
+(** Add the provided peer to the known peers *)
+val add_peers : Peer.t -> Peer.t list -> [`Duplicate | `Ok] list
 
 (** At each round, the protocol will randomly pick two peers:
   - First one: will be the sender of the Ping
@@ -30,12 +33,18 @@ val add_peer : Peer.t -> Peer.t -> [`Duplicate | `Ok]
 val pick_random_peer_addresses :
   (Address.t, Peer.t) Base.Hashtbl.t -> int -> Address.t list
 
-(** Basic random shuffle, see https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle*)
-val knuth_shuffle : Address.t list -> Address.t list
-
 (** Send the provided message to the provided peer, using the provided Client *)
 val send_message : message -> 'a Client.t ref -> Peer.t -> unit Lwt.t
 
 (** High level function, which must be run within an async thread, like:
  Lwt.async (fun () -> failure_detection t client); *)
 val failure_detection : t -> 'a Client.t ref -> 'b
+
+(**/**)
+
+(** Basic random shuffle, see https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle*)
+val knuth_shuffle : Address.t list -> Address.t list
+
+val update_peer : Peer.t -> Peer.t -> Peer.status -> unit
+
+(**/**)
