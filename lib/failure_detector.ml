@@ -34,7 +34,7 @@ let send_message message client (recipient : Peer.t) =
 
 let send_ping_to client peer = send_message Ping client peer
 
-let send_acknowledge_to = send_message Acknowledge
+let send_acknowledge_to client = send_message Acknowledge client
 
 let send_ping_request_to client (recipient : Peer.t) =
   send_message (PingRequest recipient.address) client recipient
@@ -90,8 +90,7 @@ let update_neighbor_status peer neighbor status =
     Base.Hashtbl.update peer.neighbors neighbor.address ~f:(fun _ -> neighbor)
   | None -> ()
 
-let[@warning "-32"] handle_payload t (client : 'a Client.t ref) (peer : Peer.t)
-    msg =
+let handle_payload t client peer msg =
   let peer_of_client = Client.peer_from !client in
   match msg with
   | Ping -> send_acknowledge_to client peer
@@ -106,13 +105,12 @@ let[@warning "-32"] handle_payload t (client : 'a Client.t ref) (peer : Peer.t)
       | Ok _ -> Lwt.return ()
       | Error _ -> send_acknowledge_to client peer))
   | Acknowledge ->
-  match Base.Hashtbl.find t.acknowledges t.sequence_number with
-  | Some cond ->
-    Lwt_condition.broadcast cond ();
-    Lwt.return ()
-  | None ->
-    (* Unexpected ACK -- ignore *)
-    Lwt.return ()
+    match Base.Hashtbl.find t.acknowledges t.sequence_number with
+    | Some cond ->
+      Lwt_condition.broadcast cond ();
+      Lwt.return ()
+    | None ->
+      Lwt.return ()
 
 (** This function will be called by failure_detection 
 at each round of the protocol, and update the peers *)
