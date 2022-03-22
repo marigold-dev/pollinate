@@ -13,7 +13,7 @@ with ocamlPackages; rec {
 
     checkInputs = [ alcotest alcotest-lwt ];
 
-    propagatedBuildInputs = [ lwt lwt_ppx bin_prot ppx_bin_prot ppx_deriving ];
+    propagatedBuildInputs = [ lwt lwt_ppx bin_prot ppx_bin_prot ppx_deriving sexplib ppx_hash];
 
     inherit doCheck;
 

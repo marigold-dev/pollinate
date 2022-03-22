@@ -33,8 +33,6 @@
                 ocaml
                 dune_3
                 nixfmt
-                sexplib
-                ppx_hash
               ];
           });
 
