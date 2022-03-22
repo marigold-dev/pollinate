@@ -66,48 +66,38 @@ let knuth_shuffle known_peers =
   done;
   Array.to_list shuffled_array
 
-let add_peer (peer : Peer.t) (peer_to_add : Peer.t) =
-  Base.Hashtbl.add peer.peers ~key:peer_to_add.address ~data:peer_to_add
-
-let[@warning "-32"] add_peers (peer : Peer.t) (peers_to_add : Peer.t list) =
-  List.map (add_peer peer) peers_to_add
-
 (* Regarding the SWIM protocol, if peer A cannot get ACK from peer B (timeout):
    A sets B as `suspicious`
    A randomly picks one (or several, should it also be randomly determined?) peer(s) from its list
    and ask him/them to ping B.*)
 (* This function return the random peer, to which we will ask to ping the first peer *)
-let rec pick_random_peer_addresses (peers : (Address.t, Peer.t) Base.Hashtbl.t)
-    number_of_peers =
-  let addresses = peers |> Base.Hashtbl.keys |> knuth_shuffle in
+let rec pick_random_neighbors neighbors number_of_neighbors =
+  let addresses = neighbors |> Base.Hashtbl.keys |> knuth_shuffle in
   match addresses with
   | [] -> failwith "pick_random_peers"
   | elem :: _ ->
-    if number_of_peers = 1 then
+    if number_of_neighbors = 1 then
       [elem]
     else
-      elem :: pick_random_peer_addresses peers (number_of_peers - 1)
+      elem :: pick_random_neighbors neighbors (number_of_neighbors - 1)
 
-(* Retrieve the peer_to_update from the peers of the given peer
-   and update its status to the provided one *)
-let update_peer (peer : Peer.t) (peer_to_update : Peer.t) (status : Peer.status)
-    =
-  let updated_peer =
-    Peer.retrieve_peer_from_address_opt peer peer_to_update.address in
-  match updated_peer with
-  | Some updated_peer ->
-    updated_peer.status <- status;
-    Base.Hashtbl.update peer.peers updated_peer.address ~f:(fun _ -> peer)
+let update_neighbor_status peer neighbor status =
+  let open Peer in
+  let local_neighbor = get_neighbor peer neighbor.address in
+  match local_neighbor with
+  | Some neighbor ->
+    neighbor.status <- status;
+    Base.Hashtbl.update peer.neighbors neighbor.address ~f:(fun _ -> neighbor)
   | None -> ()
 
 let[@warning "-32"] handle_payload t (client : 'a Client.t ref) (peer : Peer.t)
     msg =
-  let peer_from = Client.peer_from !client in
+  let peer_of_client = Client.peer_from !client in
   match msg with
   | Ping -> send_acknowledge_to client peer
   | PingRequest addr -> (
     let new_seq_no = next_seq_no t in
-    let peer_opt = Peer.retrieve_peer_from_address_opt peer_from addr in
+    let peer_opt = Peer.get_neighbor peer_of_client addr in
     match peer_opt with
     | Some peer -> send_ping_request_to client peer
     | None -> (
@@ -126,16 +116,17 @@ let[@warning "-32"] handle_payload t (client : 'a Client.t ref) (peer : Peer.t)
 
 (** This function will be called by failure_detection 
 at each round of the protocol, and update the peers *)
-let probe_peer t client (peer_to_update : Peer.t) =
-  let peer_from = Client.peer_from !client in
+let probe_peer t client peer_to_update =
+  let peer_of_client = Client.peer_from !client in
   let new_seq_no = next_seq_no t in
   let _ = send_ping_to client peer_to_update in
   match%lwt wait_ack_timeout t new_seq_no t.config.round_trip_time with
   | Ok _ -> Lwt.return ()
   | Error _ -> (
-    let indirect_pingers : Address.t list =
-      pick_random_peer_addresses peer_from.peers t.config.peers_to_ping in
-    let pingers = List.map Peer.from indirect_pingers in
+    let pingers =
+      t.config.peers_to_ping
+      |> pick_random_neighbors peer_of_client.neighbors
+      |> List.map Peer.from in
     let _ = List.map (send_ping_request_to client) pingers in
     let wait_time = t.config.protocol_period - t.config.round_trip_time in
     match%lwt wait_ack_timeout t new_seq_no wait_time with
@@ -145,18 +136,18 @@ let probe_peer t client (peer_to_update : Peer.t) =
          This is correct in the basic SWIM protocol, but it is a very heavy penalty.
          When there is no ACK (direct or indirect) the peer must be set to `Suspicious`.
          See section 4.2 from https://www.cs.cornell.edu/projects/Quicksilver/public_pdfs/SWIM.pdf *)
-      let _ = update_peer peer_from peer_to_update Faulty in
+      let _ = update_neighbor_status peer_of_client peer_to_update Faulty in
       Lwt.return ())
 
 (** High level function, which must be run within an async thread, like:
  Lwt.async (fun () -> failure_detection t client); *)
 let[@warning "-32"] rec failure_detection t client =
   let open Peer in
-  let peer_from = Client.peer_from !client in
+  let peer_of_client = Client.peer_from !client in
   let available_peers =
     List.filter
       (fun p -> p.status == Peer.Alive)
-      (Base.Hashtbl.data peer_from.peers) in
+      (Base.Hashtbl.data peer_of_client.neighbors) in
   match List.length available_peers with
   | 0 -> failwith "Not any peer is Alive!"
   | _ ->

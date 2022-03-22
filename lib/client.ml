@@ -11,12 +11,7 @@ type 'a t = {
 let address_of { address; _ } = address
 
 let peer_from { address; _ } =
-  let open Peer in
-  {
-    address;
-    status = Alive;
-    peers = Base.Hashtbl.create ~growth_allowed:true ~size:0 (module Address);
-  }
+  Peer.from address
 
 let send_to client payload peer =
   let open Peer in

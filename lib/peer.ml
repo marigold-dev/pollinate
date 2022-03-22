@@ -1,4 +1,3 @@
-(** Types and functions to deal with peer within the P2P application *)
 type status =
   | Alive
   | Suspicious
@@ -8,17 +7,23 @@ type status =
 type t = {
   address : Address.t;
   mutable status : status;
-  peers : (Address.t, t) Base.Hashtbl.t;
+  neighbors : (Address.t, t) Base.Hashtbl.t;
 }
 
-let retrieve_peer_from_address_opt peer address =
-  Base.Hashtbl.find peer.peers address
+let add_neighbor peer peer_to_add =
+  Base.Hashtbl.add peer.neighbors ~key:peer_to_add.address ~data:peer_to_add
 
-let from (address : Address.t) =
+let add_neighbors peer peers_to_add =
+  List.map (add_neighbor peer) peers_to_add
+
+let get_neighbor peer address =
+  Base.Hashtbl.find peer.neighbors address
+
+let from address =
   {
     address;
     status = Alive;
-    peers = Base.Hashtbl.create ~growth_allowed:true ~size:0 (module Address);
+    neighbors = Base.Hashtbl.create ~growth_allowed:true ~size:0 (module Address);
   }
 
 let from_socket_address (address : Unix.sockaddr) =
