@@ -1,26 +1,25 @@
-type state =
+(** Types and functions to deal with peer within the P2P application *)
+type status =
   | Alive
   | Suspicious
   | Faulty
+[@@deriving show { with_path = false }, eq]
 
 type t = {
-  address : string;
-  port : int;
-  known_peers : t list;
-  state : state;
+  address : Address.t;
+  mutable status : status;
+  peers : (Address.t, t) Base.Hashtbl.t;
 }
 
-let from_sockaddr sockaddr =
-  let open Lwt_unix in
-  match sockaddr with
-  | ADDR_UNIX _ -> failwith "Unix socket addresses not supported"
-  | ADDR_INET (inet, port) ->
-    {
-      address = Unix.string_of_inet_addr inet;
-      port;
-      known_peers = [];
-      state = Alive;
-    }
+let retrieve_peer_from_address_opt peer address =
+  Base.Hashtbl.find peer.peers address
 
-let to_sockaddr peer =
-  Lwt_unix.ADDR_INET (Unix.inet_addr_of_string peer.address, peer.port)
+let from (address : Address.t) =
+  {
+    address;
+    status = Alive;
+    peers = Base.Hashtbl.create ~growth_allowed:true ~size:0 (module Address);
+  }
+
+let from_socket_address (address : Unix.sockaddr) =
+  from @@ Address.from_sockaddr address

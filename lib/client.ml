@@ -1,26 +1,27 @@
 open Lwt_unix
 
 type 'a t = {
-  address : string;
-  port : int;
+  address : Address.t;
   socket : file_descr;
   state : 'a ref;
   recv_mutex : Lwt_mutex.t;
   state_mutex : Lwt_mutex.t;
 }
 
-let peer_from (client : 'a t) =
-  Peer.
-    {
-      address = client.address;
-      port = client.port;
-      known_peers = [];
-      state = Alive;
-    }
+let address_of { address; _ } = address
+
+let peer_from { address; _ } =
+  let open Peer in
+  {
+    address;
+    status = Alive;
+    peers = Base.Hashtbl.create ~growth_allowed:true ~size:0 (module Address);
+  }
 
 let send_to client payload peer =
+  let open Peer in
   let len = Bytes.length payload in
-  let addr = Peer.to_sockaddr peer in
+  let addr = Address.to_sockaddr peer.address in
   let%lwt _ = sendto !client.socket payload 0 len [] addr in
   Lwt.return ()
 
@@ -31,7 +32,7 @@ let naive_broadcast client payload peers =
 let recv_next client =
   let open Lwt_unix in
   let open Util in
-  (* Peek at the first 8 bytes of the incoming datagram
+  (* Peek the first 8 bytes of the incoming datagram
      to read the Bin_prot size header. *)
   let size_buffer = Bytes.create Encoding.size_header_length in
   let%lwt () = Lwt_mutex.lock !client.recv_mutex in
@@ -49,7 +50,7 @@ let recv_next client =
   (* Now that we have read the header and the message size, we can read the message *)
   let%lwt _, addr = recvfrom !client.socket msg_buffer 0 msg_size [] in
   Lwt_mutex.unlock !client.recv_mutex;
-  Lwt.return (msg_buffer, Peer.from_sockaddr addr)
+  Lwt.return (msg_buffer, Peer.from_socket_address addr)
 
 let serve client msg_handler =
   let rec server () =
@@ -67,6 +68,14 @@ let init ~state ~msg_handler (address, port) =
   let state = ref state in
   let recv_mutex = Lwt_mutex.create () in
   let state_mutex = Lwt_mutex.create () in
-  let client = ref { address; port; socket; state; recv_mutex; state_mutex } in
+  let client =
+    ref
+      {
+        address = Address.create address port;
+        socket;
+        state;
+        recv_mutex;
+        state_mutex;
+      } in
   serve client msg_handler;
   Lwt.return client
