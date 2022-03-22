@@ -12,7 +12,9 @@ type config = {
 
 type t = {
   config : config;
-  (* TODO: I am totally not sure about this type *)
+  (* Table mapping sequence numbers to condition variables that get
+  signalled when a peer that was probed during the period to which
+  the sequence number applies replies with acknowledgement. *)
   acknowledges : (int, unit Lwt_condition.t) Base.Hashtbl.t;
   mutable sequence_number : int;
 }
@@ -37,17 +39,12 @@ let send_acknowledge_to = send_message Acknowledge
 let send_ping_request_to client (recipient : Peer.t) =
   send_message (PingRequest recipient.address) client recipient
 
-(* TODO: Totally not sure about this...
-   I don't know if I can get rid of it and only use `wait_ack_timeout` instead
-    But I feel like Lwt_condition allows ms to manage async thread and could be useful *)
 let wait_ack t sequence_number =
   let cond =
     Base.Hashtbl.find_or_add t.acknowledges sequence_number
       ~default:Lwt_condition.create in
   Lwt_condition.wait cond
 
-(* TODO: An async thread should be started here, with a basic sleep, but not sure at all...
-     And we should return Either Ok Timeout *)
 let wait_ack_timeout t sequence_number timeout =
   Lwt.pick
     [
@@ -69,8 +66,6 @@ let knuth_shuffle known_peers =
   done;
   Array.to_list shuffled_array
 
-(* Regarding the SWIM protocol, the list of peers is not ordered.
-   Hence, I basically went for a shuffle after adding the new peer *)
 let add_peer (peer : Peer.t) (peer_to_add : Peer.t) =
   Base.Hashtbl.add peer.peers ~key:peer_to_add.address ~data:peer_to_add
 
@@ -105,7 +100,6 @@ let update_peer (peer : Peer.t) (peer_to_update : Peer.t) (status : Peer.status)
     Base.Hashtbl.update peer.peers updated_peer.address ~f:(fun _ -> peer)
   | None -> ()
 
-(* How should I use this function? Let the client of the library defines a `peer.init` using it at `msg_handler`? *)
 let[@warning "-32"] handle_payload t (client : 'a Client.t ref) (peer : Peer.t)
     msg =
   let peer_from = Client.peer_from !client in
