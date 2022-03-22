@@ -14,20 +14,19 @@ type config = {
   peers_to_ping : int;
 }
 
-(** Type holding all the necessary information for the SWIM protocol *)
-type t = {
-  config : config;
-  acknowledges : (int, unit Lwt_condition.t) Base.Hashtbl.t;
-  mutable sequence_number : int;
-}
 
 (** Add the provided peer to the known peers
   Args: current_peer; peer_to_add; *)
 val add_peer : Peer.t -> Peer.t -> [`Duplicate | `Ok]
+(** The state of a failure detection component. *)
+type t
 
 (** Add the provided peer to the known peers 
   Agrs: current_peer;peers_to_add; *)
 val add_peers : Peer.t -> Peer.t list -> [`Duplicate | `Ok] list
+(** Initializes the failure detection component
+with a default state and given config *)
+val create : config -> t
 
 (** At each round, the protocol will randomly pick two peers:
   - First one: will be the sender of the Ping
