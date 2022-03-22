@@ -9,9 +9,8 @@ type t = {
   peers : (Address.t, t) Base.Hashtbl.t;
 }
 
-let retrieve_peer_from_address_opt (peers : (Address.t, t) Base.Hashtbl.t)
-    address =
-  Base.Hashtbl.find peers address
+let retrieve_peer_from_address_opt peer address =
+  Base.Hashtbl.find peer.peers address
 
 let from (address : Address.t) =
   {

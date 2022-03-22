@@ -14,10 +14,10 @@ type t = {
 }
 
 (** Obtain the Peer.t from the given list, matching the provided Address.t *)
-val retrieve_peer_from_address_opt :
-  (Address.t, t) Base.Hashtbl.t -> Address.t -> t option
+val retrieve_peer_from_address_opt : t -> Address.t -> t option
 
 (** Constructs a Peer.t from an Address.t *)
 val from : Address.t -> t
 
+(** Construct an Address.t from a Unix.sockaddr *)
 val from_socket_address : Unix.sockaddr -> t

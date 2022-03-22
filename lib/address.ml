@@ -12,10 +12,6 @@ type t = {
 
 let create address port = { address; port }
 
-let address_of { address; _ } = address
-
-let port_of { port; _ } = port
-
 let from_sockaddr sockaddr =
   let open Lwt_unix in
   match sockaddr with

@@ -71,6 +71,9 @@ let knuth_shuffle known_peers =
 let add_peer (peer : Peer.t) (peer_to_add : Peer.t) =
   Base.Hashtbl.add peer.peers ~key:peer_to_add.address ~data:peer_to_add
 
+let[@warning "-32"] add_peers (peer : Peer.t) (peers_to_add : Peer.t list) =
+  List.map (add_peer peer) peers_to_add
+
 (* Regarding the SWIM protocol, if peer A cannot get ACK from peer B (timeout):
    A sets B as `suspicious`
    A randomly picks one (or several, should it also be randomly determined?) peer(s) from its list
@@ -92,7 +95,7 @@ let rec pick_random_peer_addresses (peers : (Address.t, Peer.t) Base.Hashtbl.t)
 let update_peer (peer : Peer.t) (peer_to_update : Peer.t) (status : Peer.status)
     =
   let updated_peer =
-    Peer.retrieve_peer_from_address_opt peer.peers peer_to_update.address in
+    Peer.retrieve_peer_from_address_opt peer peer_to_update.address in
   match updated_peer with
   | Some updated_peer ->
     updated_peer.status <- status;
@@ -107,13 +110,14 @@ let[@warning "-32"] handle_payload t (client : 'a Client.t ref) (peer : Peer.t)
   | Ping -> send_acknowledge_to client peer
   | PingRequest addr -> (
     let new_seq_no = next_seq_no t in
-    let peer_opt = Peer.retrieve_peer_from_address_opt peer_from.peers addr in
+    let peer_opt = Peer.retrieve_peer_from_address_opt peer_from addr in
     match peer_opt with
-    | Some peer -> send_ping_to client peer
-    | None -> Printf.printf "No peer from address: %s" (Address.show addr);
-    match%lwt wait_ack_timeout t new_seq_no t.config.protocol_period with
-    | Ok _ -> Lwt.return ()
-    | Error _ -> send_acknowledge_to client peer)
+    | Some peer -> send_ping_request_to client peer
+    | None -> (
+      Printf.printf "No peer from address: %s" (Address.show addr);
+      match%lwt wait_ack_timeout t new_seq_no t.config.protocol_period with
+      | Ok _ -> Lwt.return ()
+      | Error _ -> send_acknowledge_to client peer))
   | Acknowledge ->
   match Base.Hashtbl.find t.acknowledges t.sequence_number with
   | Some cond ->
@@ -123,9 +127,12 @@ let[@warning "-32"] handle_payload t (client : 'a Client.t ref) (peer : Peer.t)
     (* Unexpected ACK -- ignore *)
     Lwt.return ()
 
-let[@warning "-32"] probe_node t client (peer_to_update : Peer.t) =
+(** This function will be called by failure_detection 
+at each round of the protocol, and update the peers *)
+let probe_peer t client (peer_to_update : Peer.t) =
   let peer_from = Client.peer_from !client in
   let new_seq_no = next_seq_no t in
+  let _ = send_ping_to client peer_to_update in
   match%lwt wait_ack_timeout t new_seq_no t.config.round_trip_time with
   | Ok _ -> Lwt.return ()
   | Error _ -> (
@@ -139,7 +146,30 @@ let[@warning "-32"] probe_node t client (peer_to_update : Peer.t) =
     | Error _ ->
       (* TODO: Implement Suspicion Mechanism.
          This is correct in the basic SWIM protocol, but it is a very heavy penalty.
-         When there is no ACK (direct or indirect) the node must be set to `Suspicious`.
+         When there is no ACK (direct or indirect) the peer must be set to `Suspicious`.
          See section 4.2 from https://www.cs.cornell.edu/projects/Quicksilver/public_pdfs/SWIM.pdf *)
       let _ = update_peer peer_from peer_to_update Faulty in
       Lwt.return ())
+
+(** High level function, which must be run within an async thread, like:
+ Lwt.async (fun () -> failure_detection t client); *)
+let[@warning "-32"] rec failure_detection t client =
+  let open Peer in
+  let peer_from = Client.peer_from !client in
+  let available_peers =
+    List.filter
+      (fun p -> p.status == Peer.Alive)
+      (Base.Hashtbl.data peer_from.peers) in
+  match List.length available_peers with
+  | 0 -> failwith "Not any peer is Alive!"
+  | _ ->
+    let random_peer =
+      List.map (fun p -> p.address) available_peers |> knuth_shuffle |> List.hd
+    in
+    let _ =
+      Lwt.join
+        [
+          probe_peer t client (Peer.from random_peer);
+          Lwt_unix.sleep @@ Float.of_int t.config.protocol_period;
+        ] in
+    failure_detection t client

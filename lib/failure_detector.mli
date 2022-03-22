@@ -35,3 +35,5 @@ val knuth_shuffle : Address.t list -> Address.t list
 
 (** Send the provided message to the provided peer, using the provided Client *)
 val send_message : message -> 'a Client.t ref -> Peer.t -> unit Lwt.t
+
+val failure_detection : t -> 'a Client.t ref -> 'b
