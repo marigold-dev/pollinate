@@ -1,3 +1,4 @@
+(** Types and functions to deal with peer within the P2P application *)
 type status =
   | Alive
   | Suspicious

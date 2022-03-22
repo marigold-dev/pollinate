@@ -20,5 +20,5 @@ val retrieve_peer_from_address_opt : t -> Address.t -> t option
 (** Constructs a Peer.t from an Address.t *)
 val from : Address.t -> t
 
-(** Construct an Address.t from a Unix.sockaddr *)
+(** Constructs an Address.t from a Unix.sockaddr *)
 val from_socket_address : Unix.sockaddr -> t

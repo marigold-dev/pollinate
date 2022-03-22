@@ -6,11 +6,11 @@ type message =
 
 (** Here is the definition of the SWIM protocol *)
 type config = {
-  (* This tis the global protocol period, it should be at least three times the round_trip_time *)
+  (* This is the global protocol period, it should be at least three times the round_trip_time *)
   protocol_period : int;
   (* The round trip should be around the 99th percentile *)
   round_trip_time : int;
-  (* NUmber of peers to pick at each round *)
+  (* Number of peers to pick at each round *)
   peers_to_ping : int;
 }
 
@@ -21,10 +21,12 @@ type t = {
   mutable sequence_number : int;
 }
 
-(** Add the provided peer to the known peers *)
+(** Add the provided peer to the known peers
+  Args: current_peer; peer_to_add; *)
 val add_peer : Peer.t -> Peer.t -> [`Duplicate | `Ok]
 
-(** Add the provided peer to the known peers *)
+(** Add the provided peer to the known peers 
+  Agrs: current_peer;peers_to_add; *)
 val add_peers : Peer.t -> Peer.t list -> [`Duplicate | `Ok] list
 
 (** At each round, the protocol will randomly pick two peers:
@@ -45,6 +47,8 @@ val failure_detection : t -> 'a Client.t ref -> 'b
 (** Basic random shuffle, see https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle*)
 val knuth_shuffle : Address.t list -> Address.t list
 
+(** Internal function to update the status of a peer
+  Args: current_peer; peer_to_update; status; *)
 val update_peer : Peer.t -> Peer.t -> Peer.status -> unit
 
 (**/**)
