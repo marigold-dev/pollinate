@@ -1,16 +1,16 @@
-open Commons
-open Lwt.Infix
+(* open Commons
+open Lwt.Infix *)
 
 module Failure_detector_tests = struct
-  open Pollinate
+  (* open Pollinate
   open Failure_detector
 
   let add_peer_test () =
-    let _ = add_peer Commons.peer_b Commons.peer_a in
-    Lwt.return @@ Base.Hashtbl.length Commons.peer_b.peers
+    let _ = Peer.add_neighbor Commons.peer_b Commons.peer_a in
+    Lwt.return @@ Base.Hashtbl.length Commons.peer_b.neighbors
 
   let pick_random_test () =
-    let peers = pick_random_peer_addresses Commons.peer_b.peers 1 in
+    let peers = pick_random_neighbors Commons.peer_b.neighbors 1 in
     Lwt.return @@ List.length peers
 
   let knuth_shuffle_test () =
@@ -18,11 +18,11 @@ module Failure_detector_tests = struct
     Lwt.return @@ List.length final_list
 
   let update_peer_test () =
-    let _ = update_peer Commons.peer_b Commons.peer_a Suspicious in
-    Lwt.return @@ Peer.show_status Commons.peer_a.status
+    let _ = update_neighbor_status Commons.peer_b Commons.peer_a Suspicious in
+    Lwt.return @@ Peer.show_status Commons.peer_a.status *)
 end
 
-let test_add_peer _ () =
+(* let test_add_peer _ () =
   Failure_detector_tests.add_peer_test ()
   >|= Alcotest.(check int)
         "When adding peer to a empty list of know_peers, length is equal to 1" 1
@@ -52,4 +52,4 @@ let () =
              Alcotest_lwt.test_case "Pick random" `Quick test_pick_random;
              Alcotest_lwt.test_case "Update status" `Quick test_update_peer;
            ] );
-       ]
+       ] *)
