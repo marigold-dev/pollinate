@@ -14,9 +14,13 @@ depends: [
   "ocaml"
   "dune" {>= "2.9"}
   "lwt"
+  "sexplib"
   "lwt_ppx"
   "bin_prot"
   "ppx_bin_prot"
+  "ppx_compare"
+  "ppx_hash"
+  "ppx_sexp_conv"
   "alcotest-lwt" {with-test}
   "ppx_deriving" {with-test}
   "odoc" {with-doc}

@@ -1,26 +1,29 @@
-type state =
+type status =
   | Alive
   | Suspicious
   | Faulty
+[@@deriving show { with_path = false }, eq]
 
 type t = {
-  address : string;
-  port : int;
-  known_peers : t list;
-  state : state;
+  address : Address.t;
+  mutable status : status;
+  neighbors : (Address.t, t) Base.Hashtbl.t;
 }
 
-let from_sockaddr sockaddr =
-  let open Lwt_unix in
-  match sockaddr with
-  | ADDR_UNIX _ -> failwith "Unix socket addresses not supported"
-  | ADDR_INET (inet, port) ->
-    {
-      address = Unix.string_of_inet_addr inet;
-      port;
-      known_peers = [];
-      state = Alive;
-    }
+let add_neighbor peer peer_to_add =
+  Base.Hashtbl.add peer.neighbors ~key:peer_to_add.address ~data:peer_to_add
 
-let to_sockaddr peer =
-  Lwt_unix.ADDR_INET (Unix.inet_addr_of_string peer.address, peer.port)
+let add_neighbors peer peers_to_add = List.map (add_neighbor peer) peers_to_add
+
+let get_neighbor peer address = Base.Hashtbl.find peer.neighbors address
+
+let from address =
+  {
+    address;
+    status = Alive;
+    neighbors =
+      Base.Hashtbl.create ~growth_allowed:true ~size:0 (module Address);
+  }
+
+let from_socket_address (address : Unix.sockaddr) =
+  from @@ Address.from_sockaddr address

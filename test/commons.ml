@@ -18,6 +18,12 @@ module Commons = struct
 
   type state = string list
 
+  let protocol : Failure_detector.t =
+    let config =
+      Failure_detector.
+        { protocol_period = 5; round_trip_time = 2; peers_to_ping = 1 } in
+    Failure_detector.make config
+
   let msg_handler state _ request =
     let request = Util.Encoding.unpack bin_read_request request in
     let response =
@@ -32,21 +38,17 @@ module Commons = struct
   (* Initializes four clients and the related four peers *)
   let client_a =
     Lwt_main.run (Client.init ~state:["test1"] ~msg_handler ("127.0.0.1", 3000))
-
-  let peer_a = Client.peer_from !client_a
+  let peer_a = Peer.from (Client.address_of !client_a)
 
   let client_b =
     Lwt_main.run (Client.init ~state:["test2"] ~msg_handler ("127.0.0.1", 3001))
-
-  let peer_b = Client.peer_from !client_b
+  let peer_b = Peer.from (Client.address_of !client_b)
 
   let client_c =
     Lwt_main.run (Client.init ~state:["test1"] ~msg_handler ("127.0.0.1", 3002))
-
-  let peer_c = Client.peer_from !client_c
+  let peer_c = Peer.from (Client.address_of !client_c)
 
   let client_d =
     Lwt_main.run (Client.init ~state:["test2"] ~msg_handler ("127.0.0.1", 3003))
-
-  let peer_d = Client.peer_from !client_d
+  let peer_d = Peer.from (Client.address_of !client_d)
 end
