@@ -1,9 +1,9 @@
-type label =
+type category =
   | Request
   | Response
 
 type t = {
-  label : label;
+  category : category;
   sender : Peer.t;
   payload : bytes;
 }

@@ -6,14 +6,14 @@ client. *)
 (** Messages are requests or responses,
 determining how they're stored and
 where they're handled *)
-type label =
+type category =
   | Request
   | Response
 
 (** Messages received from peers which are
 stored in the client's inbox *)
 type t = {
-  label : label;
+  category : category;
   sender : Peer.t;
   payload : bytes;
 }
