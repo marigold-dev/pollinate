@@ -9,6 +9,7 @@ where they're handled *)
 type category =
   | Request
   | Response
+  | Uncategorized
 
 (** Messages received from peers which are
 stored in the client's inbox *)

@@ -1,4 +1,5 @@
 type category =
+  | Uncategorized
   | Request
   | Response
 
