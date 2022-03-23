@@ -13,14 +13,14 @@ type config = {
 type t = {
   config : config;
   (* Table mapping sequence numbers to condition variables that get
-  signalled when a peer that was probed during the period to which
-  the sequence number applies replies with acknowledgement. *)
+     signalled when a peer that was probed during the period to which
+     the sequence number applies replies with acknowledgement. *)
   acknowledges : (int, unit Lwt_condition.t) Base.Hashtbl.t;
   mutable sequence_number : int;
 }
 
 let create config =
-  { config ; acknowledges = Base.Hashtbl.Poly.create (); sequence_number = 0 }
+  { config; acknowledges = Base.Hashtbl.Poly.create (); sequence_number = 0 }
 
 (* Helper to increase the round *)
 let next_seq_no t =
@@ -105,12 +105,11 @@ let handle_payload t client peer msg =
       | Ok _ -> Lwt.return ()
       | Error _ -> send_acknowledge_to client peer))
   | Acknowledge ->
-    match Base.Hashtbl.find t.acknowledges t.sequence_number with
-    | Some cond ->
-      Lwt_condition.broadcast cond ();
-      Lwt.return ()
-    | None ->
-      Lwt.return ()
+  match Base.Hashtbl.find t.acknowledges t.sequence_number with
+  | Some cond ->
+    Lwt_condition.broadcast cond ();
+    Lwt.return ()
+  | None -> Lwt.return ()
 
 (** This function will be called by failure_detection 
 at each round of the protocol, and update the peers *)

@@ -13,17 +13,16 @@ type t = {
 let add_neighbor peer peer_to_add =
   Base.Hashtbl.add peer.neighbors ~key:peer_to_add.address ~data:peer_to_add
 
-let add_neighbors peer peers_to_add =
-  List.map (add_neighbor peer) peers_to_add
+let add_neighbors peer peers_to_add = List.map (add_neighbor peer) peers_to_add
 
-let get_neighbor peer address =
-  Base.Hashtbl.find peer.neighbors address
+let get_neighbor peer address = Base.Hashtbl.find peer.neighbors address
 
 let from address =
   {
     address;
     status = Alive;
-    neighbors = Base.Hashtbl.create ~growth_allowed:true ~size:0 (module Address);
+    neighbors =
+      Base.Hashtbl.create ~growth_allowed:true ~size:0 (module Address);
   }
 
 let from_socket_address (address : Unix.sockaddr) =
