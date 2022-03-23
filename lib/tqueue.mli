@@ -20,6 +20,9 @@ containing the element *)
 val wait_to_take : 'a t -> 'a Lwt.t
 val pop : 'a t -> 'a option Lwt.t
 val peek : 'a t -> 'a option Lwt.t
+(** Similar to wait_to_take, but doesn't remove
+from the queue *)
+val wait_to_peek : 'a t -> 'a Lwt.t
 val top : 'a t -> 'a option Lwt.t
 val clear : 'a t -> unit Lwt.t
 val copy : 'a t -> 'a t Lwt.t

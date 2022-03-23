@@ -40,6 +40,16 @@ let pop = take
 let peek { queue; lock; _ } =
   Lwt_mutex.with_lock lock (fun () -> Lwt.return (Queue.peek_opt queue))
 
+let wait_to_peek { queue; lock; has_elt } =
+  Lwt_mutex.with_lock lock (fun () ->
+      let%lwt () =
+        if Queue.is_empty queue then
+          Lwt_condition.wait ~mutex:lock has_elt
+        else
+          Lwt.return () in
+      Lwt.return (Queue.peek queue))
+
+
 let top = peek
 
 let clear { queue; lock; _ } =
