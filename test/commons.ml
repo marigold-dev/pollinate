@@ -22,7 +22,7 @@ module Commons = struct
     let config =
       Failure_detector.
         { protocol_period = 5; round_trip_time = 2; peers_to_ping = 1 } in
-    Failure_detector.create config
+    Failure_detector.make config
 
   let msg_handler state _ request =
     let request = Util.Encoding.unpack bin_read_request request in

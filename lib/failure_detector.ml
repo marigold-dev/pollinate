@@ -19,7 +19,7 @@ type t = {
   mutable sequence_number : int;
 }
 
-let create config =
+let make config =
   { config; acknowledges = Base.Hashtbl.Poly.create (); sequence_number = 0 }
 
 (* Helper to increase the round *)

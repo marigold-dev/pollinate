@@ -35,7 +35,7 @@ type t
 
 (** Initializes the failure detection component
 with a default state and given config *)
-val create : config -> t
+val make : config -> t
 
 (* (** At each round, the protocol will randomly pick two peers:
   - First one: will be the sender of the Ping
