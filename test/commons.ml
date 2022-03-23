@@ -37,18 +37,18 @@ module Commons = struct
 
   (* Initializes four clients and the related four peers *)
   let client_a =
-    Lwt_main.run (Client.init ~state:["test1"] ~msg_handler ("127.0.0.1", 5000))
+    Lwt_main.run (Client.init ~state:["test1"] ~msg_handler ("127.0.0.1", 3000))
   let peer_a = Peer.from (Client.address_of !client_a)
 
   let client_b =
-    Lwt_main.run (Client.init ~state:["test2"] ~msg_handler ("127.0.0.1", 5001))
+    Lwt_main.run (Client.init ~state:["test2"] ~msg_handler ("127.0.0.1", 3001))
   let peer_b = Peer.from (Client.address_of !client_b)
 
   let client_c =
-    Lwt_main.run (Client.init ~state:["test1"] ~msg_handler ("127.0.0.1", 5002))
+    Lwt_main.run (Client.init ~state:["test1"] ~msg_handler ("127.0.0.1", 3002))
   let peer_c = Peer.from (Client.address_of !client_c)
 
   let client_d =
-    Lwt_main.run (Client.init ~state:["test2"] ~msg_handler ("127.0.0.1", 5003))
+    Lwt_main.run (Client.init ~state:["test2"] ~msg_handler ("127.0.0.1", 3003))
   let peer_d = Peer.from (Client.address_of !client_d)
 end
