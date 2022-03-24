@@ -10,10 +10,12 @@ module Client_tests = struct
     let open Commons in
     let get = Util.Encoding.pack bin_writer_message (Request Get) in
 
-    let%lwt { payload = res_from_b; _ } = Client.request client_a get peer_b in
+    let%lwt { payload = res_from_b; _ } =
+      Client.request client_a get peer_b.address in
     let res_from_b = Encoding.unpack bin_read_response res_from_b in
 
-    let%lwt { payload = res_from_a; _ } = Client.request client_b get peer_a in
+    let%lwt { payload = res_from_a; _ } =
+      Client.request client_b get peer_a.address in
     let res_from_a = Encoding.unpack bin_read_response res_from_a in
 
     let res_from_b, res_from_a =
@@ -28,11 +30,13 @@ module Client_tests = struct
     let insert_req =
       Encoding.pack bin_writer_message (Request (Insert "something")) in
 
-    let%lwt { payload = res_a; _ } = Client.request client_a insert_req peer_b in
+    let%lwt { payload = res_a; _ } =
+      Client.request client_a insert_req peer_b.address in
     let res_a = Encoding.unpack bin_read_response res_a in
 
     let get = Encoding.pack bin_writer_message (Request Get) in
-    let%lwt { payload = b_state; _ } = Client.request client_a get peer_b in
+    let%lwt { payload = b_state; _ } =
+      Client.request client_a get peer_b.address in
     let b_state = Encoding.unpack bin_read_response b_state in
 
     let res_a, b_state =
@@ -46,7 +50,8 @@ module Client_tests = struct
     let open Commons in
     let ping = Encoding.pack bin_writer_message (Request Ping) in
 
-    let%lwt { payload = pong; _ } = Client.request client_a ping peer_b in
+    let%lwt { payload = pong; _ } =
+      Client.request client_a ping peer_b.address in
     let pong = Encoding.unpack bin_read_response pong in
 
     let pong =

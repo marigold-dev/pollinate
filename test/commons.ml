@@ -24,29 +24,19 @@ module Commons = struct
 
   type state = string list
 
-  let protocol : Failure_detector.t =
-    let config =
-      Failure_detector.
-        { protocol_period = 5; round_trip_time = 2; peers_to_ping = 1 } in
-    Failure_detector.make config
+  (* let protocol : Failure_detector.t =
+     let config =
+       Failure_detector.
+         { protocol_period = 5; round_trip_time = 2; peers_to_ping = 1 } in
+     Failure_detector.make config *)
 
-  let router sender msg =
-    let msg = Encoding.unpack bin_read_message msg in
-    match msg with
+  let router msg =
+    let payload = Encoding.unpack bin_read_message msg.Message.payload in
+    match payload with
     | Request r ->
-      Message.
-        {
-          label = Message.Request;
-          sender;
-          payload = Encoding.pack bin_writer_request r;
-        }
+      Message.{ msg with payload = Encoding.pack bin_writer_request r }
     | Response r ->
-      Message.
-        {
-          label = Message.Response;
-          sender;
-          payload = Encoding.pack bin_writer_response r;
-        }
+      Message.{ msg with payload = Encoding.pack bin_writer_response r }
 
   let msg_handler state request =
     let open Message in

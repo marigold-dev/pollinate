@@ -7,14 +7,19 @@ client. *)
 determining how they're stored and
 where they're handled *)
 type category =
+  | Uncategorized
   | Request
   | Response
-  | Uncategorized
+  | Custom        of string
+[@@deriving bin_io]
 
 (** Messages received from peers which are
 stored in the client's inbox *)
 type t = {
   category : category;
-  sender : Peer.t;
+  id : int;
+  sender : Address.t;
+  recipient : Address.t;
   payload : bytes;
 }
+[@@deriving bin_io]
