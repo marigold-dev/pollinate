@@ -1,5 +1,8 @@
 (** Defines utilities for working with payloads
 that are or need to be serialized via Bin_prot *)
+
+val ( let* ) : 'a option -> ('a -> 'b option) -> 'b option
+
 module Encoding : sig
   (** The int value of the buffer size *)
   val size_header_length : int

@@ -1,5 +1,7 @@
 open Lwt
 
+let ( let* ) = Option.bind
+
 module Encoding = struct
   open Bin_prot
   open Bin_prot.Utils
