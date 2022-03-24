@@ -52,7 +52,9 @@ module Client_tests = struct
     let pong =
       match pong with
       | Pong -> show_response Pong
-      | _ -> failwith "Incorrect response" in
+      | _ ->
+        failwith (Printf.sprintf "Incorrect response: %s" (show_response pong))
+    in
 
     Lwt.return pong
 end
