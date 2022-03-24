@@ -49,7 +49,6 @@ let wait_to_peek { queue; lock; has_elt } =
           Lwt.return () in
       Lwt.return (Queue.peek queue))
 
-
 let top = peek
 
 let clear { queue; lock; _ } =
