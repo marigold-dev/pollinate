@@ -10,7 +10,8 @@ type category =
   | Uncategorized
   | Request
   | Response
-  | Custom        of string
+  | Failure_detection
+  | Custom            of string
 [@@deriving bin_io]
 
 (** Messages received from peers which are

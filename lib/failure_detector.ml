@@ -28,9 +28,18 @@ let next_seq_no t =
   t.sequence_number <- t.sequence_number + 1;
   sequence_number
 
+let create_message client message (recipient : Peer.t) =
+  Message.
+    {
+      category = Failure_detection;
+      id = -1;
+      sender = Client.address_of !client;
+      recipient = recipient.address;
+      payload = Util.Encoding.pack bin_writer_message message;
+    }
+
 let send_message message client (recipient : Peer.t) =
-  let message = Util.Encoding.pack bin_writer_message message in
-  Client.send_to client message recipient
+  Client.send_to client (create_message client message recipient)
 
 let send_ping_to client peer = send_message Ping client peer
 
@@ -143,7 +152,7 @@ let[@warning "-32"] rec failure_detection t client =
   let peer_of_client = Client.peer_from !client in
   let available_peers =
     List.filter
-      (fun p -> p.status == Peer.Alive)
+      (fun p -> p.status = Peer.Alive)
       (Base.Hashtbl.data peer_of_client.neighbors) in
   match List.length available_peers with
   | 0 -> failwith "Not any peer is Alive!"
