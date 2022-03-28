@@ -49,3 +49,5 @@ val handle_payload : t -> 'a Client.t ref -> Peer.t -> message -> unit Lwt.t
 (** High level function, which must be run within an async thread, like:
  Lwt.async (fun () -> failure_detection t client); *)
 val failure_detection : t -> 'a Client.t ref -> 'b
+
+val knuth_shuffle : Peer.t list -> Peer.t list
