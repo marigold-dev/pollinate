@@ -6,7 +6,7 @@ let pack_unpack =
   QCheck2.Test.make 
   ~count:1000
   ~name:"unpack . pack returns the original value"
-  request_gen
+  (QCheck2.Gen.join request_gen)
   (fun random_request -> 
     let open Commons in 
     random_request == 

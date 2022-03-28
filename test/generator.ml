@@ -9,7 +9,7 @@ module type MTest = sig
   
   val peer_print : Peer.t -> string
 
-  val request_gen : Commons.request t
+  val request_gen : Commons.request t t
 
   val insert_gen : Commons.request t
 
