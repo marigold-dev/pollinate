@@ -19,11 +19,13 @@ type 'a t = {
   (* A store of incoming messages for the client. Stores
      messages separately by category. *)
   inbox : Inbox.t;
+  peers : (Address.t, Peer.t) Base.Hashtbl.t;
 }
 
 let address_of { address; _ } = address
 
-let peer_from { address; _ } = Peer.from address
+let peer_from { address; peers; _ } =
+  Peer.{ address; status = Alive; neighbors = peers }
 
 let create_request client recipient payload =
   Mutex.with_lock !client.current_request_id (fun id ->
@@ -141,8 +143,18 @@ let init ~state ?(router = fun m -> m) ~msg_handler (address, port) =
   let socket = Mutex.create socket in
   let state = Mutex.create (ref state) in
   let inbox = Inbox.create () in
+  let peers =
+    Base.Hashtbl.create ~growth_allowed:true ~size:0 (module Address) in
   let client =
-    ref { address; current_request_id; request_table; socket; state; inbox }
-  in
+    ref
+      {
+        address;
+        current_request_id;
+        request_table;
+        socket;
+        state;
+        inbox;
+        peers;
+      } in
   serve client router msg_handler;
   Lwt.return client
