@@ -9,7 +9,7 @@ let pack_unpack =
   request_gen
   (fun random_request -> 
     let open Commons in 
-    random_request == 
+    random_request = 
     Encoding.unpack bin_read_request @@ Encoding.pack bin_writer_request random_request)
 
 let () =
