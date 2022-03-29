@@ -9,9 +9,7 @@ module type MTest = sig
   
   val peer_print : Peer.t -> string
 
-  val request_gen : Commons.request t t
-
-  val insert_gen : Commons.request t
+  val request_gen : Commons.request t
 
 end
 
@@ -29,10 +27,9 @@ module Test : MTest = struct
   let peer_print peer =
     let open Peer in
     Address.show peer.address
-  
-  let insert_gen =
-    string_printable >|= fun str -> Commons.Insert str
 
   let request_gen =
-    insert_gen >|= fun insert -> oneofl Commons.[Get;Ping;insert]
+    let* str = string_printable in
+    oneofl Commons.[Get;Ping;Insert str]
+
 end
