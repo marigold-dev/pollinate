@@ -18,6 +18,7 @@ let update_peer =
         Failure_detector.update_neighbor_status peer neighbor neighbor_status
       in
       neighbor.status = neighbor_status)
+
 let pick_random_neighbors =
   QCheck2.Test.make ~count:1000
     ~name:
