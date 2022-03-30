@@ -10,6 +10,8 @@ module type MTest = sig
   val peer_print : Peer.t -> string
 
   val request_gen : Messages.request t
+
+  val peer_status_gen : Peer.status t
 end
 
 module Test : MTest = struct
@@ -30,4 +32,8 @@ module Test : MTest = struct
     let open Messages in
     let* str = string_printable in
     oneofl [Get; Ping; Insert str]
+
+  let peer_status_gen =
+    let open Peer in
+    oneofl [Alive; Suspicious; Faulty]
 end

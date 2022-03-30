@@ -1,6 +1,12 @@
 (tests
- (names client_tests failure_detector_prop util_prop)
- (modules client_tests messages generator failure_detector_prop util_prop)
+ (names client_tests peer_prop failure_detector_prop util_prop)
+ (modules
+  client_tests
+  messages
+  generator
+  peer_prop
+  failure_detector_prop
+  util_prop)
  (libraries pollinate bin_prot lwt alcotest-lwt qcheck-core qcheck-alcotest)
  (preprocess
   (pps ppx_bin_prot lwt_ppx ppx_deriving.show)))
