@@ -1,10 +1,11 @@
 (tests
- (names client_tests peer_prop failure_detector_prop util_prop)
+ (names client_tests peer_prop address_prop failure_detector_prop util_prop)
  (modules
   client_tests
   messages
   generator
   peer_prop
+  address_prop
   failure_detector_prop
   util_prop)
  (libraries pollinate bin_prot lwt alcotest-lwt qcheck-core qcheck-alcotest)

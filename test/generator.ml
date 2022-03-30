@@ -12,6 +12,8 @@ module type MTest = sig
   val request_gen : Messages.request t
 
   val peer_status_gen : Peer.status t
+
+  val sockaddress_gen : Unix.sockaddr t
 end
 
 module Test : MTest = struct
@@ -36,4 +38,20 @@ module Test : MTest = struct
   let peer_status_gen =
     let open Peer in
     oneofl [Alive; Suspicious; Faulty]
+
+  let sockaddress_gen =
+    let* num1 = numeral in
+    let* num2 = numeral in
+    let* num3 = numeral in
+    let* num4 = numeral in
+    let addr =
+      String.concat "."
+        [
+          Char.escaped num1;
+          Char.escaped num2;
+          Char.escaped num3;
+          Char.escaped num4;
+        ] in
+    pair (pure addr) int >|= fun (address, port) ->
+    Unix.ADDR_INET (Unix.inet_addr_of_string address, port)
 end
