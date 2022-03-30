@@ -59,14 +59,17 @@ let serve client msg_handler =
 let init ~state ~msg_handler (address, port) =
   let open Util in
   let%lwt socket = Net.create_socket port in
+  let state = ref state in
+  let recv_mutex = Lwt_mutex.create () in
+  let state_mutex = Lwt_mutex.create () in
   let client =
     ref
       {
         address = Address.create address port;
         socket;
-        state = ref state;
-        recv_mutex = Lwt_mutex.create ();
-        state_mutex = Lwt_mutex.create ();
+        state;
+        recv_mutex;
+        state_mutex;
       } in
   serve client msg_handler;
   Lwt.return client

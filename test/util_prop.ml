@@ -1,11 +1,11 @@
 open Generator.Test
 open Pollinate.Util
-open Commons
+open Messages
 
 let pack_unpack =
   QCheck2.Test.make ~count:1000 ~name:"unpack . pack returns the original value"
     request_gen (fun random_request ->
-      let open Commons in
+      let open Messages in
       random_request
       = Encoding.unpack bin_read_request
         @@ Encoding.pack bin_writer_request random_request)

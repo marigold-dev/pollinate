@@ -1,5 +1,5 @@
 (** Utils function shared by the different tests modules *)
-module Commons = struct
+module Messages = struct
   open Bin_prot.Std
 
   type request =

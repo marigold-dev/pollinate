@@ -1,6 +1,6 @@
 open QCheck2.Gen
 open Pollinate
-open Commons
+open Messages
 
 module type MTest = sig
   val peer_gen : Peer.t t
@@ -9,12 +9,12 @@ module type MTest = sig
 
   val peer_print : Peer.t -> string
 
-  val request_gen : Commons.request t
+  val request_gen : Messages.request t
 end
 
 module Test : MTest = struct
   let address_gen =
-    pair (pure "127.0.0.1") (int_range 4000 100000) >|= fun (address, port) ->
+    pair (pure "127.0.0.1") int >|= fun (address, port) ->
     Address.{ address; port }
 
   let peer_gen =
@@ -27,7 +27,7 @@ module Test : MTest = struct
     Address.show peer.address
 
   let request_gen =
-    let open Commons in
+    let open Messages in
     let* str = string_printable in
     oneofl [Get; Ping; Insert str]
 end

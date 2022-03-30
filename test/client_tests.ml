@@ -1,6 +1,6 @@
 open Lwt.Infix
 open Pollinate
-open Commons
+open Messages
 
 module Client_tests = struct
   type state = string list
@@ -12,7 +12,7 @@ module Client_tests = struct
     Failure_detector.make config
 
   let msg_handler state _ request =
-    let open Commons in
+    let open Messages in
     let request = Util.Encoding.unpack bin_read_request request in
     let response =
       match request with
@@ -43,7 +43,7 @@ module Client_tests = struct
   (* Initializes two peers and has each one request the state
      of the other, returning the first element in the response of each *)
   let trade_messages () =
-    let open Commons in
+    let open Messages in
     let get = Util.Encoding.pack bin_writer_request Get in
 
     let%lwt () = Client.send_to client_a get peer_b in
@@ -64,7 +64,7 @@ module Client_tests = struct
     Lwt.return (res_a, res_b)
 
   let test_insert () =
-    let open Commons in
+    let open Messages in
     let req = Util.Encoding.pack bin_writer_request (Insert "something") in
 
     let%lwt () = Client.send_to client_a req peer_b in
@@ -87,7 +87,7 @@ module Client_tests = struct
     Lwt.return (res_a, status_of_b)
 
   let ping_pong () =
-    let open Commons in
+    let open Messages in
     let ping = Util.Encoding.pack bin_writer_request Ping in
 
     let%lwt () = Client.send_to client_a ping peer_b in
@@ -111,7 +111,7 @@ let test_ping_pong _ () =
   Client_tests.ping_pong () >|= Alcotest.(check string) "Ping pong" "Pong"
 
 let test_insert_value _ () =
-  let open Commons in
+  let open Messages in
   Client_tests.test_insert ()
   >|= Alcotest.(check (pair string string))
         "Test insert value"
