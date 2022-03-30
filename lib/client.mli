@@ -47,5 +47,6 @@ val init :
   state:'a ->
   ?router:(Message.t -> Message.t) ->
   msg_handler:('a ref -> Message.t -> bytes) ->
+  ?init_peers:Address.t list ->
   string * int ->
   'a t ref Lwt.t
