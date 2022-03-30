@@ -3,6 +3,43 @@ open Pollinate
 open Commons
 
 module Client_tests = struct
+  type state = string list
+
+  let protocol : Failure_detector.t =
+    let config =
+      Failure_detector.
+        { protocol_period = 5; round_trip_time = 2; peers_to_ping = 1 } in
+    Failure_detector.make config
+
+  let msg_handler state _ request =
+    let open Commons in
+    let request = Util.Encoding.unpack bin_read_request request in
+    let response =
+      match request with
+      | Ping -> Pong
+      | Get -> List !state
+      | Insert s ->
+        state := s :: !state;
+        Success "Successfully added value to state" in
+    Util.Encoding.pack bin_writer_response response
+
+  (* Initializes four clients and the related four peers *)
+  let client_a =
+    Lwt_main.run (Client.init ~state:["test1"] ~msg_handler ("127.0.0.1", 3000))
+  let peer_a = Peer.from (Client.address_of !client_a)
+
+  let client_b =
+    Lwt_main.run (Client.init ~state:["test2"] ~msg_handler ("127.0.0.1", 3001))
+  let peer_b = Peer.from (Client.address_of !client_b)
+
+  let client_c =
+    Lwt_main.run (Client.init ~state:["test1"] ~msg_handler ("127.0.0.1", 3002))
+  let peer_c = Peer.from (Client.address_of !client_c)
+
+  let client_d =
+    Lwt_main.run (Client.init ~state:["test2"] ~msg_handler ("127.0.0.1", 3003))
+  let peer_d = Peer.from (Client.address_of !client_d)
+
   (* Initializes two peers and has each one request the state
      of the other, returning the first element in the response of each *)
   let trade_messages () =
@@ -87,7 +124,6 @@ let () =
          ( "communication",
            [
              Alcotest_lwt.test_case "Trading Messages" `Quick test_trade_messages;
-             Alcotest_lwt.test_case "Ping pong" `Quick test_ping_pong
-             (* Alcotest_lwt.test_case "Insert value" `Quick test_insert_value; *);
+             Alcotest_lwt.test_case "Ping pong" `Quick test_ping_pong;
            ] );
        ]
