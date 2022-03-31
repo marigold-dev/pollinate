@@ -6,7 +6,8 @@
   "devDependencies": {
     "@opam/ocaml-lsp-server": "*",
     "@opam/ocamlformat": "0.21.0",
-    "@opam/alcotest-lwt": "*"
+    "@opam/alcotest-lwt": "*",
+    "@opam/ocaml-print-intf": "*"
   },
   "dependencies": {
     "ocaml": "4.13.x",
