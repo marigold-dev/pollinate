@@ -4,26 +4,23 @@ open Util
 (** Configurable parameters that affect various aspects of the failure
 detector *)
 type failure_detector_config = {
-  (** The period of time within which peers may be randomly chosen
-  to be pinged, and within which any peer who has been pinged must
-  respond with an acknowledgement message to continue being considered
-  alive to other nodes in the network. The protocol period should
-  be at least three times the round_trip_time. *)
+  (* The period of time within which peers may be randomly chosen
+     to be pinged, and within which any peer who has been pinged must
+     respond with an acknowledgement message to continue being considered
+     alive to other nodes in the network. The protocol period should
+     be at least three times the round_trip_time. *)
   protocol_period : int;
-  
   (* TODO: Implement automatic configuration/empirical determination of an ideal round-trip time *)
-  (** The amount of time a node performing a random-probe of a
-  peer will wait before asking other active peers to probe the
-  same peer. This value must be at most a third of the protocol period,
-  but it is best if it is chosen empirically. *)
+  (* The amount of time a node performing a random-probe of a
+     peer will wait before asking other active peers to probe the
+     same peer. This value must be at most a third of the protocol period,
+     but it is best if it is chosen empirically. *)
   round_trip_time : int;
-  
-  (** The size of 'failure detection subgroups'. In other words, the
-  number of peers that will be asked to ping a suspicious node which
-  has failed to respond with acknowledgement during the round_trip_time. *)
+  (* The size of 'failure detection subgroups'. In other words, the
+     number of peers that will be asked to ping a suspicious node which
+     has failed to respond with acknowledgement during the round_trip_time. *)
   peers_to_ping : int;
 }
-
 
 (** The state of a failure detection component. *)
 type failure_detector = {
@@ -216,11 +213,9 @@ module Failure_detector = struct
     let message = create_message client message recipient in
     send_to client message
 
-  let send_ping_to client peer =
-    send_message Ping client peer
+  let send_ping_to client peer = send_message Ping client peer
 
-  let send_acknowledge_to client peer =
-    send_message Acknowledge client peer
+  let send_acknowledge_to client peer = send_message Acknowledge client peer
 
   let send_ping_request_to client (recipient : Peer.t) =
     send_message (PingRequest recipient.address) client recipient
@@ -322,11 +317,9 @@ let serve client router msg_handler =
 
     let%lwt () =
       match%lwt Inbox.next !client.inbox Message.Failure_detection with
-      | Some message ->
-        Failure_detector.handle_message client message
-      | None ->
-        Lwt.return () in
-    
+      | Some message -> Failure_detector.handle_message client message
+      | None -> Lwt.return () in
+
     let%lwt () = Failure_detector.failure_detection client in
 
     let%lwt next_response = Inbox.next !client.inbox Message.Response in
