@@ -1,11 +1,6 @@
 open Lwt.Infix
 open Pollinate
-<<<<<<< HEAD
 open Messages
-=======
-open Pollinate.Util
-open Commons
->>>>>>> 05c6958b6cbbb230f42eaeb1ff930762d4a22c7b
 
 module Client_tests = struct
   type state = string list
@@ -48,13 +43,8 @@ module Client_tests = struct
   (* Initializes two peers and has each one request the state
      of the other, returning the first element in the response of each *)
   let trade_messages () =
-<<<<<<< HEAD
     let open Messages in
     let get = Util.Encoding.pack bin_writer_request Get in
-=======
-    let open Commons in
-    let get = Util.Encoding.pack bin_writer_message (Request Get) in
->>>>>>> 05c6958b6cbbb230f42eaeb1ff930762d4a22c7b
 
     let%lwt { payload = res_from_b; _ } =
       Client.request client_a get peer_b.address in
@@ -72,7 +62,6 @@ module Client_tests = struct
     Lwt.return (res_from_b, res_from_a)
 
   let test_insert () =
-<<<<<<< HEAD
     let open Messages in
     let req = Util.Encoding.pack bin_writer_request (Insert "something") in
 
@@ -80,11 +69,6 @@ module Client_tests = struct
     let%lwt res_a, _ = Client.recv_next client_a in
 
     let res_a = Util.Encoding.unpack bin_read_response res_a in
-=======
-    let open Commons in
-    let insert_req =
-      Encoding.pack bin_writer_message (Request (Insert "something")) in
->>>>>>> 05c6958b6cbbb230f42eaeb1ff930762d4a22c7b
 
     let%lwt { payload = res_a; _ } =
       Client.request client_a insert_req peer_b.address in
@@ -103,16 +87,11 @@ module Client_tests = struct
     Lwt.return (res_a, b_state)
 
   let ping_pong () =
-<<<<<<< HEAD
     let open Messages in
     let ping = Util.Encoding.pack bin_writer_request Ping in
 
     let%lwt () = Client.send_to client_a ping peer_b in
     let%lwt pong, _ = Client.recv_next client_a in
-=======
-    let open Commons in
-    let ping = Encoding.pack bin_writer_message (Request Ping) in
->>>>>>> 05c6958b6cbbb230f42eaeb1ff930762d4a22c7b
 
     let%lwt { payload = pong; _ } =
       Client.request client_a ping peer_b.address in
@@ -136,10 +115,7 @@ let test_ping_pong _ () =
   Client_tests.ping_pong () >|= Alcotest.(check string) "Ping pong" "Pong"
 
 let test_insert_value _ () =
-<<<<<<< HEAD
   let open Messages in
-=======
->>>>>>> 05c6958b6cbbb230f42eaeb1ff930762d4a22c7b
   Client_tests.test_insert ()
   >|= Alcotest.(check (pair string string))
         "Test insert value" ("Success", "something")
@@ -152,9 +128,5 @@ let () =
            [
              Alcotest_lwt.test_case "Trading Messages" `Quick test_trade_messages;
              Alcotest_lwt.test_case "Ping pong" `Quick test_ping_pong;
-<<<<<<< HEAD
-=======
-             Alcotest_lwt.test_case "Insert value" `Quick test_insert_value;
->>>>>>> 05c6958b6cbbb230f42eaeb1ff930762d4a22c7b
            ] );
        ]
