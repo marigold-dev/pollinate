@@ -1,5 +1,8 @@
 (** Defines utilities for working with payloads
 that are or need to be serialized via Bin_prot *)
+
+val ( let* ) : 'a option -> ('a -> 'b option) -> 'b option
+
 module Encoding : sig
   (** The int value of the buffer size *)
   val size_header_length : int
@@ -17,6 +20,10 @@ module Encoding : sig
   MUST have an 8 byte size header, or this function will
   behave incorrectly *)
   val unpack : 'a Bin_prot.Read.reader -> bytes -> 'a
+
+  (** Produces a string consisting of semi-colon (;) separated
+integer-representations of each byte in the input bytes *)
+  val str_dump : bytes -> string
 end
 
 (** Defines utilities for working with UDP sockets *)

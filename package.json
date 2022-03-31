@@ -8,7 +8,8 @@
     "@opam/ocamlformat": "0.21.0",
     "@opam/alcotest-lwt": "*",
     "@opam/qcheck": "0.18.1",
-    "@opam/qcheck-alcotest": "0.18.1"
+    "@opam/qcheck-alcotest": "0.18.1",
+    "@opam/ocaml-print-intf": "*"
   },
   "dependencies": {
     "ocaml": "4.13.x",
