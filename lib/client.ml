@@ -342,33 +342,27 @@ let serve client router msg_handler =
 let init ~state ?(router = fun m -> m) ~msg_handler ?(init_peers = [])
     (address, port) =
   let open Util in
-  let address = Address.create address port in
-  let current_request_id = Mutex.create (ref 0) in
-  let request_table = Hashtbl.create 20 in
   let%lwt socket = Net.create_socket port in
   let socket = Mutex.create socket in
-  let state = Mutex.create (ref state) in
-  let inbox = Inbox.create () in
-  let failure_detector =
-    Failure_detector.make
-      { protocol_period = 9; round_trip_time = 3; helpers_size = 3 } in
   let peers =
     Base.Hashtbl.create ~growth_allowed:true ~size:0 (module Address) in
-  init_peers
-  |> List.map (fun addr ->
-         Base.Hashtbl.add peers ~key:addr ~data:(Peer.from addr))
-  |> ignore;
+  let _ =
+    init_peers
+    |> List.map (fun addr ->
+          Base.Hashtbl.add peers ~key:addr ~data:(Peer.from addr)) in
   let client =
     ref
       {
-        address;
-        current_request_id;
-        request_table;
+        address = Address.create address port;
+        current_request_id = Mutex.create (ref 0) ;
+        request_table = Hashtbl.create 20;
         socket;
-        state;
-        inbox;
-        failure_detector;
-        peers;
+        state = Mutex.create (ref state);
+        inbox = Inbox.create ();
+        failure_detector =
+        Failure_detector.make
+        { protocol_period = 9; round_trip_time = 3; helpers_size = 3 };
+        peers
       } in
   serve client router msg_handler;
   Lwt.return client
