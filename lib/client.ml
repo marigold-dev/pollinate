@@ -19,7 +19,7 @@ type failure_detector_config = {
   (* The size of 'failure detection subgroups'. In other words, the
      number of peers that will be asked to ping a suspicious node which
      has failed to respond with acknowledgement during the round_trip_time. *)
-  peers_to_ping : int;
+  helpers_size : int;
 }
 
 (** The state of a failure detection component. *)
@@ -255,7 +255,7 @@ module Failure_detector = struct
     | Ok _ -> Lwt.return ()
     | Error _ -> (
       let pingers =
-        t.config.peers_to_ping
+        t.config.helpers_size
         |> pick_random_neighbors peer_of_client.neighbors
         |> List.map Peer.from in
       let _ = List.map (send_ping_request_to client) pingers in
@@ -351,7 +351,7 @@ let init ~state ?(router = fun m -> m) ~msg_handler ?(init_peers = [])
   let inbox = Inbox.create () in
   let failure_detector =
     Failure_detector.make
-      { protocol_period = 9; round_trip_time = 3; peers_to_ping = 3 } in
+      { protocol_period = 9; round_trip_time = 3; helpers_size = 3 } in
   let peers =
     Base.Hashtbl.create ~growth_allowed:true ~size:0 (module Address) in
   init_peers
