@@ -4,19 +4,19 @@ open Util
 (** Configurable parameters that affect various aspects of the failure
 detector *)
 type failure_detector_config = {
-  (* The period of time within which peers may be randomly chosen
+  (** The period of time within which peers may be randomly chosen
      to be pinged, and within which any peer who has been pinged must
      respond with an acknowledgement message to continue being considered
      alive to other nodes in the network. The protocol period should
      be at least three times the round_trip_time. *)
   protocol_period : int;
   (* TODO: Implement automatic configuration/empirical determination of an ideal round-trip time *)
-  (* The amount of time a node performing a random-probe of a
+  (** The amount of time a node performing a random-probe of a
      peer will wait before asking other active peers to probe the
      same peer. This value must be at most a third of the protocol period,
      but it is best if it is chosen empirically. *)
   round_trip_time : int;
-  (* The size of 'failure detection subgroups'. In other words, the
+  (** The size of 'failure detection subgroups'. In other words, the
      number of peers that will be asked to ping a suspicious node which
      has failed to respond with acknowledgement during the round_trip_time. *)
   helpers_size : int;
@@ -25,7 +25,7 @@ type failure_detector_config = {
 (** The state of a failure detection component. *)
 type failure_detector = {
   config : failure_detector_config;
-  (* Table mapping sequence numbers to condition variables that get
+  (** Table mapping sequence numbers to condition variables that get
       signalled when a peer that was probed during the period to which
       the sequence number applies replies with acknowledgement. *)
   acknowledges : (int, unit Lwt_condition.t) Base.Hashtbl.t;
@@ -34,20 +34,20 @@ type failure_detector = {
 
 type 'a t = {
   address : Address.t;
-  (* An ID that is incremented whenever a request is
+  (** An ID that is incremented whenever a request is
      made from this client. The response matching this
      request will carry the same ID, allowing the response
      to be identified and thus stopping the request from
      blocking. *)
   current_request_id : int ref Mutex.t;
-  (* A hashtable that pairs request IDs with condition variables.
+  (** A hashtable that pairs request IDs with condition variables.
      When a response is received by the server, it checks this table
      for a waiting request and signals the request's condition variable
      with the incoming response. *)
   request_table : (int, Message.t Lwt_condition.t) Hashtbl.t;
   socket : file_descr Mutex.t;
   state : 'a ref Mutex.t;
-  (* A store of incoming messages for the client. Stores
+  (** A store of incoming messages for the client. Stores
      messages separately by category. *)
   inbox : Inbox.t;
   failure_detector : failure_detector;
@@ -143,20 +143,20 @@ module Failure_detector = struct
   let make config =
     { config; acknowledges = Base.Hashtbl.Poly.create (); sequence_number = 0 }
 
-  (* Helper to increase the round at each new protocol_period *)
+  (** Helper to increase the round at each new protocol_period *)
   let next_seq_no t =
     let sequence_number = t.sequence_number in
     t.sequence_number <- t.sequence_number + 1;
     sequence_number
 
-  (* Adds the Ack when received *)
+  (** Adds the Ack when received *)
   let wait_ack t sequence_number =
     let cond =
       Base.Hashtbl.find_or_add t.acknowledges sequence_number
         ~default:Lwt_condition.create in
     Lwt_condition.wait cond
 
-  (* Simple racing between getting Ack message or timeout ending *)
+  (** Simple racing between getting Ack message or timeout ending *)
   let wait_ack_timeout t sequence_number timeout =
     Lwt.pick
       [
@@ -182,7 +182,7 @@ module Failure_detector = struct
      A sets B as `suspicious`
      A randomly picks one (or several, should it also be randomly determined?) peer(s) from its list
      and ask him/them to ping B.*)
-  (* This function return the random peer, to which we will ask to ping the first peer *)
+  (** This function return the random peer, to which we will ask to ping the first peer *)
   let rec pick_random_neighbors neighbors number_of_neighbors =
     let addresses = neighbors |> Base.Hashtbl.keys |> knuth_shuffle in
     match addresses with
@@ -298,7 +298,7 @@ module Failure_detector = struct
       Lwt.return ()
 end
 
-(* Signals a waiting request with its corresponding response
+(** Signals a waiting request with its corresponding response
    if it exists. Otherwise returns None. *)
 let handle_response request_table res =
   let open Message in
