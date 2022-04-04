@@ -143,18 +143,20 @@ module Failure_detector = struct
   let make config =
     { config; acknowledges = Base.Hashtbl.Poly.create (); sequence_number = 0 }
 
-  (* Helper to increase the round *)
+  (* Helper to increase the round at each new protocol_period *)
   let next_seq_no t =
     let sequence_number = t.sequence_number in
     t.sequence_number <- t.sequence_number + 1;
     sequence_number
 
+  (* Adds the Ack when received *)
   let wait_ack t sequence_number =
     let cond =
       Base.Hashtbl.find_or_add t.acknowledges sequence_number
         ~default:Lwt_condition.create in
     Lwt_condition.wait cond
 
+  (* Simple racing between getting Ack message or timeout ending *)
   let wait_ack_timeout t sequence_number timeout =
     Lwt.pick
       [
@@ -199,6 +201,7 @@ module Failure_detector = struct
       neighbor.status <- status;
       Base.Hashtbl.update peer.neighbors neighbor.address ~f:(fun _ -> neighbor)
     | None -> ()
+
   let create_message client message (recipient : Peer.t) =
     Message.
       {
@@ -223,7 +226,6 @@ module Failure_detector = struct
   (** Processes an incoming message bound for the failure detector of a client *)
   let handle_message client message =
     let open Message in
-    let peer_of_client = peer_from !client in
     let peer = Peer.from message.sender in
     let msg = Util.Encoding.unpack bin_read_message message.payload in
     let t = !client.failure_detector in
@@ -231,6 +233,7 @@ module Failure_detector = struct
     | Ping -> send_acknowledge_to client peer
     | PingRequest addr -> (
       let new_seq_no = next_seq_no t in
+      let peer_of_client = peer_from !client in
       let peer_opt = Peer.get_neighbor peer_of_client addr in
       match peer_opt with
       | Some peer -> send_ping_request_to client peer
@@ -343,26 +346,25 @@ let init ~state ?(router = fun m -> m) ~msg_handler ?(init_peers = [])
     (address, port) =
   let open Util in
   let%lwt socket = Net.create_socket port in
-  let socket = Mutex.create socket in
   let peers =
     Base.Hashtbl.create ~growth_allowed:true ~size:0 (module Address) in
   let _ =
     init_peers
     |> List.map (fun addr ->
-          Base.Hashtbl.add peers ~key:addr ~data:(Peer.from addr)) in
+           Base.Hashtbl.add peers ~key:addr ~data:(Peer.from addr)) in
   let client =
     ref
       {
         address = Address.create address port;
-        current_request_id = Mutex.create (ref 0) ;
+        current_request_id = Mutex.create (ref 0);
         request_table = Hashtbl.create 20;
-        socket;
+        socket = Mutex.create socket;
         state = Mutex.create (ref state);
         inbox = Inbox.create ();
         failure_detector =
-        Failure_detector.make
-        { protocol_period = 9; round_trip_time = 3; helpers_size = 3 };
-        peers
+          Failure_detector.make
+            { protocol_period = 9; round_trip_time = 3; helpers_size = 3 };
+        peers;
       } in
   serve client router msg_handler;
   Lwt.return client
