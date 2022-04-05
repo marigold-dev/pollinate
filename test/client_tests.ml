@@ -1,49 +1,14 @@
 open Lwt.Infix
 open Pollinate
-open Messages
+open Pollinate.Util
+open Commons
 
 module Client_tests = struct
-  type state = string list
-
-  let protocol : Client.failure_detector_config =
-    let config =
-      { protocol_period = 5; round_trip_time = 2; peers_to_ping = 1 } in
-    Failure_detector.make config
-
-  let msg_handler state _ request =
-    let open Messages in
-    let request = Util.Encoding.unpack bin_read_request request in
-    let response =
-      match request with
-      | Ping -> Pong
-      | Get -> List !state
-      | Insert s ->
-        state := s :: !state;
-        Success "Successfully added value to state" in
-    Util.Encoding.pack bin_writer_response response
-
-  (* Initializes four clients and the related four peers *)
-  let client_a =
-    Lwt_main.run (Client.init ~state:["test1"] ~msg_handler ("127.0.0.1", 3000))
-  let peer_a = Peer.from (Client.address_of !client_a)
-
-  let client_b =
-    Lwt_main.run (Client.init ~state:["test2"] ~msg_handler ("127.0.0.1", 3001))
-  let peer_b = Peer.from (Client.address_of !client_b)
-
-  let client_c =
-    Lwt_main.run (Client.init ~state:["test1"] ~msg_handler ("127.0.0.1", 3002))
-  let peer_c = Peer.from (Client.address_of !client_c)
-
-  let client_d =
-    Lwt_main.run (Client.init ~state:["test2"] ~msg_handler ("127.0.0.1", 3003))
-  let peer_d = Peer.from (Client.address_of !client_d)
-
   (* Initializes two peers and has each one request the state
      of the other, returning the first element in the response of each *)
   let trade_messages () =
-    let open Messages in
-    let get = Util.Encoding.pack bin_writer_request Get in
+    let open Commons in
+    let get = Util.Encoding.pack bin_writer_message (Request Get) in
 
     let%lwt { payload = res_from_b; _ } =
       Client.request client_a get peer_b.address in
@@ -61,13 +26,9 @@ module Client_tests = struct
     Lwt.return (res_from_b, res_from_a)
 
   let test_insert () =
-    let open Messages in
-    let req = Util.Encoding.pack bin_writer_request (Insert "something") in
-
-    let%lwt () = Client.send_to client_a req peer_b in
-    let%lwt res_a, _ = Client.recv_next client_a in
-
-    let res_a = Util.Encoding.unpack bin_read_response res_a in
+    let open Commons in
+    let insert_req =
+      Encoding.pack bin_writer_message (Request (Insert "something")) in
 
     let%lwt { payload = res_a; _ } =
       Client.request client_a insert_req peer_b.address in
@@ -86,11 +47,8 @@ module Client_tests = struct
     Lwt.return (res_a, b_state)
 
   let ping_pong () =
-    let open Messages in
-    let ping = Util.Encoding.pack bin_writer_request Ping in
-
-    let%lwt () = Client.send_to client_a ping peer_b in
-    let%lwt pong, _ = Client.recv_next client_a in
+    let open Commons in
+    let ping = Encoding.pack bin_writer_message (Request Ping) in
 
     let%lwt { payload = pong; _ } =
       Client.request client_a ping peer_b.address in
@@ -114,7 +72,6 @@ let test_ping_pong _ () =
   Client_tests.ping_pong () >|= Alcotest.(check string) "Ping pong" "Pong"
 
 let test_insert_value _ () =
-  let open Messages in
   Client_tests.test_insert ()
   >|= Alcotest.(check (pair string string))
         "Test insert value" ("Success", "something")
@@ -127,5 +84,6 @@ let () =
            [
              Alcotest_lwt.test_case "Trading Messages" `Quick test_trade_messages;
              Alcotest_lwt.test_case "Ping pong" `Quick test_ping_pong;
+             Alcotest_lwt.test_case "Insert value" `Quick test_insert_value;
            ] );
        ]

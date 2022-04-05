@@ -6,6 +6,7 @@
   generator
   peer_prop
   address_prop
+  commons
   util_prop)
  (libraries pollinate bin_prot lwt alcotest-lwt qcheck-core qcheck-alcotest)
  (preprocess
