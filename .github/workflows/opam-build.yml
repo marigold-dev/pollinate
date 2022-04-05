@@ -26,10 +26,14 @@ jobs:
 
       - name: Use OCaml 5
         uses: ocaml/setup-ocaml@v2
+        with:
+          opam-pin: false
+          opam-depext: false
+          opam-disable-sandboxing: true
 
       - run: opam repo add beta https://github.com/ocaml/ocaml-beta-repository.git
 
-      - run: opam switch create . --no-install --packages ocaml.5.00.0
+      - run: opam switch reinstall . --no-install --packages ocaml.5.00.0
 
       - run: opam install . --deps-only --with-test
 
