@@ -1,7 +1,6 @@
 ---
 name: Maintenance
 about: Suggest an improvement over how the project is maintained
-title: '[MAINTENANCE] '
 labels: maintenance
 assignees: ''
 ---
