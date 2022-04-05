@@ -38,6 +38,7 @@
 
           defaultPackage = myPkgs.pollinate;
         };
-    in with flake-utils.lib; eachSystem defaultSystems out;
+    in with flake-utils.lib;
+    eachSystem [ system.x86_64-linux system.aarch64-darwin ] out;
 
 }
