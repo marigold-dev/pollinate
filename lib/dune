@@ -1,6 +1,7 @@
 (library
  (name pollinate)
  (libraries bin_prot lwt lwt.unix sexplib)
+ (inline_tests)
  (preprocess
   (pps
    ppx_bin_prot
@@ -9,4 +10,5 @@
    ppx_deriving.eq
    ppx_compare
    ppx_hash
-   ppx_sexp_conv)))
+   ppx_sexp_conv
+   ppx_inline_test)))

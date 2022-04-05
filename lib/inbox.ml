@@ -8,6 +8,9 @@ let create () =
   let _ =
     Base.Hashtbl.add inbox ~key:Message.Uncategorized ~data:(Tqueue.create ())
   in
+  let _ =
+    Base.Hashtbl.add inbox ~key:Message.Failure_detection
+      ~data:(Tqueue.create ()) in
   inbox
 
 let find_or_create_category inbox category =

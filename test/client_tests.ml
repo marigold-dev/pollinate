@@ -5,10 +5,9 @@ open Messages
 module Client_tests = struct
   type state = string list
 
-  let protocol : Failure_detector.t =
+  let protocol : Client.failure_detector_config =
     let config =
-      Failure_detector.
-        { protocol_period = 5; round_trip_time = 2; peers_to_ping = 1 } in
+      { protocol_period = 5; round_trip_time = 2; peers_to_ping = 1 } in
     Failure_detector.make config
 
   let msg_handler state _ request =

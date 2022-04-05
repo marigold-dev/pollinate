@@ -1,6 +1,37 @@
 open Lwt_unix
 open Util
 
+(** Configurable parameters that affect various aspects of the failure
+detector *)
+type failure_detector_config = {
+  (* The period of time within which peers may be randomly chosen
+     to be pinged, and within which any peer who has been pinged must
+     respond with an acknowledgement message to continue being considered
+     alive to other nodes in the network. The protocol period should
+     be at least three times the round_trip_time. *)
+  protocol_period : int;
+  (* TODO: Implement automatic configuration/empirical determination of an ideal round-trip time *)
+  (* The amount of time a node performing a random-probe of a
+     peer will wait before asking other active peers to probe the
+     same peer. This value must be at most a third of the protocol period,
+     but it is best if it is chosen empirically. *)
+  round_trip_time : int;
+  (* The size of 'failure detection subgroups'. In other words, the
+     number of peers that will be asked to ping a suspicious node which
+     has failed to respond with acknowledgement during the round_trip_time. *)
+  helpers_size : int;
+}
+
+(** The state of a failure detection component. *)
+type failure_detector = {
+  config : failure_detector_config;
+  (* Table mapping sequence numbers to condition variables that get
+      signalled when a peer that was probed during the period to which
+      the sequence number applies replies with acknowledgement. *)
+  acknowledges : (int, unit Lwt_condition.t) Base.Hashtbl.t;
+  mutable sequence_number : int;
+}
+
 type 'a t = {
   address : Address.t;
   (* An ID that is incremented whenever a request is
@@ -19,11 +50,14 @@ type 'a t = {
   (* A store of incoming messages for the client. Stores
      messages separately by category. *)
   inbox : Inbox.t;
+  failure_detector : failure_detector;
+  peers : (Address.t, Peer.t) Base.Hashtbl.t;
 }
 
 let address_of { address; _ } = address
 
-let peer_from { address; _ } = Peer.from address
+let peer_from { address; peers; _ } =
+  Peer.{ address; status = Alive; neighbors = peers }
 
 let create_request client recipient payload =
   Mutex.with_lock !client.current_request_id (fun id ->
@@ -49,6 +83,7 @@ let create_response client request payload =
     }
 
 let send_to client message =
+  let open Message in
   let payload = Encoding.pack Message.bin_writer_t message in
   let len = Bytes.length payload in
   let addr = Address.to_sockaddr message.recipient in
@@ -95,7 +130,185 @@ let route client router msg =
   let msg = router msg in
   Inbox.push !client.inbox msg.category msg
 
-(* Signals a waiting request with its corresponding response
+module Failure_detector = struct
+  (** Messages sent by the failure detector protocol *)
+  type message =
+    | Ping
+    | Acknowledge
+    | PingRequest of Address.t
+  [@@deriving bin_io]
+
+  (** Initializes the failure detection component
+  with a default state and given config *)
+  let make config =
+    { config; acknowledges = Base.Hashtbl.Poly.create (); sequence_number = 0 }
+
+  (** Helper to increase the round at each new protocol_period *)
+  let next_seq_no t =
+    let sequence_number = t.sequence_number in
+    t.sequence_number <- t.sequence_number + 1;
+    sequence_number
+
+  (** Adds the Ack when received *)
+  let wait_ack t sequence_number =
+    let cond =
+      Base.Hashtbl.find_or_add t.acknowledges sequence_number
+        ~default:Lwt_condition.create in
+    Lwt_condition.wait cond
+
+  (** Simple racing between getting Ack message or timeout ending *)
+  let wait_ack_timeout t sequence_number timeout =
+    Lwt.pick
+      [
+        (let _ = Lwt_unix.sleep (Float.of_int timeout) in
+         Lwt.return @@ Result.Error "Timeout reached");
+        (let _ = wait_ack t sequence_number in
+         Lwt.return @@ Result.Ok "Successfully received acknowledge");
+      ]
+
+  (** Basic random shuffle, see https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle*)
+  let knuth_shuffle known_peers =
+    let shuffled_array = Array.copy (Array.of_list known_peers) in
+    let initial_array_length = Array.length shuffled_array in
+    for i = initial_array_length - 1 downto 1 do
+      let k = Random.int (i + 1) in
+      let x = shuffled_array.(k) in
+      shuffled_array.(k) <- shuffled_array.(i);
+      shuffled_array.(i) <- x
+    done;
+    Array.to_list shuffled_array
+
+  (* Regarding the SWIM protocol, if peer A cannot get ACK from peer B (timeout):
+     A sets B as `suspicious`
+     A randomly picks one (or several, should it also be randomly determined?) peer(s) from its list
+     and ask him/them to ping B.*)
+
+  (** This function return the random peer, to which we will ask to ping the first peer *)
+  let rec pick_random_neighbors neighbors number_of_neighbors =
+    let addresses = neighbors |> Base.Hashtbl.keys |> knuth_shuffle in
+    match addresses with
+    | [] -> failwith "pick_random_peers"
+    | elem :: _ ->
+      if number_of_neighbors = 1 then
+        [elem]
+      else
+        elem :: pick_random_neighbors neighbors (number_of_neighbors - 1)
+
+  (** Updates a peer in the client's peer list with
+  the given status. Returns a result that contains
+  unit if the peer is found in the client's list, and
+  a string stating that a peer with the given address
+  could not be found otherwise. *)
+  let update_peer_status client peer status =
+    let open Peer in
+    let neighbor = Base.Hashtbl.find !client.peers peer.address in
+    match neighbor with
+    | Some neighbor ->
+      neighbor.status <- status;
+      Result.Ok ()
+    | None ->
+      Result.Error
+        (Printf.sprintf
+           "Failed to find peer with address %s:%d in client peer list"
+           peer.address.address peer.address.port)
+
+  let create_message client message (recipient : Peer.t) =
+    Message.
+      {
+        category = Failure_detection;
+        id = -1;
+        sender = address_of !client;
+        recipient = recipient.address;
+        payload = Encoding.pack bin_writer_message message;
+      }
+
+  let send_message message client (recipient : Peer.t) =
+    let message = create_message client message recipient in
+    send_to client message
+
+  let send_ping_to client peer = send_message Ping client peer
+
+  let send_acknowledge_to client peer = send_message Acknowledge client peer
+
+  let send_ping_request_to client (recipient : Peer.t) =
+    send_message (PingRequest recipient.address) client recipient
+
+  (** Processes an incoming message bound for the failure detector of a client *)
+  let handle_message client message =
+    let open Message in
+    let peer = Peer.from message.sender in
+    let msg = Encoding.unpack bin_read_message message.payload in
+    let t = !client.failure_detector in
+    match msg with
+    | Ping -> send_acknowledge_to client peer
+    | PingRequest addr -> (
+      let new_seq_no = next_seq_no t in
+      let peer_opt = Base.Hashtbl.find !client.peers addr in
+      match peer_opt with
+      | Some peer -> send_ping_request_to client peer
+      | None -> (
+        match%lwt wait_ack_timeout t new_seq_no t.config.protocol_period with
+        | Ok _ -> Lwt.return ()
+        | Error _ -> send_acknowledge_to client peer))
+    | Acknowledge ->
+    match Base.Hashtbl.find t.acknowledges t.sequence_number with
+    | Some cond ->
+      Lwt_condition.broadcast cond ();
+      Lwt.return ()
+    | None -> Lwt.return ()
+
+  (** This function will be called by failure_detection 
+  at each round of the protocol, and update the peers *)
+  let probe_peer t client peer_to_update =
+    let new_seq_no = next_seq_no t in
+    let _ = send_ping_to client peer_to_update in
+    match%lwt wait_ack_timeout t new_seq_no t.config.round_trip_time with
+    | Ok _ -> Lwt.return ()
+    | Error _ -> (
+      let pingers =
+        t.config.helpers_size
+        |> pick_random_neighbors !client.peers
+        |> List.map Peer.from in
+      let _ = List.map (send_ping_request_to client) pingers in
+      let wait_time = t.config.protocol_period - t.config.round_trip_time in
+      match%lwt wait_ack_timeout t new_seq_no wait_time with
+      | Ok _ ->
+        let _ = update_peer_status client peer_to_update Alive in
+        Lwt.return ()
+      | Error _ ->
+        (* TODO: Implement Suspicion Mechanism.
+           This is correct in the basic SWIM protocol, but it is a very heavy penalty.
+           When there is no ACK (direct or indirect) the peer must be set to `Suspicious`.
+           See section 4.2 from https://www.cs.cornell.edu/projects/Quicksilver/public_pdfs/SWIM.pdf *)
+        let _ = update_peer_status client peer_to_update Faulty in
+        Lwt.return ())
+
+  (** High level function, which must be run within an async thread, like:
+  Lwt.async (fun () -> failure_detection t client); *)
+  let failure_detection client =
+    let open Peer in
+    let t = !client.failure_detector in
+    let available_peers =
+      List.filter
+        (fun p -> p.status = Peer.Alive)
+        (Base.Hashtbl.data !client.peers) in
+    match List.length available_peers with
+    | 0 -> Lwt.return ()
+    | _ ->
+      let random_peer =
+        List.map (fun p -> p.address) available_peers
+        |> knuth_shuffle
+        |> List.hd in
+      let _ =
+        Lwt.join
+          [
+            probe_peer t client (Peer.from random_peer);
+            Lwt_unix.sleep @@ Float.of_int t.config.protocol_period;
+          ] in
+      Lwt.return ()
+end
+
+(** Signals a waiting request with its corresponding response
    if it exists. Otherwise returns None. *)
 let handle_response request_table res =
   let open Message in
@@ -115,6 +328,13 @@ let serve client router msg_handler =
     let%lwt message = recv_next client in
     let%lwt () = route client router message in
 
+    let%lwt () =
+      match%lwt Inbox.next !client.inbox Message.Failure_detection with
+      | Some message -> Failure_detector.handle_message client message
+      | None -> Lwt.return () in
+
+    let%lwt () = Failure_detector.failure_detection client in
+
     let%lwt next_response = Inbox.next !client.inbox Message.Response in
     let _ = handle_response !client.request_table next_response in
 
@@ -132,17 +352,29 @@ let serve client router msg_handler =
     server () in
   Lwt.async server
 
-let init ~state ?(router = fun m -> m) ~msg_handler (address, port) =
+let init ~state ?(router = fun m -> m) ~msg_handler ?(init_peers = [])
+    (address, port) =
   let open Util in
-  let address = Address.create address port in
-  let current_request_id = Mutex.create (ref 0) in
-  let request_table = Hashtbl.create 20 in
   let%lwt socket = Net.create_socket port in
-  let socket = Mutex.create socket in
-  let state = Mutex.create (ref state) in
-  let inbox = Inbox.create () in
+  let peers =
+    Base.Hashtbl.create ~growth_allowed:true ~size:0 (module Address) in
+  let _ =
+    init_peers
+    |> List.map (fun addr ->
+           Base.Hashtbl.add peers ~key:addr ~data:(Peer.from addr)) in
   let client =
-    ref { address; current_request_id; request_table; socket; state; inbox }
-  in
+    ref
+      {
+        address = Address.create address port;
+        current_request_id = Mutex.create (ref 0);
+        request_table = Hashtbl.create 20;
+        socket = Mutex.create socket;
+        state = Mutex.create (ref state);
+        inbox = Inbox.create ();
+        failure_detector =
+          Failure_detector.make
+            { protocol_period = 9; round_trip_time = 3; helpers_size = 3 };
+        peers;
+      } in
   serve client router msg_handler;
   Lwt.return client

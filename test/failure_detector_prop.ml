@@ -1,4 +1,4 @@
-open Generator.Test
+(* open Generator.Test
 open Pollinate
 open QCheck2.Gen
 
@@ -33,4 +33,4 @@ let () =
   let failure_detector_prop =
     List.map QCheck_alcotest.to_alcotest [knuth_shuffle_size; update_peer] in
   Alcotest.run "Failure detector"
-    [("failure_detector.ml", failure_detector_prop)]
+    [("failure_detector.ml", failure_detector_prop)] *)
