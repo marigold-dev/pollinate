@@ -1,7 +1,8 @@
-(** Messages received by the client, whether they're requests,
+(** Messages received by the node, whether they're requests,
 responses, or protocol-specific messages. For consumer use
 only when implementing a routing function for the
-client. *)
+node. *)
+open Common
 
 (** Messages are requests or responses,
 determining how they're stored and
@@ -15,7 +16,7 @@ type category =
 [@@deriving bin_io]
 
 (** Messages received from peers which are
-stored in the client's inbox *)
+stored in the node's inbox *)
 type t = {
   category : category;
   id : int;
