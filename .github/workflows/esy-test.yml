@@ -1,0 +1,43 @@
+name: Pollinate tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  schedule:
+    # Prime the caches every Monday
+    - cron: 0 1 * * MON
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+
+    runs-on: ${{ matrix.system }}-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 17
+
+      - name: Install esy
+        run: npm install -g @esy-nightly/esy
+
+      - uses: esy/github-action@master
+        with:
+          cache-key: ${{ matrix.system }}-${{ hashFiles('esy.lock/index.json') }}
+
+      - name: Run Code formatter
+        run: esy b dune build @fmt
+
+      - name: Run Check
+        run: esy b dune build @check
+
+      - name: Run tests
+        run: esy x dune test

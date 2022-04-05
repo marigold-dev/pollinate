@@ -1,4 +1,4 @@
-name: OPAM build
+name: OPAM OCaml 5 build & tests
 
 on:
   pull_request:
@@ -39,11 +39,11 @@ jobs:
 
       # We only want to run the lints once, since Linux is the cheapest we run it there
       - name: Lint doc
-        if: ${{ matrix.os == 'ubuntu-latest' && matrix.ocaml-compiler == '4.14.x' }}
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         uses: ocaml/setup-ocaml/lint-doc@v2
 
       - name: Lint fmt
-        if: ${{ matrix.os == 'ubuntu-latest' && matrix.ocaml-compiler == '4.14.x' }}
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         uses: ocaml/setup-ocaml/lint-fmt@v2
 
       # Claims that some dependencies should be test dependencies when they are used in the lib
