@@ -2,12 +2,14 @@ open Lwt.Infix
 open Pollinate
 open Pollinate.Util
 open Commons
+open Messages
 
 module Client_tests = struct
   (* Initializes two peers and has each one request the state
      of the other, returning the first element in the response of each *)
   let trade_messages () =
     let open Commons in
+    let open Messages in
     let get = Util.Encoding.pack bin_writer_message (Request Get) in
 
     let%lwt { payload = res_from_b; _ } =
@@ -27,6 +29,7 @@ module Client_tests = struct
 
   let test_insert () =
     let open Commons in
+    let open Messages in
     let insert_req =
       Encoding.pack bin_writer_message (Request (Insert "something")) in
 
@@ -48,6 +51,7 @@ module Client_tests = struct
 
   let ping_pong () =
     let open Commons in
+    let open Messages in
     let ping = Encoding.pack bin_writer_message (Request Ping) in
 
     let%lwt { payload = pong; _ } =

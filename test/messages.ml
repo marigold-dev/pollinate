@@ -14,4 +14,10 @@ module Messages = struct
     | Success of string
     | Error   of string
   [@@deriving bin_io, show { with_path = false }]
+
+  type message =
+    | Request  of request
+    | Response of response
+  [@@deriving bin_io, show { with_path = false }]
+  
 end
