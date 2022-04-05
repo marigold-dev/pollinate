@@ -19,8 +19,8 @@ jobs:
           - ubuntu-latest
         # Just adding lower and upper bound what we want to support
         ocaml-compiler:
-          - 4.13.x
-          - 4.08.x
+          - 5.00.0
+          - 4.14.x
 
     runs-on: ${{ matrix.os }}
 
@@ -41,11 +41,11 @@ jobs:
 
       # We only want to run the lints once, since Linux is the cheapest we run it there
       - name: Lint doc
-        if: ${{ matrix.os == 'ubuntu-latest' && matrix.ocaml-compiler == '4.13.x' }}
+        if: ${{ matrix.os == 'ubuntu-latest' && matrix.ocaml-compiler == '4.14.x' }}
         uses: ocaml/setup-ocaml/lint-doc@v2
 
       - name: Lint fmt
-        if: ${{ matrix.os == 'ubuntu-latest' && matrix.ocaml-compiler == '4.13.x' }}
+        if: ${{ matrix.os == 'ubuntu-latest' && matrix.ocaml-compiler == '4.14.x' }}
         uses: ocaml/setup-ocaml/lint-fmt@v2
 
       # Claims that some dependencies should be test dependencies when they are used in the lib
