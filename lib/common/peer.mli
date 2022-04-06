@@ -1,4 +1,4 @@
-(** Peers are nodes in the network other than the client.
+(** Peers are nodes in the network other than the user.
 The built-in failure detector maintains the status of any
 peer as either Alive, Suspicious, or Faulty, in order to
 maintain a set of active "neighbors" to communicate with. *)

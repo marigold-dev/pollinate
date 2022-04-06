@@ -1,3 +1,4 @@
+open Common
 open Bin_prot.Std
 
 type category =

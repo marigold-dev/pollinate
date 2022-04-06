@@ -1,3 +1,4 @@
+open Common
 type t = (Message.category, Message.t Tqueue.t) Base.Hashtbl.t
 
 let create () =
