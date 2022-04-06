@@ -1,25 +1,25 @@
-open QCheck2.Gen
-open QCheck2
-open Pollinate.Node
-open Pollinate.Util
-open Pollinate.Peer
+
 open Messages
 
 module type MTest = sig
-  val peer_gen : Pollinate.Peer.t t
-
+  open QCheck2.Gen
+  open Pollinate
+  val peer_gen : Peer.t t
+  
   val address_gen : Address.t t
-
+  
   val peer_print : Peer.t -> string
-
+  
   val request_gen : Messages.request t
-
+  
   val peer_status_gen : Peer.status t
-
+  
   val sockaddress_gen : Unix.sockaddr t
 end
 
 module Test : MTest = struct
+  open QCheck2.Gen
+  open Pollinate
   let address_gen =
     pair (pure "127.0.0.1") int >|= fun (address, port) ->
     Address.{ address; port }

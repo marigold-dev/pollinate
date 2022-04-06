@@ -9,6 +9,7 @@ module Node_tests = struct
      of the other, returning the first element in the response of each *)
   let trade_messages () =
     let open Commons in
+    let open Messages in
     let get = Encoding.pack bin_writer_message (Request Get) in
 
     let%lwt { payload = res_from_b; _ } =

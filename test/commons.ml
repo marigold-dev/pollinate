@@ -1,11 +1,9 @@
 (** Utils function shared by the different tests modules *)
 module Commons = struct
-  open Bin_prot.Std
   open Pollinate.Node
   open Pollinate.Util
   open Messages
-  
-  
+
   type state = string list
   
   let router msg =
