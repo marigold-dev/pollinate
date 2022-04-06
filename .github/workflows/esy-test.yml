@@ -15,10 +15,9 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - macos-latest
           - ubuntu-latest
 
-    runs-on: ${{ matrix.system }}-latest
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
