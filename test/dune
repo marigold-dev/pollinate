@@ -1,7 +1,7 @@
 (tests
- (names client_tests peer_prop address_prop util_prop failure_detector_prop)
- (modules
-  client_tests
+ (names node_tests peer_prop address_prop util_prop failure_detector_prop)
+ (modules 
+  node_tests 
   messages
   generator
   peer_prop

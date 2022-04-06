@@ -1,11 +1,13 @@
 (** Utils function shared by the different tests modules *)
 module Commons = struct
-  open Pollinate
+  open Bin_prot.Std
+  open Pollinate.Node
   open Pollinate.Util
   open Messages
-
+  
+  
   type state = string list
-
+  
   let router msg =
     let open Messages in
     match msg.Message.category with
@@ -32,28 +34,28 @@ module Commons = struct
         Success "Successfully added value to state" in
     Encoding.pack bin_writer_message (Response response)
 
-  (* Initializes four clients and the related four peers *)
-  let client_a =
+  (* Initializes four nodes and the related four peers *)
+  let node_a =
     Lwt_main.run
-      (Client.init ~router ~state:["test1"] ~msg_handler ("127.0.0.1", 3000))
+      (Node.init ~router ~state:["test1"] ~msg_handler ("127.0.0.1", 3000))
 
-  let peer_a = Client.peer_from !client_a
+  let peer_a = Client.peer_from !node_a
 
-  let client_b =
+  let node_b =
     Lwt_main.run
-      (Client.init ~router ~state:["test2"] ~msg_handler ("127.0.0.1", 3001))
+      (Node.init ~router ~state:["test2"] ~msg_handler ("127.0.0.1", 3001))
 
-  let peer_b = Client.peer_from !client_b
+  let peer_b = Client.peer_from !node_b
 
-  let client_c =
+  let node_c =
     Lwt_main.run
-      (Client.init ~router ~state:["test1"] ~msg_handler ("127.0.0.1", 3002))
+      (Node.init ~router ~state:["test1"] ~msg_handler ("127.0.0.1", 3002))
 
-  let peer_c = Client.peer_from !client_c
+  let peer_c = Client.peer_from !node_c
 
-  let client_d =
+  let node_d =
     Lwt_main.run
-      (Client.init ~router ~state:["test2"] ~msg_handler ("127.0.0.1", 3003))
+      (Node.init ~router ~state:["test2"] ~msg_handler ("127.0.0.1", 3003))
 
-  let peer_d = Client.peer_from !client_d
+  let peer_d = Client.peer_from !node_d
 end

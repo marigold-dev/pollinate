@@ -1,9 +1,12 @@
 open QCheck2.Gen
-open Pollinate
+open QCheck2
+open Pollinate.Node
+open Pollinate.Util
+open Pollinate.Peer
 open Messages
 
 module type MTest = sig
-  val peer_gen : Peer.t t
+  val peer_gen : Pollinate.Peer.t t
 
   val address_gen : Address.t t
 

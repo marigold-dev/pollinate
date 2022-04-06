@@ -1,23 +1,22 @@
 open Lwt.Infix
-open Pollinate
+open Pollinate.Node
 open Pollinate.Util
 open Commons
 open Messages
 
-module Client_tests = struct
+module Node_tests = struct
   (* Initializes two peers and has each one request the state
      of the other, returning the first element in the response of each *)
   let trade_messages () =
     let open Commons in
-    let open Messages in
-    let get = Util.Encoding.pack bin_writer_message (Request Get) in
+    let get = Encoding.pack bin_writer_message (Request Get) in
 
     let%lwt { payload = res_from_b; _ } =
-      Client.request client_a get peer_b.address in
+      Client.request node_a get peer_b.address in
     let res_from_b = Encoding.unpack bin_read_response res_from_b in
 
     let%lwt { payload = res_from_a; _ } =
-      Client.request client_b get peer_a.address in
+      Client.request node_b get peer_a.address in
     let res_from_a = Encoding.unpack bin_read_response res_from_a in
 
     let res_from_b, res_from_a =
@@ -34,12 +33,12 @@ module Client_tests = struct
       Encoding.pack bin_writer_message (Request (Insert "something")) in
 
     let%lwt { payload = res_a; _ } =
-      Client.request client_a insert_req peer_b.address in
+      Client.request node_a insert_req peer_b.address in
     let res_a = Encoding.unpack bin_read_response res_a in
 
     let get = Encoding.pack bin_writer_message (Request Get) in
     let%lwt { payload = b_state; _ } =
-      Client.request client_a get peer_b.address in
+      Client.request node_a get peer_b.address in
     let b_state = Encoding.unpack bin_read_response b_state in
 
     let res_a, b_state =
@@ -54,8 +53,7 @@ module Client_tests = struct
     let open Messages in
     let ping = Encoding.pack bin_writer_message (Request Ping) in
 
-    let%lwt { payload = pong; _ } =
-      Client.request client_a ping peer_b.address in
+    let%lwt { payload = pong; _ } = Client.request node_a ping peer_b.address in
     let pong = Encoding.unpack bin_read_response pong in
 
     let pong =
@@ -69,14 +67,14 @@ module Client_tests = struct
 end
 
 let test_trade_messages _ () =
-  Client_tests.trade_messages ()
+  Node_tests.trade_messages ()
   >|= Alcotest.(check (pair string string)) "test2 and test1" ("test2", "test1")
 
 let test_ping_pong _ () =
-  Client_tests.ping_pong () >|= Alcotest.(check string) "Ping pong" "Pong"
+  Node_tests.ping_pong () >|= Alcotest.(check string) "Ping pong" "Pong"
 
 let test_insert_value _ () =
-  Client_tests.test_insert ()
+  Node_tests.test_insert ()
   >|= Alcotest.(check (pair string string))
         "Test insert value" ("Success", "something")
 
