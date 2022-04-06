@@ -1,0 +1,6 @@
+(library
+ (name node)
+ (public_name pollinate.node)
+ (libraries bin_prot lwt lwt.unix pollinate.common)
+ (preprocess
+  (pps ppx_bin_prot lwt_ppx)))
