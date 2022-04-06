@@ -33,6 +33,7 @@ let run node router msg_handler =
       | None -> Lwt.return () in
 
     let%lwt () = Failure_detector.failure_detection node in
+    let%lwt () = Failure_detector.suspicious_detection node in
 
     let%lwt next_response = Inbox.next !node.inbox Message.Response in
     let _ = handle_response !node.request_table next_response in

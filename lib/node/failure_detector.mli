@@ -18,3 +18,5 @@ val handle_message : 'a node ref -> Message.t -> unit Lwt.t
 (** High level function, which must be run within an async thread, like:
 Lwt.async (fun () -> failure_detection t node); *)
 val failure_detection : 'a node ref -> unit Lwt.t
+
+val suspicious_detection : 'a node ref -> unit Lwt.t
