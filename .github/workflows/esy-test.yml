@@ -10,13 +10,7 @@ on:
     - cron: 0 1 * * MON
 
 jobs:
-  test:
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-
+  linux:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,7 +24,7 @@ jobs:
 
       - uses: esy/github-action@master
         with:
-          cache-key: ${{ matrix.system }}-${{ hashFiles('esy.lock/index.json') }}
+          cache-key: ubuntu-latest-${{ hashFiles('esy.lock/index.json') }}
 
       - name: Run Code formatter
         run: esy b dune build @fmt
