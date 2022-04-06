@@ -129,7 +129,12 @@ let probe_peer t node peer_to_update =
   let new_seq_no = next_seq_no t in
   let _ = send_ping_to node peer_to_update in
   match%lwt wait_ack_timeout t new_seq_no t.config.round_trip_time with
-  | Ok _ -> Lwt.return ()
+  | Ok _ ->
+    (* if we received the ack, we should override peer status to Alive *)
+    let _ = update_peer_status node peer_to_update Alive in
+    (* TODO: regarding SWIM protocol, a `peer_to_update is suspect` message must be sent
+       to every peers known by the node *)
+    Lwt.return ()
   | Error _ -> (
     let pingers =
       t.config.helpers_size
@@ -142,11 +147,8 @@ let probe_peer t node peer_to_update =
       let _ = update_peer_status node peer_to_update Alive in
       Lwt.return ()
     | Error _ ->
-      (* TODO: Implement Suspicion Mechanism.
-          This is correct in the basic SWIM protocol, but it is a very heavy penalty.
-          When there is no ACK (direct or indirect) the peer must be set to `Suspicious`.
-          See section 4.2 from https://www.cs.cornell.edu/projects/Quicksilver/public_pdfs/SWIM.pdf *)
-      let _ = update_peer_status node peer_to_update Faulty in
+      let _ = update_peer_status node peer_to_update Suspicious in
+      (* TODO: A `peer_to_update is suspect` message must be sent to every peers known by the node *)
       Lwt.return ())
 
 let failure_detection node =

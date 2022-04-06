@@ -15,6 +15,9 @@ type failure_detector_config = {
      same peer. This value must be at most a third of the protocol period,
      but it is best if it is chosen empirically. *)
   round_trip_time : int;
+  (* The amount of time a peer is suspect. After this delay,
+     the peer will be declared as Faulty and removed from the know_peers list of the node *)
+  suspicion_time : int;
   (* The size of 'failure detection subgroups'. In other words, the
      number of peers that will be asked to ping a suspicious node which
      has failed to respond with acknowledgement during the round_trip_time. *)
