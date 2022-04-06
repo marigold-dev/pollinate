@@ -1,6 +1,7 @@
 open Common
 open Common.Util
 open Types
+open Bin_prot.Common
 
 type message =
   | Ping

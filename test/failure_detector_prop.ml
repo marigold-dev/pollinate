@@ -10,14 +10,14 @@ let knuth_shuffle_size =
     (QCheck2.Gen.list peer_gen) (fun peers ->
       List.length (SUT.knuth_shuffle peers) == List.length peers)
 
-let update_peer =
-  QCheck2.Test.make ~count:1000
-    ~name:"update_neighbor_status successfully update neighbor status"
-    (triple peer_gen peer_gen peer_status_gen)
-    (fun (peer, neighbor, neighbor_status) ->
-      let _ = add_neighbor peer neighbor in
-      let () = SUT.update_peer_status peer neighbor neighbor_status in
-      neighbor.status = neighbor_status)
+(* let update_peer =
+   QCheck2.Test.make ~count:1000
+     ~name:"update_neighbor_status successfully update neighbor status"
+     (triple peer_gen peer_gen peer_status_gen)
+     (fun (peer, neighbor, neighbor_status) ->
+       let _ = add_neighbor peer neighbor in
+       let _ = SUT.update_peer_status Commons.node_a neighbor neighbor_status in
+       neighbor.status = neighbor_status) *)
 
 let pick_random_neighbors =
   QCheck2.Test.make ~count:1000
@@ -31,6 +31,7 @@ let pick_random_neighbors =
 
 let () =
   let failure_detector_prop =
-    List.map QCheck_alcotest.to_alcotest [knuth_shuffle_size; update_peer] in
+    List.map QCheck_alcotest.to_alcotest
+      [knuth_shuffle_size; pick_random_neighbors] in
   Alcotest.run "Failure detector"
     [("failure_detector.ml", failure_detector_prop)]
