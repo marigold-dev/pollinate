@@ -1,19 +1,18 @@
-
 open Messages
 
 module type MTest = sig
   open QCheck2.Gen
   open Pollinate
   val peer_gen : Peer.t t
-  
+
   val address_gen : Address.t t
-  
+
   val peer_print : Peer.t -> string
-  
+
   val request_gen : Messages.request t
-  
+
   val peer_status_gen : Peer.status t
-  
+
   val sockaddress_gen : Unix.sockaddr t
 end
 

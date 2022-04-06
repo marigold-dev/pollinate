@@ -19,5 +19,4 @@ module Messages = struct
     | Request  of request
     | Response of response
   [@@deriving bin_io, show { with_path = false }]
-  
 end

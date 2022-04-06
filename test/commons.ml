@@ -5,20 +5,20 @@ module Commons = struct
   open Messages
 
   type state = string list
-  
+
   let router msg =
     let open Messages in
     match msg.Message.category with
     | Request ->
       let[@warning "-8"] (Request r) =
-      Encoding.unpack bin_read_message msg.Message.payload in
-      { msg with payload = Encoding.pack bin_writer_request r }
-      | Response ->
-        let[@warning "-8"] (Response r) =
         Encoding.unpack bin_read_message msg.Message.payload in
-        { msg with payload = Encoding.pack bin_writer_response r }
-        | _ -> msg
-        
+      { msg with payload = Encoding.pack bin_writer_request r }
+    | Response ->
+      let[@warning "-8"] (Response r) =
+        Encoding.unpack bin_read_message msg.Message.payload in
+      { msg with payload = Encoding.pack bin_writer_response r }
+    | _ -> msg
+
   let msg_handler state request =
     let open Messages in
     let open Message in
