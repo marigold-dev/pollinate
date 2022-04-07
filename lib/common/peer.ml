@@ -7,6 +7,7 @@ type status =
 type t = {
   address : Address.t;
   mutable status : status;
+  mutable last_suspicious_status : Unix.tm option;
   neighbors : (Address.t, t) Base.Hashtbl.t;
 }
 
@@ -21,6 +22,7 @@ let from address =
   {
     address;
     status = Alive;
+    last_suspicious_status = None;
     neighbors =
       Base.Hashtbl.create ~growth_allowed:true ~size:0 (module Address);
   }

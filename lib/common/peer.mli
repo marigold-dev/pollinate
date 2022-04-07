@@ -17,6 +17,7 @@ and removals are all approximately constant-time. *)
 type t = {
   address : Address.t;
   mutable status : status;
+  mutable last_suspicious_status : Unix.tm option;
   neighbors : (Address.t, t) Base.Hashtbl.t;
 }
 

@@ -62,18 +62,26 @@ let rec pick_random_neighbors neighbors number_of_neighbors =
     else
       elem :: pick_random_neighbors neighbors (number_of_neighbors - 1)
 
-(* Updates a peer in the node's peer list with
+(** Updates a peer in the node's peer list with
    the given status. Returns a result that contains
    unit if the peer is found in the node's list, and
    a string stating that a peer with the given address
    could not be found otherwise. *)
 let update_peer_status node peer status =
   let open Peer in
+  let open Unix in
   let neighbor = Base.Hashtbl.find !node.peers peer.address in
   match neighbor with
-  | Some neighbor ->
+  | Some neighbor -> (
     neighbor.status <- status;
-    Result.Ok ()
+    match status with
+    | Suspicious ->
+      let time = gmtime @@ time () in
+      neighbor.last_suspicious_status <- Some time;
+      Result.Ok ()
+    | _ ->
+      neighbor.last_suspicious_status <- None;
+      Result.Ok ())
   | None ->
     Result.Error
       (Printf.sprintf "Failed to find peer with address %s:%d in node peer list"
@@ -178,29 +186,20 @@ end)
 
 let suspicious_detection node =
   let open Peer in
+  let open Unix in
   let t = !node.failure_detector in
+  let%lwt () = Lwt_unix.sleep @@ Float.of_int t.config.suspicion_time in
   let suspicious_peers =
     List.filter
       (fun p -> p.status = Peer.Suspicious)
-      (Base.Hashtbl.data !node.peers) in
-  match List.length suspicious_peers with
-  | 0 -> Lwt.return ()
-  | _ ->
-    let _ = Lwt_unix.sleep @@ Float.of_int t.config.suspicion_time in
-    let suspicious_peers' =
-      List.filter
-        (fun p -> p.status = Peer.Suspicious)
-        (Base.Hashtbl.data !node.peers) in
-    let s1 = PeerSet.empty in
-    let s1 = List.fold_right PeerSet.add suspicious_peers s1 in
-    let s2 = PeerSet.empty in
-    let s2 = List.fold_right PeerSet.add suspicious_peers' s2 in
-    let inter = PeerSet.inter s1 s2 in
-    let _ =
-      PeerSet.iter
-        (fun (p : Peer.t) -> Base.Hashtbl.remove !node.peers p.address)
-        inter in
-    (* TODO: this is where Faulty status is used
-    We should then send a `peer_a is Faulty` message to every known_peers
-    and each of these peers must remove it from its inner known_peers list *)
-    Lwt.return ()
+      (Base.Hashtbl.data !node.peers)
+    |> List.filter (fun p ->
+           p.last_suspicious_status < Some (gmtime @@ time ())) in
+  let _ =
+    List.iter
+      (fun (p : Peer.t) -> Base.Hashtbl.remove !node.peers p.address)
+      suspicious_peers in
+  (* TODO: this is where Faulty status is used
+     We should then send a `peer_a is Faulty` message to every known_peers
+     and each of these peers must remove it from its inner known_peers list *)
+  Lwt.return ()
