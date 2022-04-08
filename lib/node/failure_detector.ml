@@ -69,14 +69,13 @@ let rec pick_random_neighbors neighbors number_of_neighbors =
    could not be found otherwise. *)
 let update_peer_status node peer status =
   let open Peer in
-  let open Unix in
   let neighbor = Base.Hashtbl.find !node.peers peer.address in
   match neighbor with
   | Some neighbor -> (
     neighbor.status <- status;
     match status with
     | Suspicious ->
-      let time = gmtime @@ time () in
+      let time = Unix.gmtime @@ Unix.time () in
       neighbor.last_suspicious_status <- Some time;
       Result.Ok ()
     | _ ->
@@ -179,22 +178,19 @@ let failure_detection node =
         ] in
     Lwt.return ()
 
-module PeerSet = Set.Make (struct
-  let compare = Stdlib.compare
-  type t = Peer.t
-end)
-
 let suspicious_detection node =
   let open Peer in
-  let open Unix in
   let t = !node.failure_detector in
   let%lwt () = Lwt_unix.sleep @@ Float.of_int t.config.suspicion_time in
+  let timeout =
+    Float.of_int t.config.suspicion_time
+    |> Float.add (Unix.time ())
+    |> Unix.gmtime in
   let suspicious_peers =
     List.filter
       (fun p -> p.status = Peer.Suspicious)
       (Base.Hashtbl.data !node.peers)
-    |> List.filter (fun p ->
-           p.last_suspicious_status < Some (gmtime @@ time ())) in
+    |> List.filter (fun p -> p.last_suspicious_status < Some timeout) in
   let _ =
     List.iter
       (fun (p : Peer.t) -> Base.Hashtbl.remove !node.peers p.address)
