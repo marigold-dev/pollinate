@@ -1,4 +1,4 @@
-name: OPAM build
+name: OPAM OCaml 5 build & tests
 
 on:
   pull_request:
@@ -17,10 +17,6 @@ jobs:
         os:
           - macos-latest
           - ubuntu-latest
-        # Just adding lower and upper bound what we want to support
-        ocaml-compiler:
-          - 4.13.x
-          - 4.08.x
 
     runs-on: ${{ matrix.os }}
 
@@ -28,10 +24,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Use OCaml ${{ matrix.ocaml-compiler }}
+      - name: Use OCaml 5
         uses: ocaml/setup-ocaml@v2
-        with:
-          ocaml-compiler: ${{ matrix.ocaml-compiler }}
+
+      - run: opam repo add beta https://github.com/ocaml/ocaml-beta-repository.git
+
+      - run: opam switch reinstall . --no-install --packages ocaml.5.00.0
 
       - run: opam install . --deps-only --with-test
 
@@ -41,11 +39,11 @@ jobs:
 
       # We only want to run the lints once, since Linux is the cheapest we run it there
       - name: Lint doc
-        if: ${{ matrix.os == 'ubuntu-latest' && matrix.ocaml-compiler == '4.13.x' }}
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         uses: ocaml/setup-ocaml/lint-doc@v2
 
       - name: Lint fmt
-        if: ${{ matrix.os == 'ubuntu-latest' && matrix.ocaml-compiler == '4.13.x' }}
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         uses: ocaml/setup-ocaml/lint-fmt@v2
 
       # Claims that some dependencies should be test dependencies when they are used in the lib
