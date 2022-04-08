@@ -1,4 +1,8 @@
-(** Utils function shared by the different tests modules *)
+(** A peer must handle two kind of messages:
+  - Request, which are messages to send
+  - Response, which are response from the previous request they sent
+  For example, if node_a sends a `Request Ping` to node_b,
+    node_b will send a `Response Pong` message to node_a *)
 module Messages = struct
   open Bin_prot.Std
 
