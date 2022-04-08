@@ -1,5 +1,5 @@
 open QCheck2.Gen
-open Generator.Test
+open Generator
 
 module SUT = Pollinate.Address
 

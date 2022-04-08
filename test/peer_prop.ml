@@ -1,4 +1,4 @@
-open Generator.Test
+open Generator
 open QCheck2.Gen
 
 module SUT = Pollinate.Peer
@@ -7,6 +7,15 @@ let add_peer =
   QCheck2.Test.make ~count:1000
     ~name:"add_peer on empty neighbors leads to size of 1"
     (pair peer_gen peer_gen) (fun (peer, neighbor) ->
+      let _ = SUT.add_neighbor peer neighbor in
+      Base.Hashtbl.length peer.neighbors == 1)
+
+let add_same_peer =
+  QCheck2.Test.make ~count:1000
+    ~name:"add_peer the same peer more than once, only add it once"
+    (pair peer_gen peer_gen) (fun (peer, neighbor) ->
+      let _ = SUT.add_neighbor peer neighbor in
+      let _ = SUT.add_neighbor peer neighbor in
       let _ = SUT.add_neighbor peer neighbor in
       Base.Hashtbl.length peer.neighbors == 1)
 
@@ -46,6 +55,12 @@ let get_neighbor =
 let () =
   let failure_detector_prop =
     List.map QCheck_alcotest.to_alcotest
-      [add_peer; add_peers; from; get_neighbor_empty_hashtbl; get_neighbor]
-  in
+      [
+        add_peer;
+        add_same_peer;
+        add_peers;
+        from;
+        get_neighbor_empty_hashtbl;
+        get_neighbor;
+      ] in
   Alcotest.run "Peer tests" [("peer.ml", failure_detector_prop)]

@@ -10,6 +10,12 @@ type t = {
   neighbors : (Address.t, t) Base.Hashtbl.t;
 }
 
+let peer_print peer =
+  "Peer address: "
+  ^ Address.show peer.address
+  ^ " Peer status: "
+  ^ show_status peer.status
+
 let add_neighbor peer peer_to_add =
   Base.Hashtbl.add peer.neighbors ~key:peer_to_add.address ~data:peer_to_add
 

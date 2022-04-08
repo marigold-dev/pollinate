@@ -1,4 +1,4 @@
-open Generator.Test
+open Generator
 open Messages
 
 module SUT = Pollinate.Util.Encoding
