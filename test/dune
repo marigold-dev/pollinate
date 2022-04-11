@@ -3,7 +3,7 @@
  (modules
   node_tests
   messages
-  generator
+  generators
   peer_prop
   address_prop
   commons

@@ -20,9 +20,6 @@ type t = {
   neighbors : (Address.t, t) Base.Hashtbl.t;
 }
 
-(** Prints the address and the status of the provided peer *)
-val peer_print : t -> string
-
 (** Constructs a Peer.t from an Address.t. This
 is the recommended way to create a Peer "from scratch". *)
 val from : Address.t -> t

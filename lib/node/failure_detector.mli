@@ -1,7 +1,7 @@
 open Types
 open Common
 
-(* Messages sent by the failure detector protocol *)
+(** Messages sent by the failure detector protocol *)
 type message =
   | Ping
   | Acknowledge

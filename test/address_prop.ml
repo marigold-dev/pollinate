@@ -1,5 +1,4 @@
 open QCheck2.Gen
-open Generator
 
 module SUT = Pollinate.Address
 
@@ -12,8 +11,8 @@ let create =
 
 let from_sockaddr =
   QCheck2.Test.make ~count:1000
-    ~name:"from_sockaddr from any sockaddress is successful" sockaddress_gen
-    (fun sockaddress ->
+    ~name:"from_sockaddr from any sockaddress is successful"
+    Generators.sockaddress_gen (fun sockaddress ->
       let addr = SUT.from_sockaddr sockaddress in
       match sockaddress with
       | Unix.ADDR_INET (address, port) ->
@@ -22,7 +21,7 @@ let from_sockaddr =
 
 let to_sockaddr =
   QCheck2.Test.make ~count:1000
-    ~name:"to_sockaddr from any address is successful" address_gen
+    ~name:"to_sockaddr from any address is successful" Generators.address_gen
     (fun address ->
       let addr = SUT.to_sockaddr address in
       match addr with

@@ -1,11 +1,10 @@
-open Generator
 open Messages
 
 module SUT = Pollinate.Util.Encoding
 
 let pack_unpack =
   QCheck2.Test.make ~count:1000 ~name:"unpack . pack returns the original value"
-    request_gen (fun random_request ->
+    Generators.request_gen (fun random_request ->
       let open Messages in
       random_request
       = SUT.unpack bin_read_request
