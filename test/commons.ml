@@ -1,30 +1,13 @@
 (** Utils function shared by the different tests modules *)
 module Commons = struct
-  open Bin_prot.Std
   open Pollinate.Node
   open Pollinate.Util
-
-  type request =
-    | Ping
-    | Get
-    | Insert of string
-  [@@deriving bin_io, show { with_path = false }]
-
-  type response =
-    | Pong
-    | List    of string list
-    | Success of string
-    | Error   of string
-  [@@deriving bin_io, show { with_path = false }]
-
-  type message =
-    | Request  of request
-    | Response of response
-  [@@deriving bin_io, show { with_path = false }]
+  open Messages
 
   type state = string list
 
   let router msg =
+    let open Messages in
     match msg.Message.category with
     | Request ->
       let[@warning "-8"] (Request r) =
@@ -37,6 +20,7 @@ module Commons = struct
     | _ -> msg
 
   let msg_handler state request =
+    let open Messages in
     let open Message in
     let request = Encoding.unpack bin_read_request request.payload in
     let response =

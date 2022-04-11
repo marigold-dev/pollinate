@@ -7,6 +7,8 @@
     "@opam/ocaml-lsp-server": "*",
     "@opam/ocamlformat": "0.21.0",
     "@opam/alcotest-lwt": "*",
+    "@opam/qcheck": "0.18.1",
+    "@opam/qcheck-alcotest": "0.18.1",
     "@opam/ocaml-print-intf": "*"
   },
   "dependencies": {
@@ -19,6 +21,7 @@
     "@opam/ppx_deriving": "5.2.1",
     "@opam/ppx_compare": "v0.14.0",
     "@opam/ppx_hash": "v0.14.0",
-    "@opam/sexplib": "v0.14.0"
+    "@opam/sexplib": "v0.14.0",
+    "@opam/ppx_inline_test": "v0.14.1"
   }
 }
