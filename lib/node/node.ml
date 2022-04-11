@@ -3,6 +3,7 @@ open Types
 
 module Message = Message
 module Client = Client
+module Failure_detector = Failure_detector
 
 type 'a t = 'a Types.node
 
