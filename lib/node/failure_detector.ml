@@ -74,7 +74,8 @@ let update_peer_status node peer status =
   | Some neighbor when status = Suspicious ->
     neighbor.status <- status;
     Result.Ok (neighbor.last_suspicious_status <- Some (Unix.time ()))
-  | Some neighbor -> neighbor.status <- status;
+  | Some neighbor ->
+    neighbor.status <- status;
     Result.Ok (neighbor.last_suspicious_status <- None)
   | None ->
     Result.Error
@@ -176,9 +177,9 @@ let failure_detection node =
 let suspicious_detection node =
   let open Peer in
   let t = !node.failure_detector in
-  let%lwt () = Lwt_unix.sleep @@ Float.of_int t.config.suspicion_time in
-  let timeout : float =
-    Float.of_int t.config.suspicion_time |> Float.add (Unix.time ()) in
+  (* let () = Unix.sleep t.config.suspicion_time in *)
+  let timeout =
+    Float.add (Unix.time ()) (Float.of_int t.config.suspicion_time) in
   let suspicious_peers =
     List.filter
       (fun p -> p.status = Peer.Suspicious)
