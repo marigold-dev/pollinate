@@ -71,15 +71,11 @@ let update_peer_status node peer status =
   let open Peer in
   let neighbor = Base.Hashtbl.find !node.peers peer.address in
   match neighbor with
-  | Some neighbor -> (
+  | Some neighbor when status = Suspicious ->
     neighbor.status <- status;
-    match status with
-    | Suspicious ->
-      neighbor.last_suspicious_status <- Some (Unix.time ());
-      Result.Ok ()
-    | _ ->
-      neighbor.last_suspicious_status <- None;
-      Result.Ok ())
+    Result.Ok (neighbor.last_suspicious_status <- Some (Unix.time ()))
+  | Some neighbor -> neighbor.status <- status;
+    Result.Ok (neighbor.last_suspicious_status <- None)
   | None ->
     Result.Error
       (Printf.sprintf "Failed to find peer with address %s:%d in node peer list"

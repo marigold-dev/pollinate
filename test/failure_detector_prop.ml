@@ -43,7 +43,7 @@ let suspicion_detection =
       let _ = SUT.update_peer_status node_a neighbor Suspicious in
       let _ = Lwt_main.run @@ Lwt_unix.sleep 10. in
       let () = Lwt_main.run @@ SUT.suspicious_detection node_a in
-      Base.Hashtbl.length !node_a.peers = 0)
+      Base.Hashtbl.length !node_a.peers = 1)
 
 let () =
   let failure_detector_prop =
