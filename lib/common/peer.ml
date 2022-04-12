@@ -7,7 +7,7 @@ type status =
 type t = {
   address : Address.t;
   mutable status : status;
-  mutable last_suspicious_status : Unix.tm option;
+  mutable last_suspicious_status : float option;
   neighbors : (Address.t, t) Base.Hashtbl.t;
 }
 

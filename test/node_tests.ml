@@ -5,10 +5,24 @@ open Commons
 open Messages
 
 module Node_tests = struct
+  (* Initializes two nodes and the related two peers *)
+  let node_a =
+    Lwt_main.run
+      (Node.init ~router:Commons.router ~state:["test1"]
+         ~msg_handler:Commons.msg_handler ("127.0.0.1", 3000))
+
+  let peer_a = Client.peer_from !node_a
+
+  let node_b =
+    Lwt_main.run
+      (Node.init ~router:Commons.router ~state:["test2"]
+         ~msg_handler:Commons.msg_handler ("127.0.0.1", 3001))
+
+  let peer_b = Client.peer_from !node_b
+
   (* Initializes two peers and has each one request the state
      of the other, returning the first element in the response of each *)
   let trade_messages () =
-    let open Commons in
     let open Messages in
     let get = Encoding.pack bin_writer_message (Request Get) in
 
@@ -28,7 +42,6 @@ module Node_tests = struct
     Lwt.return (res_from_b, res_from_a)
 
   let test_insert () =
-    let open Commons in
     let open Messages in
     let insert_req =
       Encoding.pack bin_writer_message (Request (Insert "something")) in
@@ -50,7 +63,6 @@ module Node_tests = struct
     Lwt.return (res_a, b_state)
 
   let ping_pong () =
-    let open Commons in
     let open Messages in
     let ping = Encoding.pack bin_writer_message (Request Ping) in
 
