@@ -72,5 +72,4 @@ let request node request recipient =
   Lwt_condition.wait condition_var
 
 let broadcast_request node req recipients =
-  let _ = List.map (request node req) recipients in
-  ()
+  List.map (request node req) recipients
