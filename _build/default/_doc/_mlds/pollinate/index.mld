@@ -1,0 +1,7 @@
+{0 pollinate index}
+{1 Library pollinate.common}
+The entry point of this library is the module:
+{!module-Common}.
+{1 Library pollinate.node}
+The entry point of this library is the module:
+{!module-Node}.

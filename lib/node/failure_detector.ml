@@ -28,7 +28,7 @@ let wait_ack t sequence_number =
 let wait_ack_timeout t sequence_number timeout =
   Lwt.pick
     [
-      (let _ = Lwt_unix.sleep (Float.of_int timeout) in
+      (let _ = Lwt_unix.sleep @@ Float.of_int timeout in
        Lwt.return @@ Result.Error "Timeout reached");
       (let _ = wait_ack t sequence_number in
        Lwt.return @@ Result.Ok "Successfully received acknowledge");
@@ -63,17 +63,20 @@ let rec pick_random_neighbors neighbors number_of_neighbors =
       elem :: pick_random_neighbors neighbors (number_of_neighbors - 1)
 
 (** Updates a peer in the node's peer list with
-the given status. Returns a result that contains
-unit if the peer is found in the node's list, and
-a string stating that a peer with the given address
-could not be found otherwise. *)
+   the given status. Returns a result that contains
+   unit if the peer is found in the node's list, and
+   a string stating that a peer with the given address
+   could not be found otherwise. *)
 let update_peer_status node peer status =
   let open Peer in
   let neighbor = Base.Hashtbl.find !node.peers peer.address in
   match neighbor with
+  | Some neighbor when status = Suspicious ->
+    neighbor.status <- status;
+    Result.Ok (neighbor.last_suspicious_status <- Some (Unix.gettimeofday ()))
   | Some neighbor ->
     neighbor.status <- status;
-    Result.Ok ()
+    Result.Ok (neighbor.last_suspicious_status <- None)
   | None ->
     Result.Error
       (Printf.sprintf "Failed to find peer with address %s:%d in node peer list"
@@ -129,7 +132,12 @@ let probe_peer t node peer_to_update =
   let new_seq_no = next_seq_no t in
   let _ = send_ping_to node peer_to_update in
   match%lwt wait_ack_timeout t new_seq_no t.config.round_trip_time with
-  | Ok _ -> Lwt.return ()
+  | Ok _ ->
+    (* if we received the ack, we should override peer status to Alive *)
+    let _ = update_peer_status node peer_to_update Alive in
+    (* TODO: regarding SWIM protocol, a `peer_to_update is suspect` message must be sent
+       to every peers known by the node *)
+    Lwt.return ()
   | Error _ -> (
     let pingers =
       t.config.helpers_size
@@ -142,11 +150,8 @@ let probe_peer t node peer_to_update =
       let _ = update_peer_status node peer_to_update Alive in
       Lwt.return ()
     | Error _ ->
-      (* TODO: Implement Suspicion Mechanism.
-          This is correct in the basic SWIM protocol, but it is a very heavy penalty.
-          When there is no ACK (direct or indirect) the peer must be set to `Suspicious`.
-          See section 4.2 from https://www.cs.cornell.edu/projects/Quicksilver/public_pdfs/SWIM.pdf *)
-      let _ = update_peer_status node peer_to_update Faulty in
+      let _ = update_peer_status node peer_to_update Suspicious in
+      (* TODO: A `peer_to_update is suspect` message must be sent to every peers known by the node *)
       Lwt.return ())
 
 let failure_detection node =
@@ -168,3 +173,26 @@ let failure_detection node =
           Lwt_unix.sleep @@ Float.of_int t.config.protocol_period;
         ] in
     Lwt.return ()
+
+let suspicious_detection node =
+  let open Peer in
+  let t = !node.failure_detector in
+  let timeout =
+    Float.sub (Unix.gettimeofday ()) (Float.of_int t.config.suspicion_time)
+  in
+  let suspicious_peers =
+    List.filter
+      (fun p -> p.status = Peer.Suspicious)
+      (Base.Hashtbl.data !node.peers)
+    |> List.filter (fun p ->
+           match p.last_suspicious_status with
+           | Some time -> time < timeout
+           | None -> false) in
+  let _ =
+    List.iter
+      (fun (p : Peer.t) -> Base.Hashtbl.remove !node.peers p.address)
+      suspicious_peers in
+  (* TODO: this is where Faulty status is used
+     We should then send a `peer_a is Faulty` message to every known_peers
+     and each of these peers must remove it from its inner known_peers list *)
+  Lwt.return ()

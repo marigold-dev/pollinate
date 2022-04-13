@@ -5,6 +5,7 @@ type failure_detector_config = {
   protocol_period : int;
   (* TODO: Implement automatic configuration/empirical determination of an ideal round-trip time *)
   round_trip_time : int;
+  suspicion_time : int;
   helpers_size : int;
 }
 

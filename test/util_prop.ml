@@ -12,4 +12,4 @@ let pack_unpack =
 
 let () =
   let pack_unpack_prop = List.map QCheck_alcotest.to_alcotest [pack_unpack] in
-  Alcotest.run "my test" [("suite", pack_unpack_prop)]
+  Alcotest.run "Messages" [("common.util.ml", pack_unpack_prop)]

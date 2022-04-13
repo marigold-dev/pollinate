@@ -1,5 +1,11 @@
 (tests
- (names node_tests peer_prop address_prop util_prop failure_detector_prop)
+ (names
+  node_tests
+  peer_prop
+  address_prop
+  util_prop
+  failure_detector_prop
+  failure_detector_tests)
  (modules
   node_tests
   messages
@@ -8,7 +14,8 @@
   address_prop
   commons
   util_prop
-  failure_detector_prop)
+  failure_detector_prop
+  failure_detector_tests)
  (libraries pollinate bin_prot lwt alcotest-lwt qcheck-core qcheck-alcotest)
  (preprocess
   (pps ppx_bin_prot lwt_ppx ppx_deriving.show)))
