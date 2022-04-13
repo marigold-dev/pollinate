@@ -9,6 +9,9 @@ val address_of : 'a node -> Address.t
 (** Constructs a Peer.t from a node *)
 val peer_from : 'a node -> Peer.t
 
+(** Add a peer to the know peers *)
+val add_peer : 'a node -> Peer.t -> [`Duplicate | `Ok]
+
 (** `create_request node recipient payload` creates a Message.t of the Request category
 addressed to `recipient` containing `payload`. *)
 val create_request : 'a node ref -> Address.t -> bytes -> Message.t Lwt.t

@@ -28,7 +28,12 @@ let init ~state ?(router = fun m -> m) ~msg_handler ?(init_peers = [])
         inbox = Inbox.create ();
         failure_detector =
           Failure_detector.make
-            { protocol_period = 9; round_trip_time = 3; helpers_size = 3 };
+            {
+              protocol_period = 9;
+              round_trip_time = 3;
+              suspicion_time = 9;
+              helpers_size = 3;
+            };
         peers;
       } in
   Server.run node router msg_handler;

@@ -4,6 +4,11 @@ open Commons
 
 module SUT = Pollinate.Node.Failure_detector
 
+let node_a =
+  Lwt_main.run
+    (Node.init ~router:Commons.router ~state:["test1"]
+       ~msg_handler:Commons.msg_handler ("127.0.0.1", 3002))
+
 let knuth_shuffle_size =
   QCheck2.Test.make ~count:1000
     ~name:"Knuth_shuffle does not change the size of the list"
@@ -15,10 +20,8 @@ let update_peer =
     ~name:"update_neighbor_status successfully update neighbor status"
     (pair Generators.peer_gen Generators.peer_status_gen)
     (fun (neighbor, neighbor_status) ->
-      let _ =
-        add_neighbor (Pollinate.Node.Client.peer_from !Commons.node_a) neighbor
-      in
-      let _ = SUT.update_peer_status Commons.node_a neighbor neighbor_status in
+      let _ = add_neighbor (Pollinate.Node.Client.peer_from !node_a) neighbor in
+      let _ = SUT.update_peer_status node_a neighbor neighbor_status in
       neighbor.status = neighbor_status)
 
 let pick_random_neighbors =
