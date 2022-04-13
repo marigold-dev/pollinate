@@ -33,5 +33,4 @@ val request : 'a node ref -> bytes -> Address.t -> Message.t Lwt.t
 
 (** Broadcasts a request containing the given payload to a list
 of recipients and collects the responses in a list of `Message.t Lwt.t`. *)
-val broadcast_request :
-  'a node ref -> bytes -> Address.t list -> Message.t Lwt.t list
+val broadcast_request : 'a node ref -> bytes -> Address.t list -> unit

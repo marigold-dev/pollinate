@@ -35,18 +35,29 @@ let run node router msg_handler =
     let%lwt () = Failure_detector.failure_detection node in
 
     let%lwt next_response = Inbox.next !node.inbox Message.Response in
-    let _ = handle_response !node.request_table next_response in
+    let%lwt _ =
+      match next_response with
+      | Some response ->
+        if response.recipient = !node.address then
+          let _ = handle_response !node.request_table next_response in
+          Lwt.return ()
+        else
+          Client.send_to node response
+      | None -> Lwt.return () in
 
     let%lwt request = Inbox.next !node.inbox Message.Request in
     let%lwt () =
       match request with
       | Some request ->
-        let%lwt state = Mutex.lock !node.state in
-        let response =
-          request |> msg_handler state |> Client.create_response node request
-        in
-        let%lwt () = Client.send_to node response in
-        Lwt.return (Mutex.unlock !node.state)
+        if request.recipient = !node.address then
+          let%lwt state = Mutex.lock !node.state in
+          let response =
+            request |> msg_handler state |> Client.create_response node request
+          in
+          let%lwt () = Client.send_to node response in
+          Lwt.return (Mutex.unlock !node.state)
+        else
+          Client.send_to node request
       | None -> Lwt.return () in
 
     server () in
