@@ -9,7 +9,7 @@ type message =
   | Alive       of Address.t
   | Suspicion   of Address.t
   | Confirm     of Address.t
-[@@deriving bin_io]
+[@@deriving bin_io, show { with_path = false }, eq]
 
 let make config =
   { config; acknowledges = Base.Hashtbl.Poly.create (); sequence_number = 0 }

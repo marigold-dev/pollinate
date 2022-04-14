@@ -9,7 +9,7 @@ type message =
   | Alive       of Address.t
   | Suspicion   of Address.t
   | Confirm     of Address.t
-[@@deriving bin_io]
+[@@deriving bin_io, show { with_path = false }, eq]
 
 (** Initializes the failure detection component
 with a default state and given config *)
@@ -36,5 +36,7 @@ val update_peer_status :
   Common.Peer.t ->
   Common.Peer.status ->
   (unit, string) result
+
+val send_ping_to : 'a node ref -> Peer.t -> unit Lwt.t
 
 (**/**)
