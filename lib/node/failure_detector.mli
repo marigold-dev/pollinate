@@ -8,7 +8,7 @@ type message =
   | PingRequest of Address.t
   | Alive       of Address.t
   | Suspicion   of Address.t
-  | Faulty      of Address.t
+  | Confirm     of Address.t
 [@@deriving bin_io]
 
 (** Initializes the failure detection component

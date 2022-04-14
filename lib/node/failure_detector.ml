@@ -8,7 +8,7 @@ type message =
   | PingRequest of Address.t
   | Alive       of Address.t
   | Suspicion   of Address.t
-  | Faulty      of Address.t
+  | Confirm     of Address.t
 [@@deriving bin_io]
 
 let make config =
@@ -148,7 +148,7 @@ let handle_message node message =
       Lwt.return ()
     | None -> Lwt.return ()
   end
-  | Faulty addr ->
+  | Confirm addr ->
     let _ = Base.Hashtbl.remove !node.peers addr in
     Lwt.return ()
 
@@ -219,9 +219,6 @@ let suspicious_detection node =
       suspicious_peers in
   let _ =
     List.map
-      (fun p -> broadcast_message (Suspicion p.address) node)
+      (fun p -> broadcast_message (Confirm p.address) node)
       suspicious_peers in
-  (* TODO: this is where Faulty status is used
-     We should then send a `peer_a is Faulty` message to every known_peers
-     and each of these peers must remove it from its inner known_peers list *)
   Lwt.return ()
