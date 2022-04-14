@@ -8,7 +8,12 @@ let address_gen =
 let peer_gen =
   let open Peer in
   address_gen >|= fun address ->
-  { address; status = Alive; neighbors = Base.Hashtbl.Poly.create () }
+  {
+    address;
+    status = Alive;
+    neighbors = Base.Hashtbl.Poly.create ();
+    last_suspicious_status = None;
+  }
 
 let request_gen =
   let open Messages in

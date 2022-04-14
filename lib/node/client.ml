@@ -6,7 +6,16 @@ open Types
 let address_of { address; _ } = address
 
 let peer_from { address; peers; _ } =
-  Peer.{ address; status = Alive; neighbors = peers }
+  Peer.
+    {
+      address;
+      status = Alive;
+      last_suspicious_status = None;
+      neighbors = peers;
+    }
+
+let add_peer node (peer : Peer.t) =
+  Base.Hashtbl.add node.peers ~key:peer.address ~data:peer
 
 let create_request node recipient payload =
   Mutex.with_lock !node.current_request_id (fun id ->
