@@ -6,6 +6,9 @@ type message =
   | Ping
   | Acknowledge
   | PingRequest of Address.t
+  | Alive       of Address.t
+  | Suspicion   of Address.t
+  | Faulty      of Address.t
 [@@deriving bin_io]
 
 (** Initializes the failure detection component

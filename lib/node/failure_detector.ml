@@ -6,6 +6,9 @@ type message =
   | Ping
   | Acknowledge
   | PingRequest of Address.t
+  | Alive       of Address.t
+  | Suspicion   of Address.t
+  | Faulty      of Address.t
 [@@deriving bin_io]
 
 let make config =
@@ -103,6 +106,11 @@ let send_acknowledge_to node peer = send_message Acknowledge node peer
 let send_ping_request_to node (recipient : Peer.t) =
   send_message (PingRequest recipient.address) node recipient
 
+let broadcast_message message node =
+  List.map
+    (fun p -> send_message message node p)
+    (Base.Hashtbl.data !node.peers)
+
 let handle_message node message =
   let open Message in
   let peer = Peer.from message.sender in
@@ -119,12 +127,30 @@ let handle_message node message =
       match%lwt wait_ack_timeout t new_seq_no t.config.protocol_period with
       | Ok _ -> Lwt.return ()
       | Error _ -> send_acknowledge_to node peer))
-  | Acknowledge ->
-  match Base.Hashtbl.find t.acknowledges t.sequence_number with
-  | Some cond ->
-    Lwt_condition.broadcast cond ();
+  | Acknowledge -> begin
+    match Base.Hashtbl.find t.acknowledges t.sequence_number with
+    | Some cond ->
+      Lwt_condition.broadcast cond ();
+      Lwt.return ()
+    | None -> Lwt.return ()
+  end
+  | Alive addr -> begin
+    match Base.Hashtbl.find !node.peers addr with
+    | Some peer ->
+      let _ = update_peer_status node peer Alive in
+      Lwt.return ()
+    | None -> Lwt.return ()
+  end
+  | Suspicion addr -> begin
+    match Base.Hashtbl.find !node.peers addr with
+    | Some peer ->
+      let _ = update_peer_status node peer Suspicious in
+      Lwt.return ()
+    | None -> Lwt.return ()
+  end
+  | Faulty addr ->
+    let _ = Base.Hashtbl.remove !node.peers addr in
     Lwt.return ()
-  | None -> Lwt.return ()
 
 (** This function will be called by failure_detection 
 at each round of the protocol, and update the peers *)
@@ -135,8 +161,7 @@ let probe_peer t node peer_to_update =
   | Ok _ ->
     (* if we received the ack, we should override peer status to Alive *)
     let _ = update_peer_status node peer_to_update Alive in
-    (* TODO: regarding SWIM protocol, a `peer_to_update is suspect` message must be sent
-       to every peers known by the node *)
+    let _ = broadcast_message (Alive peer_to_update.address) node in
     Lwt.return ()
   | Error _ -> (
     let pingers =
@@ -151,7 +176,7 @@ let probe_peer t node peer_to_update =
       Lwt.return ()
     | Error _ ->
       let _ = update_peer_status node peer_to_update Suspicious in
-      (* TODO: A `peer_to_update is suspect` message must be sent to every peers known by the node *)
+      let _ = broadcast_message (Suspicion peer_to_update.address) node in
       Lwt.return ())
 
 let failure_detection node =
@@ -191,6 +216,10 @@ let suspicious_detection node =
   let _ =
     List.iter
       (fun (p : Peer.t) -> Base.Hashtbl.remove !node.peers p.address)
+      suspicious_peers in
+  let _ =
+    List.map
+      (fun p -> broadcast_message (Suspicion p.address) node)
       suspicious_peers in
   (* TODO: this is where Faulty status is used
      We should then send a `peer_a is Faulty` message to every known_peers
