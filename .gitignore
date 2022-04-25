@@ -3,7 +3,7 @@ _esy
 bin
 
 # Ignore everything within _build folder
-# Except the _doc whitch contains the generated doc
+# Except the _doc which contains the generated doc
 _build/*
 !_build/default
 _build/default/*
