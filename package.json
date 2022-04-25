@@ -22,6 +22,7 @@
     "@opam/ppx_compare": "v0.14.0",
     "@opam/ppx_hash": "v0.14.0",
     "@opam/sexplib": "v0.14.0",
-    "@opam/ppx_inline_test": "v0.14.1"
+    "@opam/ppx_inline_test": "v0.14.1",
+    "@opam/odoc": "2.1.0"
   }
 }
