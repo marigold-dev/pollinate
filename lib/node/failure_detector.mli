@@ -1,3 +1,7 @@
+(** Implementation of the {{:https://www.cs.cornell.edu/projects/Quicksilver/public_pdfs/SWIM.pdf} SWIM protocol.}
+  - failure_detection: which goal is to calculate if a know peer is Alive or Suspicious, then disseminate the new status
+  - suspicious_detection: which goal is to handle the Suspicious peers, and flag them as Faulty if timeout has expired, then disseminate the new status *)
+
 open Types
 open Common
 

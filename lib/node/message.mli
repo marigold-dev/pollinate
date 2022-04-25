@@ -2,6 +2,7 @@
 responses, or protocol-specific messages. For consumer use
 only when implementing a routing function for the
 node. *)
+
 open Common
 
 (** Messages are requests or responses,

@@ -1,9 +1,15 @@
 (** Defines utilities for working with payloads
 that are or need to be serialized via Bin_prot *)
 
+(**/**)
+
 val ( let* ) : 'a option -> ('a -> 'b option) -> 'b option
 
+(**/**)
+
 module Encoding : sig
+  (** Defines utilities to properly encode or decode a message *)
+
   (** The int value of the buffer size *)
   val size_header_length : int
 
@@ -26,8 +32,9 @@ integer-representations of each byte in the input bytes *)
   val str_dump : bytes -> string
 end
 
-(** Defines utilities for working with UDP sockets *)
 module Net : sig
+  (** Defines utilities for working with UDP sockets *)
+
   (** Creates and binds a socket to localhost:<port> where
   port is the lone argument to this function *)
   val create_socket : int -> Lwt_unix.file_descr Lwt.t
