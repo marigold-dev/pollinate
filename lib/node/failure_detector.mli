@@ -16,11 +16,11 @@ val make : failure_detector_config -> failure_detector
 val handle_message : 'a node ref -> Message.t -> unit Lwt.t
 
 (** Responsible for the calculation of the status of each node *)
-val failure_detection : 'a node ref -> unit Lwt.t
+val suspicion_detection : 'a node ref -> unit Lwt.t
 
 (** If a peer is suspicious for more that failure_detector_config.suspicion_time
  it needs to be deleted from the list of knowns peers *)
-val suspicious_detection : 'a node ref -> unit Lwt.t
+val failure_detection : 'a node ref -> unit Lwt.t
 
 (**/**)
 
