@@ -1,14 +1,7 @@
 _esy
 .vscode
 bin
-
-# Ignore everything within _build folder
-# Except the _doc which contains the generated doc
-_build/*
-!_build/default
-_build/default/*
-_build/default/_doc/*
-!_build/default/_doc/*
+_build
 
 # nix
 .direnv

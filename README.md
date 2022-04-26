@@ -1,6 +1,7 @@
 # Pollinate
 
 A platform agnostic OCaml library for P2P communications using UDP and Bin_prot.
+Technical documentation is available [here](https://marigold-dev.github.io/pollinate/).
 
 ## Building and Running Tests
 
@@ -39,10 +40,9 @@ $ dune test
 
 ## Documentation
 
-A built-in documentation with [`odoc`](https://github.com/ocaml/odoc) is available.
-Here is the [entrypoint](_build/default/_doc/_html/index.html).
+A built-in documentation with [`odoc`](https://github.com/ocaml/odoc) is available [here](https://marigold-dev.github.io/pollinate/).
 
-In case you want to rebuild it locally (for example, you made changes and want to see them):
+In case you want to rebuild it locally (for example, you made changes and want to see them before pushing):
 
 ```shell script
 $ dune build @doc
