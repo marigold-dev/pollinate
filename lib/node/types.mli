@@ -1,6 +1,8 @@
 open Common
 open Lwt_unix
 
+(** {1 Types} *)
+
 (** Configurable parameters that affect various aspects of the failure
 detector *)
 type failure_detector_config = {

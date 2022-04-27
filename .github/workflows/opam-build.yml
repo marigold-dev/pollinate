@@ -46,6 +46,9 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-latest' }}
         uses: ocaml/setup-ocaml/lint-fmt@v2
 
+      - name: Deploy odoc to GitHub Pages
+        if: ${{ matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/main' }}
+        uses: ocaml/setup-ocaml/deploy-doc@v2
       # Claims that some dependencies should be test dependencies when they are used in the lib
       # - name: Lint opam
       #   if: ${{ matrix.os == 'ubuntu-latest' && matrix.ocaml-compiler == '4.13.x' }}
