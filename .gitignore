@@ -1,7 +1,7 @@
 _esy
 .vscode
-_build
 bin
+_build
 
 # nix
 .direnv

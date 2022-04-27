@@ -179,7 +179,7 @@ let probe_peer t node peer_to_update =
       let _ = broadcast_message (Suspicion peer_to_update.address) node in
       Lwt.return ())
 
-let failure_detection node =
+let suspicion_detection node =
   let open Peer in
   let t = !node.failure_detector in
   let available_peers =
@@ -199,7 +199,7 @@ let failure_detection node =
         ] in
     Lwt.return ()
 
-let suspicious_detection node =
+let failure_detection node =
   let open Peer in
   let t = !node.failure_detector in
   let timeout =
