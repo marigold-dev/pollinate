@@ -23,5 +23,8 @@
     "@opam/ppx_compare": "*",
     "@opam/ppx_hash": "*",
     "@opam/sexplib": "*"
+  },
+  "resolutions": {
+    "ocaml": "esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396"
   }
 }
