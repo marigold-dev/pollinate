@@ -16,13 +16,13 @@
     "ocaml": ">=4.12.",
     "@opam/dune": ">=3.1.1",
     "@opam/lwt": "*",
-    "@opam/bin_prot": ">=v0.15.0",
-    "@opam/ppx_bin_prot": ">=v0.15.0",
+    "@opam/bin_prot": ">=v0.14.0",
+    "@opam/ppx_bin_prot": ">=v0.14.0",
     "@opam/lwt_ppx": ">=2.0.3",
     "@opam/ppx_deriving": ">=5.2.1",
-    "@opam/ppx_compare": ">=v0.15.0",
-    "@opam/ppx_hash": ">=v0.15.0",
-    "@opam/sexplib": ">=v0.15.0"
+    "@opam/ppx_compare": ">=v0.14.0",
+    "@opam/ppx_hash": ">=v0.14.0",
+    "@opam/sexplib": ">=v0.14.0"
   },
   "resolutions": {
     "ocaml": "esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396"
