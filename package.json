@@ -3,8 +3,17 @@
   "esy": {
     "build": "dune build"
   },
+  "devDependencies": {
+    "@opam/ocaml-lsp-server": "*",
+    "@opam/ocamlformat": "0.21.0",
+    "@opam/alcotest-lwt": "*",
+    "@opam/qcheck": "0.18.1",
+    "@opam/qcheck-alcotest": "0.18.1",
+    "@opam/ocaml-print-intf": "*",
+    "@opam/odoc": "2.1.0"
+  },
   "dependencies": {
-    "ocaml": ">=4.12.0",
+    "ocaml": "4.12.",
     "@opam/dune": "*",
     "@opam/lwt": "*",
     "@opam/bin_prot": "*",
@@ -13,14 +22,7 @@
     "@opam/ppx_deriving": "*",
     "@opam/ppx_compare": "*",
     "@opam/ppx_hash": "*",
-    "@opam/sexplib": "*",
-    "@opam/qcheck": "*",
-    "@opam/qcheck-alcotest": "*",
-    "@opam/ocaml-lsp-server": "*",
-    "@opam/ocamlformat": "*",
-    "@opam/alcotest-lwt": "*",
-    "@opam/ocaml-print-intf": "*",
-    "@opam/odoc": "*"
+    "@opam/sexplib": "*"
   },
   "resolutions": {
     "ocaml": "esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396"
