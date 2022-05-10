@@ -18,7 +18,7 @@
     "@opam/bin_prot": "*",
     "@opam/ppx_bin_prot": "*",
     "@opam/lwt_ppx": "*",
-    "@opam/ppx_deriving": "5.2.1",
+    "@opam/ppx_deriving": "*",
     "@opam/ppx_compare": "v0.14.0",
     "@opam/ppx_hash": "v0.14.0",
     "@opam/sexplib": "v0.14.0",
