@@ -22,6 +22,6 @@
     "@opam/ppx_deriving": "*",
     "@opam/ppx_compare": "*",
     "@opam/ppx_hash": "*",
-    "@opam/sexplib": "v0.10.0"
+    "@opam/sexplib": ">=113.33.00 <v0.11.0"
   }
 }
