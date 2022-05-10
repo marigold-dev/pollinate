@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "ocaml": ">=4.12.0",
-    "@opam/dune": ">=2.9.3",
+    "@opam/dune": "*",
     "@opam/lwt": "*",
     "@opam/bin_prot": "*",
     "@opam/ppx_bin_prot": "*",
@@ -22,6 +22,6 @@
     "@opam/ppx_deriving": "*",
     "@opam/ppx_compare": "*",
     "@opam/ppx_hash": "*",
-    "@opam/sexplib": ">=113.33.00 <v0.11.0"
+    "@opam/sexplib": "*"
   }
 }
