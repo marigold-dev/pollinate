@@ -5,12 +5,12 @@
   },
   "devDependencies": {
     "@opam/ocaml-lsp-server": "*",
-    "@opam/ocamlformat": "0.21.0",
+    "@opam/ocamlformat": "*",
     "@opam/alcotest-lwt": "*",
-    "@opam/qcheck": "0.18.1",
-    "@opam/qcheck-alcotest": "0.18.1",
+    "@opam/qcheck": "*",
+    "@opam/qcheck-alcotest": "*",
     "@opam/ocaml-print-intf": "*",
-    "@opam/odoc": "2.1.0"
+    "@opam/odoc": "*"
   },
   "dependencies": {
     "ocaml": "4.12.",
