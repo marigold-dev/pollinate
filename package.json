@@ -9,7 +9,8 @@
     "@opam/alcotest-lwt": "*",
     "@opam/qcheck": "0.18.1",
     "@opam/qcheck-alcotest": "0.18.1",
-    "@opam/ocaml-print-intf": "*"
+    "@opam/ocaml-print-intf": "*",
+    "@opam/odoc": "2.1.0"
   },
   "dependencies": {
     "ocaml": "4.13.x",
@@ -21,7 +22,6 @@
     "@opam/ppx_deriving": "*",
     "@opam/ppx_compare": "*",
     "@opam/ppx_hash": "*",
-    "@opam/sexplib": "v0.14.0",
-    "@opam/odoc": "2.1.0"
+    "@opam/sexplib": "*"
   }
 }
