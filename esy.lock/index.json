@@ -1,5 +1,5 @@
 {
-  "checksum": "259acdbe440481fb6a05c28f16304f6f",
+  "checksum": "3cec970257b5bf41493a1d6b93bf4228",
   "root": "pollinate@link-dev:./package.json",
   "node": {
     "pollinate@link-dev:./package.json": {
@@ -15,23 +15,22 @@
       "dependencies": [
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
         "@opam/sexplib@opam:v0.15.0@b6ab7383",
+        "@opam/qcheck-alcotest@opam:0.18.1@c4603318",
+        "@opam/qcheck@opam:0.18.1@3ba2dcbd",
         "@opam/ppx_hash@opam:v0.15.0@dcd843fa",
         "@opam/ppx_deriving@opam:5.2.1@089e5dd3",
         "@opam/ppx_compare@opam:v0.15.0@1b560134",
         "@opam/ppx_bin_prot@opam:v0.15.0@a95046f1",
-        "@opam/lwt_ppx@opam:2.0.3@125707d0", "@opam/lwt@opam:5.5.0@30354e4c",
-        "@opam/dune@opam:3.1.1@30ff5793",
-        "@opam/bin_prot@opam:v0.15.0@93fbb7f6"
-      ],
-      "devDependencies": [
-        "@opam/qcheck-alcotest@opam:0.18.1@c4603318",
-        "@opam/qcheck@opam:0.18.1@3ba2dcbd",
         "@opam/odoc@opam:2.1.0@d39daa6f",
         "@opam/ocamlformat@opam:0.21.0@b395910b",
         "@opam/ocaml-print-intf@opam:1.2.0@687a1e97",
         "@opam/ocaml-lsp-server@opam:1.11.4@3650eb5b",
+        "@opam/lwt_ppx@opam:2.0.3@125707d0", "@opam/lwt@opam:5.5.0@30354e4c",
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/bin_prot@opam:v0.15.0@93fbb7f6",
         "@opam/alcotest-lwt@opam:1.5.0@f1f00af0"
-      ]
+      ],
+      "devDependencies": []
     },
     "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9": {
       "id":
