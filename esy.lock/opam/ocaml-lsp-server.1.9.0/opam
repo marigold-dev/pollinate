@@ -29,7 +29,7 @@ depends: [
   "result" {>= "1.5"}
   "ocamlformat-rpc-lib" {>= "0.18.0" & < "0.20.0"}
   "odoc" {with-doc}
-  "ocaml" {>= "4.13" & < "4.14"}
+  "ocaml" {>= "4.12" & < "4.13"}
 ]
 dev-repo: "git+https://github.com/ocaml/ocaml-lsp.git"
 build: [
@@ -45,10 +45,10 @@ build: [
 ]
 url {
   src:
-    "https://github.com/ocaml/ocaml-lsp/releases/download/1.10.3/jsonrpc-1.10.3.tbz"
+    "https://github.com/ocaml/ocaml-lsp/releases/download/1.9.0/jsonrpc-1.9.0.tbz"
   checksum: [
-    "sha256=a3ac1073b0728b94f4bdb0111772c0abaf7ff70324399450eab7156bfac151f1"
-    "sha512=bed6ddbde28088e43db0d40ab27056ba22537d19ffe8117a3da4c77676948f18708b06937dd2c972dce5c5822ea751c9c85cfa1ce3c1b3739460d4a24ebc2282"
+    "sha256=7046491eb9d0417d23d2a0ce39f9bc3bb9b75521453106f723c8e5f18c2584a9"
+    "sha512=591fcf1fd2308b56ca2b5f60383d9a24e59aea49bf0dfe4f3b3e1d3a44f0537be07c650523e7f229122c7914fca78bccaafd01c5f79793e38617959f1bcfc7e1"
   ]
 }
-x-commit-hash: "a249e618facf7b7f524bf96e6f1cf6728a7fcd90"
+x-commit-hash: "16a83262b0964b4c82db43f6c7a81dd6526b703d"
