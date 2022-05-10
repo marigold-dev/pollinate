@@ -13,8 +13,8 @@
     "@opam/odoc": "2.1.0"
   },
   "dependencies": {
-    "ocaml": "4.12.x",
-    "@opam/dune": "2.9.3",
+    "ocaml": ">=4.13.0",
+    "@opam/dune": ">=2.9.3",
     "@opam/lwt": "*",
     "@opam/bin_prot": "*",
     "@opam/ppx_bin_prot": "*",
