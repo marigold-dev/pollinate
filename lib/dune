@@ -1,3 +1,4 @@
 (library
  (name pollinate)
+ (public_name pollinate)
  (libraries pollinate.common pollinate.node))
