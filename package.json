@@ -21,9 +21,18 @@
     "@opam/lwt_ppx": ">=2.0.3",
     "@opam/ppx_deriving": ">=5.2.1",
     "@opam/ppx_compare": "v0.14.0",
-    "@opam/ppx_hash": "v0.14.0"
+    "@opam/ppx_hash": "v0.14.0",
+    "@opam/sexplib": "*"
   },
   "resolutions": {
-    "ocaml": "esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396"
+    "ocaml": "esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396",
+    "@opam/sexplib": {
+      "source": "EduardoRFS/sexplib:sexplib.opam#58602935946f7677413a3a367887d0fee281eb26",
+      "override": {
+        "dependencies": {
+          "@opam/bigarray-compat": "*"
+        }
+      }
+    }
   }
 }
