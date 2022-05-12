@@ -30,6 +30,36 @@
   "resolutions": {
     "ocaml": "esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396",
     "@opam/base": "EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd",
+    "@opam/lwt": "kit-ty-kate/lwt:lwt.opam#0c4cc9d1238461b82b92d61c1c007cb1048509be",
+    "@opam/ppx_sexp_conv": "janestreet/ppx_sexp_conv:ppx_sexp_conv.opam#3d413303de3f76fecb19dc51c85b81c33c5c872a",
+    "@opam/ppx_hash": {
+      "version": "opam:v0.14.0",
+      "override": {
+        "dependencies": {
+          "@opam/ppx_sexp_conv": "*"
+        }
+      }
+    },
+    "@opam/ppx_assert": {
+      "version": "opam:v0.14.0",
+      "override": {
+        "dependencies": {
+          "@opam/ppx_sexp_conv": "*"
+        }
+      }
+    },
+    "@opam/ppx_base": {
+      "version": "opam:v0.14.0",
+      "override": {
+        "dependencies": {
+          "@opam/ppx_sexp_conv": "*"
+        }
+      }
+    },
+    "@opam/ppx_inline_test": "janestreet/ppx_inline_test:ppx_inline_test.opam#54e0a1cd2402126998d40f653876e59a7011bf75",
+    "@opam/sexplib0": "EduardoRFS/sexplib0:sexplib0.opam#6785e5fe565bdbcdbc00d861654b4f468d7a552c",
+    "@opam/ppxlib": "patricoferris/ppxlib:ppxlib.opam#91c39e958fca1dabf16f64dc7699ace7752f0014",
+    "@opam/ocplib-endian": "kit-ty-kate/ocplib-endian:ocplib-endian.opam#8136732deb8e7f69ece0a19cfc9f9a141ebe1d2b",
     "@opam/sexplib": {
       "source": "EduardoRFS/sexplib:sexplib.opam#58602935946f7677413a3a367887d0fee281eb26",
       "override": {
@@ -37,6 +67,30 @@
           "@opam/bigarray-compat": "*"
         }
       }
-    }
+    },
+    "@opam/dune": "EduardoRFS/dune:dune.opam#b9d9eb13366d1edcdfbdb3afe3afa5c08ff87e54",
+    "@opam/biniou": "EduardoRFS/biniou:biniou.opam#b5f099b4ad594e68383e55ffde6d296439d341b8",
+    "@opam/omd": "EduardoRFS/omd:omd.opam#7b866aacbc119e2be54b2dfcd198b860d3c497b1",
+    "@opam/odoc": "ocaml/odoc:odoc.opam#d243b80287a73bf3f34292254b0e9d8b2f56cc47",
+    "@opam/odoc-parser": {
+      "source": "kit-ty-kate/odoc-parser:odoc-parser.opam#bfa00f8b36778e16166e17c529f289633caf9fa7",
+      "override": {
+        "dependencies": {
+          "@opam/camlp-streams": "*"
+        }
+      }
+    },
+    "@opam/ocamlformat": "EduardoRFS/ocamlformat:ocamlformat.opam#832e0a33d5cc05a77a335e6b6fa369172c742c95",
+    "@opam/ocamlformat-rpc": "EduardoRFS/ocamlformat:ocamlformat-rpc.opam#832e0a33d5cc05a77a335e6b6fa369172c742c95",
+    "@opam/ocamlformat-rpc-lib": "EduardoRFS/ocamlformat:ocamlformat-rpc-lib.opam#832e0a33d5cc05a77a335e6b6fa369172c742c95",
+    "@opam/ocaml-lsp-server": {
+      "source": "EduardoRFS/ocaml-lsp:ocaml-lsp-server.opam#24fcebcec9f1e99815b036a6d45c0f912e8e8a19",
+      "override": {
+        "dependencies": {
+          "@opam/ocamlformat-rpc-lib": "*"
+        }
+      }
+    },
+    "@opam/stdio": "janestreet/stdio:stdio.opam#f006beb417ee568c612c3d89824cfb6e15a98568"
   }
 }
