@@ -8,12 +8,14 @@
     "@opam/ocamlformat": "*",
     "@opam/alcotest-lwt": "1.5.0",
     "@opam/qcheck": "0.18.1",
+    "@opam/qcheck-core": "0.18.1",
     "@opam/qcheck-alcotest": "0.18.1",
     "@opam/ocaml-print-intf": "*",
     "@opam/odoc": "*"
   },
   "dependencies": {
     "ocaml": "*",
+    "@opam/base": "*",
     "@opam/dune": "*",
     "@opam/lwt": "*",
     "@opam/bin_prot": "*",
@@ -26,6 +28,7 @@
   },
   "resolutions": {
     "ocaml": "esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396",
+    "@opam/base": "EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd",
     "@opam/sexplib": {
       "source": "EduardoRFS/sexplib:sexplib.opam#58602935946f7677413a3a367887d0fee281eb26",
       "override": {

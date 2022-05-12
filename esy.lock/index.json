@@ -1,5 +1,5 @@
 {
-  "checksum": "542b87c1e7a83fce6c60feb36352233d",
+  "checksum": "bebd8ebc51c077eb75ca3da8a1fedb98",
   "root": "pollinate@link-dev:./package.json",
   "node": {
     "pollinate@link-dev:./package.json": {
@@ -21,9 +21,11 @@
         "@opam/ppx_bin_prot@opam:v0.14.0@4a83bcd2",
         "@opam/lwt_ppx@opam:2.0.3@125707d0", "@opam/lwt@opam:5.5.0@30354e4c",
         "@opam/dune@opam:3.1.1@30ff5793",
-        "@opam/bin_prot@opam:v0.14.0@2d7601e9"
+        "@opam/bin_prot@opam:v0.14.0@2d7601e9",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9"
       ],
       "devDependencies": [
+        "@opam/qcheck-core@opam:0.18.1@5f40aab3",
         "@opam/qcheck-alcotest@opam:0.18.1@c4603318",
         "@opam/qcheck@opam:0.18.1@3ba2dcbd",
         "@opam/odoc@opam:2.1.0@d39daa6f",
@@ -124,12 +126,14 @@
       "overrides": [],
       "dependencies": [
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868",
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9",
         "@esy-ocaml/substs@0.0.1@d41d8cd9"
       ],
       "devDependencies": [
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868"
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9"
       ]
     },
     "@opam/uutf@opam:1.0.3@47c95a18": {
@@ -353,12 +357,14 @@
       "overrides": [],
       "dependencies": [
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868",
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9",
         "@esy-ocaml/substs@0.0.1@d41d8cd9"
       ],
       "devDependencies": [
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868"
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9"
       ]
     },
     "@opam/spawn@opam:v0.15.1@85e9d6f1": {
@@ -760,14 +766,16 @@
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
         "@opam/variantslib@opam:v0.14.0@88d5444d",
         "@opam/ppxlib@opam:0.25.0@8553d2e8",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868",
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9",
         "@esy-ocaml/substs@0.0.1@d41d8cd9"
       ],
       "devDependencies": [
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
         "@opam/variantslib@opam:v0.14.0@88d5444d",
         "@opam/ppxlib@opam:0.25.0@8553d2e8",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868"
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9"
       ]
     },
     "@opam/ppx_sexp_conv@opam:v0.14.3@fd72d57e": {
@@ -791,14 +799,16 @@
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
         "@opam/sexplib0@opam:v0.14.0@155c136c",
         "@opam/ppxlib@opam:0.25.0@8553d2e8",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868",
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9",
         "@esy-ocaml/substs@0.0.1@d41d8cd9"
       ],
       "devDependencies": [
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
         "@opam/sexplib0@opam:v0.14.0@155c136c",
         "@opam/ppxlib@opam:0.25.0@8553d2e8",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868"
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9"
       ]
     },
     "@opam/ppx_optcomp@opam:v0.14.3@08009524": {
@@ -822,14 +832,16 @@
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
         "@opam/stdio@opam:v0.14.0@a5affb43",
         "@opam/ppxlib@opam:0.25.0@8553d2e8",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868",
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9",
         "@esy-ocaml/substs@0.0.1@d41d8cd9"
       ],
       "devDependencies": [
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
         "@opam/stdio@opam:v0.14.0@a5affb43",
         "@opam/ppxlib@opam:0.25.0@8553d2e8",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868"
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9"
       ]
     },
     "@opam/ppx_here@opam:v0.14.0@c05577d4": {
@@ -852,13 +864,15 @@
       "dependencies": [
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
         "@opam/ppxlib@opam:0.25.0@8553d2e8",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868",
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9",
         "@esy-ocaml/substs@0.0.1@d41d8cd9"
       ],
       "devDependencies": [
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
         "@opam/ppxlib@opam:0.25.0@8553d2e8",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868"
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9"
       ]
     },
     "@opam/ppx_hash@opam:v0.14.0@455f5f56": {
@@ -883,7 +897,8 @@
         "@opam/ppxlib@opam:0.25.0@8553d2e8",
         "@opam/ppx_sexp_conv@opam:v0.14.3@fd72d57e",
         "@opam/ppx_compare@opam:v0.14.0@fbd22977",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868",
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9",
         "@esy-ocaml/substs@0.0.1@d41d8cd9"
       ],
       "devDependencies": [
@@ -891,7 +906,8 @@
         "@opam/ppxlib@opam:0.25.0@8553d2e8",
         "@opam/ppx_sexp_conv@opam:v0.14.3@fd72d57e",
         "@opam/ppx_compare@opam:v0.14.0@fbd22977",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868"
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9"
       ]
     },
     "@opam/ppx_fields_conv@opam:v0.14.2@d9b8c107": {
@@ -915,14 +931,16 @@
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
         "@opam/ppxlib@opam:0.25.0@8553d2e8",
         "@opam/fieldslib@opam:v0.14.0@5bb0d853",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868",
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9",
         "@esy-ocaml/substs@0.0.1@d41d8cd9"
       ],
       "devDependencies": [
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
         "@opam/ppxlib@opam:0.25.0@8553d2e8",
         "@opam/fieldslib@opam:v0.14.0@5bb0d853",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868"
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9"
       ]
     },
     "@opam/ppx_deriving@opam:5.2.1@089e5dd3": {
@@ -1007,14 +1025,16 @@
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
         "@opam/ppxlib@opam:0.25.0@8553d2e8",
         "@opam/ppx_sexp_conv@opam:v0.14.3@fd72d57e",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868",
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9",
         "@esy-ocaml/substs@0.0.1@d41d8cd9"
       ],
       "devDependencies": [
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
         "@opam/ppxlib@opam:0.25.0@8553d2e8",
         "@opam/ppx_sexp_conv@opam:v0.14.3@fd72d57e",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868"
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9"
       ]
     },
     "@opam/ppx_compare@opam:v0.14.0@fbd22977": {
@@ -1037,13 +1057,15 @@
       "dependencies": [
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
         "@opam/ppxlib@opam:0.25.0@8553d2e8",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868",
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9",
         "@esy-ocaml/substs@0.0.1@d41d8cd9"
       ],
       "devDependencies": [
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
         "@opam/ppxlib@opam:0.25.0@8553d2e8",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868"
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9"
       ]
     },
     "@opam/ppx_bin_prot@opam:v0.14.0@4a83bcd2": {
@@ -1069,7 +1091,7 @@
         "@opam/ppx_here@opam:v0.14.0@c05577d4",
         "@opam/dune@opam:3.1.1@30ff5793",
         "@opam/bin_prot@opam:v0.14.0@2d7601e9",
-        "@opam/base@opam:v0.14.3@b3ddb868",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9",
         "@esy-ocaml/substs@0.0.1@d41d8cd9"
       ],
       "devDependencies": [
@@ -1078,7 +1100,7 @@
         "@opam/ppx_here@opam:v0.14.0@c05577d4",
         "@opam/dune@opam:3.1.1@30ff5793",
         "@opam/bin_prot@opam:v0.14.0@2d7601e9",
-        "@opam/base@opam:v0.14.3@b3ddb868"
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9"
       ]
     },
     "@opam/pp@opam:1.1.2@89ad03b5": {
@@ -1127,13 +1149,15 @@
       "dependencies": [
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
         "@opam/sexplib0@opam:v0.14.0@155c136c",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868",
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9",
         "@esy-ocaml/substs@0.0.1@d41d8cd9"
       ],
       "devDependencies": [
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
         "@opam/sexplib0@opam:v0.14.0@155c136c",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868"
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9"
       ]
     },
     "@opam/ounit2@opam:2.2.6@a5a48cd6": {
@@ -1440,7 +1464,7 @@
         "@opam/dune-build-info@opam:3.1.1@c472eb57",
         "@opam/dune@opam:3.1.1@30ff5793",
         "@opam/cmdliner@opam:1.1.1@03763729",
-        "@opam/base@opam:v0.14.3@b3ddb868",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9",
         "@esy-ocaml/substs@0.0.1@d41d8cd9"
       ],
       "devDependencies": [
@@ -1459,7 +1483,7 @@
         "@opam/dune-build-info@opam:3.1.1@c472eb57",
         "@opam/dune@opam:3.1.1@30ff5793",
         "@opam/cmdliner@opam:1.1.1@03763729",
-        "@opam/base@opam:v0.14.3@b3ddb868"
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9"
       ]
     },
     "@opam/ocamlfind@opam:1.9.3@781b30f3": {
@@ -2023,12 +2047,14 @@
       "overrides": [],
       "dependencies": [
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868",
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9",
         "@esy-ocaml/substs@0.0.1@d41d8cd9"
       ],
       "devDependencies": [
         "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868"
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9"
       ]
     },
     "@opam/fiber@opam:3.1.1@866370f9": {
@@ -2423,7 +2449,8 @@
         "@opam/ppx_fields_conv@opam:v0.14.2@d9b8c107",
         "@opam/ppx_custom_printf@opam:v0.14.1@63de284d",
         "@opam/ppx_compare@opam:v0.14.0@fbd22977",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868",
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9",
         "@esy-ocaml/substs@0.0.1@d41d8cd9"
       ],
       "devDependencies": [
@@ -2434,7 +2461,8 @@
         "@opam/ppx_fields_conv@opam:v0.14.2@d9b8c107",
         "@opam/ppx_custom_printf@opam:v0.14.1@63de284d",
         "@opam/ppx_compare@opam:v0.14.0@fbd22977",
-        "@opam/dune@opam:3.1.1@30ff5793", "@opam/base@opam:v0.14.3@b3ddb868"
+        "@opam/dune@opam:3.1.1@30ff5793",
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9"
       ]
     },
     "@opam/bigarray-compat@opam:1.1.0@84cda9d0": {
@@ -2538,21 +2566,17 @@
       "dependencies": [ "@esy-ocaml/substs@0.0.1@d41d8cd9" ],
       "devDependencies": []
     },
-    "@opam/base@opam:v0.14.3@b3ddb868": {
-      "id": "@opam/base@opam:v0.14.3@b3ddb868",
+    "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9": {
+      "id":
+        "@opam/base@github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd@d41d8cd9",
       "name": "@opam/base",
-      "version": "opam:v0.14.3",
+      "version":
+        "github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd",
       "source": {
         "type": "install",
         "source": [
-          "archive:https://opam.ocaml.org/cache/sha256/e3/e34dc0dd052a386c84f5f67e71a90720dff76e0edd01f431604404bee86ebe5a#sha256:e34dc0dd052a386c84f5f67e71a90720dff76e0edd01f431604404bee86ebe5a",
-          "archive:https://github.com/janestreet/base/archive/v0.14.3.tar.gz#sha256:e34dc0dd052a386c84f5f67e71a90720dff76e0edd01f431604404bee86ebe5a"
-        ],
-        "opam": {
-          "name": "base",
-          "version": "v0.14.3",
-          "path": "esy.lock/opam/base.v0.14.3"
-        }
+          "github:EduardoRFS/base:base.opam#6ea52922e153b3a3aae6ffbf2379c6f442671ebd"
+        ]
       },
       "overrides": [],
       "dependencies": [
