@@ -1,5 +1,5 @@
 {
-  "checksum": "bebd8ebc51c077eb75ca3da8a1fedb98",
+  "checksum": "9feac5fad996f87d74c877f5aaf9a9fe",
   "root": "pollinate@link-dev:./package.json",
   "node": {
     "pollinate@link-dev:./package.json": {
@@ -32,7 +32,8 @@
         "@opam/ocamlformat@opam:0.21.0@b395910b",
         "@opam/ocaml-print-intf@opam:1.2.0@687a1e97",
         "@opam/ocaml-lsp-server@opam:1.11.4@3650eb5b",
-        "@opam/alcotest-lwt@opam:1.5.0@f1f00af0"
+        "@opam/alcotest-lwt@opam:1.5.0@f1f00af0",
+        "@opam/alcotest@opam:1.5.0@338d9572"
       ]
     },
     "ocaml@github:esy-ocaml/ocaml#65e3f82dcd867d2b1f27c84597b3c25259b09396@d41d8cd9": {

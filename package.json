@@ -6,6 +6,7 @@
   "devDependencies": {
     "@opam/ocaml-lsp-server": "*",
     "@opam/ocamlformat": "*",
+    "@opam/alcotest": "1.5.0",
     "@opam/alcotest-lwt": "1.5.0",
     "@opam/qcheck": "0.18.1",
     "@opam/qcheck-core": "0.18.1",
