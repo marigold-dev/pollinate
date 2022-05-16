@@ -1,13 +1,41 @@
-{ pkgs ? import ./sources.nix { }, doCheck ? false }:
+{ pkgs, stdenv, lib, nix-filter, ocamlPackages, doCheck }:
 
-{
-  native = pkgs.callPackage ./generic.nix { inherit doCheck; };
+with ocamlPackages;
+buildDunePackage {
+  pname = "pollinate";
+  version = "0.1.0";
 
-  musl64 = let pkgsCross = pkgs.pkgsCross.musl64.pkgsStatic;
+  # Using nix-filter means we only rebuild when we have to
+  src = with nix-filter.lib;
+    filter {
+      root = ../.;
+      include = [
+        "dune-project"
+        "pollinate.opam"
+        "README.md"
+        (inDirectory "lib")
+        (inDirectory "test")
+      ];
+    };
 
-  in pkgsCross.callPackage ./generic.nix {
-    static = true;
-    inherit doCheck;
-    ocamlPackages = pkgsCross.ocamlPackages;
+  checkInputs = [ alcotest alcotest-lwt ];
+
+  propagatedBuildInputs = [
+    lwt
+    lwt_ppx
+    bin_prot
+    ppx_bin_prot
+    ppx_deriving
+    sexplib
+    ppx_hash
+    qcheck-core
+    qcheck-alcotest
+  ];
+
+  inherit doCheck;
+
+  meta = {
+    description =
+      "A platform agnostic library for P2P communications using UDP and Bin_prot";
   };
 }

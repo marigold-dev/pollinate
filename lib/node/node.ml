@@ -4,6 +4,7 @@ open Types
 module Message = Message
 module Client = Client
 module Failure_detector = Failure_detector
+module Inbox = Inbox
 
 type 'a t = 'a Types.node
 
