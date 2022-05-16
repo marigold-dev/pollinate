@@ -3,6 +3,7 @@ open Common
 module Message = Message
 module Client = Client
 module Failure_detector = Failure_detector
+module Inbox = Inbox
 
 (** Represents a node with some state in a peer-to-peer network *)
 type 'a t = 'a Types.node
