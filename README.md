@@ -33,7 +33,24 @@ $ cd pollinate
 
 # Allow direnv to load the nix environment
 $ direnv allow
+```
 
+#### Build
+
+Pollinate is buildable in two different versions of OCaml:
+
+- 4.13
+- 5.00
+
+To build a specific version with `nix` simply run `nix build .#pollinate_ocamlPackages_<version>`, for example, to build using OCaml 5:
+
+```shell script
+$ nix build .#pollinate_ocamlPackages_5_00
+```
+
+#### Run tests suite
+
+```
 # Run test
 $ dune test
 ```
