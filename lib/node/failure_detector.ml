@@ -113,20 +113,26 @@ let broadcast_message message node =
 
 let handle_message node message =
   let open Message in
-  let peer = Peer.from message.sender in
+  let sender = Peer.from message.sender in
   let msg = Encoding.unpack bin_read_message message.payload in
   let t = !node.failure_detector in
   match msg with
-  | Ping -> send_acknowledge_to node peer
+  | Ping -> send_acknowledge_to node sender
   | PingRequest addr -> (
-    let new_seq_no = next_seq_no t in
     let peer_opt = Base.Hashtbl.find !node.peers addr in
     match peer_opt with
-    | Some peer -> send_ping_request_to node peer
-    | None -> (
-      match%lwt wait_ack_timeout t new_seq_no t.config.protocol_period with
-      | Ok _ -> Lwt.return ()
-      | Error _ -> send_acknowledge_to node peer))
+    | Some recipient -> (
+      let _ = send_ping_to node recipient in
+      match%lwt
+        wait_ack_timeout t t.sequence_number t.config.round_trip_time
+      with
+      | Ok _ ->
+        (* if we received the ack, we should override peer status to Alive *)
+        let _ = update_peer_status node recipient Alive in
+        let _ = broadcast_message (Alive recipient.address) node in
+        send_acknowledge_to node sender
+      | Error _ -> Lwt.return ())
+    | None -> Lwt.return ())
   | Acknowledge -> begin
     match Base.Hashtbl.find t.acknowledges t.sequence_number with
     | Some cond ->
@@ -152,7 +158,7 @@ let handle_message node message =
     let _ = Base.Hashtbl.remove !node.peers addr in
     Lwt.return ()
 
-(** This function will be called by failure_detection 
+(** This function will be called by suspicion_detection 
 at each round of the protocol, and update the peers *)
 let probe_peer t node peer_to_update =
   let new_seq_no = next_seq_no t in
