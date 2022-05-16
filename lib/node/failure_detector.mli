@@ -53,6 +53,4 @@ val update_peer_status :
   Common.Peer.status ->
   (unit, string) result
 
-val send_ping_to : 'a node ref -> Peer.t -> unit Lwt.t
-
 (**/**)

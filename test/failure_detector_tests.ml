@@ -33,26 +33,11 @@ let failure_detection_nothing_on_alive () =
   let%lwt _ = SUT.failure_detection node_a in
   Lwt.return (Base.Hashtbl.length !node_a.peers = 1)
 
-let send_ping () =
-  let open Common.Util.Encoding in
-  let open Common.Peer in
-  let _ = add_neighbor (Pollinate.Node.Client.peer_from !node_a) peer_b in
-  let _ = SUT.send_ping_to node_a peer_b in
-  let%lwt message = Client.recv_next node_b in
-  let ping = unpack SUT.bin_read_message message.payload in
-  let%lwt response = Client.recv_next node_a in
-  let ack = unpack SUT.bin_read_message response.payload in
-  Lwt.return @@ (SUT.show_message ping, SUT.show_message ack)
-
 let test_suspicion_detection _ () =
   failure_detection () >|= Alcotest.(check bool) "" true
 
 let test_failure_detection_nothing_on_alive _ () =
   failure_detection_nothing_on_alive () >|= Alcotest.(check bool) "" true
-
-let test_send_ping _ () =
-  send_ping ()
-  >|= Alcotest.(check (pair string string)) "" ("Ping", "Acknowledge")
 
 let () =
   Lwt_main.run
@@ -64,6 +49,5 @@ let () =
                test_suspicion_detection;
              Alcotest_lwt.test_case "Do nothing on Alive peer" `Quick
                test_failure_detection_nothing_on_alive;
-             Alcotest_lwt.test_case "Sending Ping works" `Quick test_send_ping;
            ] );
        ]
