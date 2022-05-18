@@ -24,7 +24,7 @@ let create_request node recipient payload =
         Message.
           {
             category = Message.Request;
-            subCategory = None;
+            sub_category_opt = None;
             id = !id;
             sender = !node.address;
             recipient;
@@ -35,7 +35,7 @@ let create_response node request payload =
   Message.
     {
       category = Message.Response;
-      subCategory = None;
+      sub_category_opt = None;
       id = request.id;
       sender = !node.address;
       recipient = request.sender;

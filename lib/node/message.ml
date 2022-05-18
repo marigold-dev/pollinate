@@ -11,7 +11,7 @@ type category =
 
 type t = {
   category : category;
-  subCategory : (string * string) option;
+  sub_category_opt : (string * string) option;
   id : int;
   sender : Address.t;
   recipient : Address.t;
