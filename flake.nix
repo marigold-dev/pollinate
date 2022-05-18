@@ -18,17 +18,18 @@
             inherit system;
             overlays = [ ocaml-overlay.overlays."${system}".default ];
           };
+          ocamlPackages_dev = pkgs.ocaml-ng.ocamlPackages_5_00;
           pollinate = (pkgs.callPackage ./nix {
             inherit nix-filter;
             doCheck = true;
-            ocamlPackages = pkgs.ocaml-ng.ocamlPackages_5_00;
+            ocamlPackages = ocamlPackages_dev;
           });
         in {
           devShells = {
             default = (pkgs.mkShell {
               inputsFrom = [ pollinate ];
               buildInputs = with pkgs;
-                with ocamlPackages; [
+                with ocamlPackages_dev; [
                   ocaml-lsp
                   ocamlformat
                   odoc
