@@ -1,4 +1,3 @@
-open Common
 open Common.Util
 open Types
 
@@ -42,12 +41,11 @@ let run node router msg_handler =
     let%lwt () =
       match request with
       | Some request ->
-        let%lwt state = Mutex.lock !node.state in
         let response =
-          request |> msg_handler state |> Client.create_response node request
+          request |> msg_handler |> Client.create_response node request
         in
         let%lwt () = Client.send_to node response in
-        Lwt.return (Mutex.unlock !node.state)
+        Lwt.return ()
       | None -> Lwt.return () in
 
     server () in

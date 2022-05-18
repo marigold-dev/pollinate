@@ -4,8 +4,6 @@ module Commons = struct
   open Pollinate.Util
   open Messages
 
-  type state = string list
-
   let router msg =
     let open Messages in
     match msg.Message.category with
@@ -19,16 +17,15 @@ module Commons = struct
       { msg with payload = Encoding.pack bin_writer_response r }
     | _ -> msg
 
-  let msg_handler state request =
+  let msg_handler request =
     let open Messages in
     let open Message in
     let request = Encoding.unpack bin_read_request request.payload in
     let response =
       match request with
       | Ping -> Pong
-      | Get -> List !state
-      | Insert s ->
-        state := s :: !state;
+      | Get -> Success "Ok"
+      | Insert _ ->
         Success "Successfully added value to state" in
     Encoding.pack bin_writer_message (Response response)
 end
