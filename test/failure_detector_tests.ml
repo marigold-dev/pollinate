@@ -6,12 +6,12 @@ module SUT = Pollinate.Node.Failure_detector
 
 let node_a =
   Lwt_main.run
-    (Node.init ~router:Commons.router ~state:["test1"]
-       ~msg_handler:Commons.msg_handler ("127.0.0.1", 3003))
+    (Node.init ~router:Commons.router ~msg_handler:Commons.msg_handler
+       ("127.0.0.1", 3003))
 let node_b =
   Lwt_main.run
-    (Node.init ~router:Commons.router ~state:["test1"]
-       ~msg_handler:Commons.msg_handler ("127.0.0.1", 3004))
+    (Node.init ~router:Commons.router ~msg_handler:Commons.msg_handler
+       ("127.0.0.1", 3004))
 
 let peer_b = Client.peer_from !node_b
 

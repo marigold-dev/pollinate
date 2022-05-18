@@ -27,16 +27,16 @@ val make : failure_detector_config -> failure_detector
 (** {1 Messaging} *)
 
 (** Processes an incoming [Message.t] bound for the failure detector of a node. *)
-val handle_message : 'a node ref -> Message.t -> unit Lwt.t
+val handle_message : node ref -> Message.t -> unit Lwt.t
 
 (** {1 Detection functions} *)
 
 (** Responsible for the calculation of the status of each node *)
-val suspicion_detection : 'a node ref -> unit Lwt.t
+val suspicion_detection : node ref -> unit Lwt.t
 
 (** If a peer is suspicious for more that failure_detector_config.suspicion_time
  it needs to be deleted from the list of knowns peers *)
-val failure_detection : 'a node ref -> unit Lwt.t
+val failure_detection : node ref -> unit Lwt.t
 
 (**/**)
 
@@ -45,9 +45,6 @@ val knuth_shuffle : Peer.t list -> Peer.t list
 val pick_random_neighbors : ('a, 'b) Base.Hashtbl.t -> int -> 'a list
 
 val update_peer_status :
-  'a Types.node ref ->
-  Common.Peer.t ->
-  Common.Peer.status ->
-  (unit, string) result
+  Types.node ref -> Common.Peer.t -> Common.Peer.status -> (unit, string) result
 
 (**/**)
