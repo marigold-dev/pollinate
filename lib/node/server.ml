@@ -42,8 +42,7 @@ let run node router msg_handler =
       match request with
       | Some request ->
         let response =
-          request |> msg_handler |> Client.create_response node request
-        in
+          request |> msg_handler |> Client.create_response node request in
         let%lwt () = Client.send_to node response in
         Lwt.return ()
       | None -> Lwt.return () in

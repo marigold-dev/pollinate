@@ -25,7 +25,6 @@ module Commons = struct
       match request with
       | Ping -> Pong
       | Get -> Success "Ok"
-      | Insert _ ->
-        Success "Successfully added value to state" in
+      | Insert _ -> Success "Successfully added value to state" in
     Encoding.pack bin_writer_message (Response response)
 end
