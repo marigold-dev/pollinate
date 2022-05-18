@@ -37,7 +37,7 @@ type failure_detector = {
 }
 
 (** Represents a node with some state in a peer-to-peer network *)
-type 'a node = {
+type node = {
   address : Address.t;
       (** An ID that is incremented whenever a request is
      made from this node. The response matching this
@@ -51,7 +51,6 @@ type 'a node = {
      with the incoming response. *)
   request_table : (int, Message.t Lwt_condition.t) Hashtbl.t;
   socket : file_descr Mutex.t;
-  state : 'a ref Mutex.t;
       (** A store of incoming messages for the node. Stores
      messages separately by category. *)
   inbox : Inbox.t;

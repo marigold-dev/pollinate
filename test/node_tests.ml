@@ -8,15 +8,15 @@ module Node_tests = struct
   (* Initializes two nodes and the related two peers *)
   let node_a =
     Lwt_main.run
-      (Node.init ~preprocess:Commons.preprocess ~state:["test1"]
-         ~msg_handler:Commons.msg_handler ("127.0.0.1", 3000))
+      (Node.init ~preprocess:Commons.preprocess ~msg_handler:Commons.msg_handler
+         ("127.0.0.1", 3000))
 
   let peer_a = Client.peer_from !node_a
 
   let node_b =
     Lwt_main.run
-      (Node.init ~preprocess:Commons.preprocess ~state:["test2"]
-         ~msg_handler:Commons.msg_handler ("127.0.0.1", 3001))
+      (Node.init ~preprocess:Commons.preprocess ~msg_handler:Commons.msg_handler
+         ("127.0.0.1", 3001))
 
   let peer_b = Client.peer_from !node_b
 
@@ -36,7 +36,7 @@ module Node_tests = struct
 
     let res_from_b, res_from_a =
       match (res_from_b, res_from_a) with
-      | List l1, List l2 -> (List.hd l1, List.hd l2)
+      | Success ok1, Success ok2 -> (ok1, ok2)
       | _ -> failwith "Incorrect response" in
 
     Lwt.return (res_from_b, res_from_a)
@@ -57,7 +57,7 @@ module Node_tests = struct
 
     let res_a, b_state =
       match (res_a, b_state) with
-      | Success _, List lb -> ("Success", List.hd lb)
+      | Success ok1, Success ok2 -> (ok1, ok2)
       | _ -> failwith "Incorrect response" in
 
     Lwt.return (res_a, b_state)
@@ -81,7 +81,7 @@ end
 
 let test_trade_messages _ () =
   Node_tests.trade_messages ()
-  >|= Alcotest.(check (pair string string)) "test2 and test1" ("test2", "test1")
+  >|= Alcotest.(check (pair string string)) "test2 and test1" ("Ok", "Ok")
 
 let test_ping_pong _ () =
   Node_tests.ping_pong () >|= Alcotest.(check string) "Ping pong" "Pong"
@@ -89,7 +89,8 @@ let test_ping_pong _ () =
 let test_insert_value _ () =
   Node_tests.test_insert ()
   >|= Alcotest.(check (pair string string))
-        "Test insert value" ("Success", "something")
+        "Test insert value"
+        ("Successfully added value to state", "Ok")
 
 let () =
   Lwt_main.run
