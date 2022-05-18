@@ -6,7 +6,7 @@ module Commons = struct
 
   type state = string list
 
-  let router msg =
+  let preprocess msg =
     let open Messages in
     match msg.Message.category with
     | Request ->

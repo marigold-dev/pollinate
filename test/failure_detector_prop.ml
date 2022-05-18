@@ -6,7 +6,7 @@ module SUT = Pollinate.Node.Failure_detector
 
 let node_a =
   Lwt_main.run
-    (Node.init ~router:Commons.router ~state:["test1"]
+    (Node.init ~preprocess:Commons.preprocess ~state:["test1"]
        ~msg_handler:Commons.msg_handler ("127.0.0.1", 3002))
 
 let knuth_shuffle_size =
