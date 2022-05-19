@@ -6,8 +6,8 @@ module Client = Client
 module Failure_detector = Failure_detector
 module Inbox = Inbox
 
-let init ?(router = fun m -> m) ~msg_handler ?(init_peers = []) (address, port)
-    =
+let init ?(preprocess = fun m -> m) ~msg_handler ?(init_peers = [])
+    (address, port) =
   let open Util in
   let%lwt socket = Net.create_socket port in
   let peers =
@@ -34,5 +34,5 @@ let init ?(router = fun m -> m) ~msg_handler ?(init_peers = []) (address, port)
             };
         peers;
       } in
-  Server.run node router msg_handler;
+  Server.run node preprocess msg_handler;
   Lwt.return node

@@ -4,7 +4,7 @@ module Commons = struct
   open Pollinate.Util
   open Messages
 
-  let router msg =
+  let preprocess msg =
     let open Messages in
     match msg.Message.category with
     | Request ->
