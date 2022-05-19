@@ -14,7 +14,7 @@ to initialize a server that runs asynchronously. Returns
 a reference to the node. *)
 val init :
   ?preprocess:(Message.t -> Message.t) ->
-  msg_handler:(Message.t -> bytes) ->
+  ?msg_handler:(Message.t -> bytes) ->
   ?init_peers:Address.t list ->
   string * int ->
   Types.node ref Lwt.t
