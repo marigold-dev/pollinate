@@ -1,7 +1,6 @@
 open QCheck2.Gen
 open Pollinate.Peer
 open Commons
-
 module SUT = Pollinate.Node.Failure_detector
 
 let node_a =
