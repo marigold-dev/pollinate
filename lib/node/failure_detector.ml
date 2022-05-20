@@ -89,6 +89,7 @@ let create_message node message (recipient : Peer.t) =
   Message.
     {
       category = Failure_detection;
+      sub_category_opt = None;
       id = -1;
       sender = Client.address_of !node;
       recipient = recipient.address;

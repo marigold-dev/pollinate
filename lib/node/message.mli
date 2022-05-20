@@ -22,6 +22,7 @@ type category =
 stored in the node's inbox. *)
 type t = {
   category : category;
+  sub_category_opt : (string * string) option;
   id : int;
   sender : Address.t;
   recipient : Address.t;
