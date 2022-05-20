@@ -8,14 +8,16 @@ module Node_tests = struct
   (* Initializes two nodes and the related two peers *)
   let node_a =
     Lwt_main.run
-      (Node.init ~preprocess:Commons.preprocess ~msg_handler:Commons.msg_handler ~sign_payload:(fun _p _k -> None) ~key:None 
-         ("127.0.0.1", 3000))
+      (Node.init ~preprocess:Commons.preprocess ~msg_handler:Commons.msg_handler
+         ~sign_payload:(fun _p _k -> None)
+         ~key:None ("127.0.0.1", 3000))
 
   let peer_a = Client.peer_from !node_a
 
   let node_b =
     Lwt_main.run
-      (Node.init ~preprocess:Commons.preprocess ~msg_handler:Commons.msg_handler ~sign_payload:(fun _p _k -> None) ~key:None 
+      (Node.init ~preprocess:Commons.preprocess ~msg_handler:Commons.msg_handler
+         ~sign_payload:(fun _p _k -> None) ~key:None 
          ("127.0.0.1", 3001))
 
   let peer_b = Client.peer_from !node_b

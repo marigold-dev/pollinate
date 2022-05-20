@@ -29,7 +29,7 @@ let create_request node recipient sign_payload key payload =
             sender = !node.address;
             recipient;
             payload;
-            payload_signature = sign_payload payload key ;
+            payload_signature = sign_payload payload key;
           })
 
 let create_response node request sign_payload key payload =
@@ -41,7 +41,7 @@ let create_response node request sign_payload key payload =
       sender = !node.address;
       recipient = request.sender;
       payload;
-      payload_signature = sign_payload payload key ;
+      payload_signature = sign_payload payload key;
     }
 
 let send_to node message =

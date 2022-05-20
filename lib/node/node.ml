@@ -6,8 +6,8 @@ module Client = Client
 module Failure_detector = Failure_detector
 module Inbox = Inbox
 
-let init ?(preprocess = fun m -> m) ~msg_handler ?(init_peers = []) ~sign_payload ~key
-    (address, port) =
+let init ?(preprocess = fun m -> m) ~msg_handler ?(init_peers = [])
+    ~sign_payload ~key (address, port) =
   let open Util in
   let%lwt socket = Net.create_socket port in
   let peers =
