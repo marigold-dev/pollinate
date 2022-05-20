@@ -19,7 +19,7 @@ module Commons = struct
 
   let msg_handler request =
     let open Messages in
-    let open Message in
+    let open Pollinate.Node.Message in
     let request = Encoding.unpack bin_read_request request.payload in
     let response =
       match request with

@@ -7,7 +7,7 @@ type category =
   | Response
   | Failure_detection
   | Custom            of string
-[@@deriving bin_io]
+[@@deriving bin_io, eq, ord]
 
 type t = {
   category : category;
@@ -16,5 +16,6 @@ type t = {
   sender : Address.t;
   recipient : Address.t;
   payload : bytes;
+  payload_signature : bytes option;
 }
-[@@deriving bin_io]
+[@@deriving bin_io, eq, ord]

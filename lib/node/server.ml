@@ -21,7 +21,7 @@ let handle_response request_table res =
    4. Grab the next request if it exists and send it to the message handler along with the
      node's state
    5. Send the encoded response from the message handler to the requester *)
-let run node router msg_handler =
+let run node router msg_handler (sign_payload : bytes -> bytes option -> bytes option) (key : bytes option) =
   let rec server () =
     let%lwt message = Client.recv_next node in
     let%lwt () = route node router message in
@@ -42,7 +42,7 @@ let run node router msg_handler =
       match request with
       | Some request ->
         let response =
-          request |> msg_handler |> Client.create_response node request in
+          request |> msg_handler |> Client.create_response node request sign_payload key in
         let%lwt () = Client.send_to node response in
         Lwt.return ()
       | None -> Lwt.return () in
