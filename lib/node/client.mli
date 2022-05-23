@@ -19,8 +19,8 @@ addressed to {i recipient} containing {i payload}. *)
 val create_request :
   node ref ->
   Address.t ->
-  (bytes -> bytes option -> bytes option) ->
-  bytes option ->
+  sign_payload:(bytes -> bytes option -> bytes option) ->
+  key:bytes option ->
   bytes ->
   Message.t Lwt.t
 
@@ -29,8 +29,8 @@ that responds to {i request} whose content is {i payload}. *)
 val create_response :
   node ref ->
   Message.t ->
-  (bytes -> bytes option -> bytes option) ->
-  bytes option ->
+  sign_payload:(bytes -> bytes option -> bytes option) ->
+  key:bytes option ->
   bytes ->
   Message.t
 
@@ -48,9 +48,9 @@ function blocks the current thread of execution until a response
 arrives. *)
 val request :
   node ref ->
+  sign_payload:(bytes -> bytes option -> bytes option) ->
+  key:bytes option ->
   bytes ->
-  (bytes -> bytes option -> bytes option) ->
-  bytes option ->
   Address.t ->
   Message.t Lwt.t
 
@@ -58,8 +58,8 @@ val request :
 of recipients and collects the responses in a list of [Message.t Lwt.t]. *)
 val broadcast_request :
   node ref ->
-  bytes ->
   Address.t list ->
-  (bytes -> bytes option -> bytes option) ->
-  bytes option ->
+  sign_payload:(bytes -> bytes option -> bytes option) ->
+  key:bytes option ->
+  bytes ->
   Message.t Lwt.t list
