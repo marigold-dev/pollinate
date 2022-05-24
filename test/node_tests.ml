@@ -8,7 +8,7 @@ module Node_tests = struct
   (* Initializes two nodes and the related two peers *)
   let node_a =
     Lwt_main.run
-      (Node.init ~preprocess:Commons.preprocess ~msg_handler:Commons.msg_handler
+      (Pnode.init ~preprocess:Commons.preprocess ~msg_handler:Commons.msg_handler
          ~sign_payload:(fun _p _k -> None)
          ~key:None ("127.0.0.1", 3000))
 
@@ -16,7 +16,7 @@ module Node_tests = struct
 
   let node_b =
     Lwt_main.run
-      (Node.init ~preprocess:Commons.preprocess ~msg_handler:Commons.msg_handler
+      (Pnode.init ~preprocess:Commons.preprocess ~msg_handler:Commons.msg_handler
          ~sign_payload:(fun _p _k -> None)
          ~key:None ("127.0.0.1", 3001))
 
