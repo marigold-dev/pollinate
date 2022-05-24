@@ -1,6 +1,6 @@
 (** Utils function shared by the different tests modules *)
 module Commons = struct
-  open Pollinate.Node
+  open Pollinate.PNode
   open Pollinate.Util
   open Messages
 
@@ -19,7 +19,7 @@ module Commons = struct
 
   let msg_handler request =
     let open Messages in
-    let open Pollinate.Node.Message in
+    let open Pollinate.PNode.Message in
     let request = Encoding.unpack bin_read_request request.payload in
     let response =
       match request with

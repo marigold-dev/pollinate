@@ -1,5 +1,5 @@
 open Lwt.Infix
-open Pollinate.Node
+open Pollinate.PNode
 open Pollinate.Util
 open Commons
 open Messages

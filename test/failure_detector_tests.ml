@@ -1,8 +1,8 @@
 open Commons
-open Pollinate.Node
+open Pollinate.PNode
 open Lwt.Infix
 
-module SUT = Pollinate.Node.Failure_detector
+module SUT = Pollinate.PNode.Failure_detector
 
 let node_a =
   Lwt_main.run
@@ -21,7 +21,7 @@ let failure_detection () =
   let open Common.Peer in
   let open Client in
   let _ = add_peer !node_a peer_b in
-  let _ = Pollinate.Node.Client.peer_from !node_a in
+  let _ = Pollinate.PNode.Client.peer_from !node_a in
   let _ = SUT.update_peer_status node_a peer_b Suspicious in
   (* Need to wait for the timeout to be reached An other way to do, would be to change the `last_suspicious_status` of the peer *)
   let%lwt _ = Lwt_unix.sleep 9.1 in
@@ -30,7 +30,7 @@ let failure_detection () =
 
 let failure_detection_nothing_on_alive () =
   let open Common.Peer in
-  let _ = add_neighbor (Pollinate.Node.Client.peer_from !node_a) peer_b in
+  let _ = add_neighbor (Pollinate.PNode.Client.peer_from !node_a) peer_b in
   let _ = SUT.update_peer_status node_a peer_b Alive in
   let%lwt _ = SUT.failure_detection node_a in
   Lwt.return (Base.Hashtbl.length !node_a.peers = 1)
