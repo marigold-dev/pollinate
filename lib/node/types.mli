@@ -39,21 +39,26 @@ type failure_detector = {
 (** Represents a node with some state in a peer-to-peer network *)
 type node = {
   address : Address.t;
-      (** An ID that is incremented whenever a request is
-     made from this node. The response matching this
-     request will carry the same ID, allowing the response
-     to be identified and thus stopping the request from
-     blocking. *)
+      (* An ID that is incremented whenever a request is
+         made from this node. The response matching this
+         request will carry the same ID, allowing the response
+         to be identified and thus stopping the request from
+         blocking. *)
   current_request_id : int ref Mutex.t;
-      (** A hashtable that pairs request IDs with condition variables.
-     When a response is received by the server, it checks this table
-     for a waiting request and signals the request's condition variable
-     with the incoming response. *)
+      (* A hashtable that pairs request IDs with condition variables.
+         When a response is received by the server, it checks this table
+         for a waiting request and signals the request's condition variable
+         with the incoming response. *)
   request_table : (int, Message.t Lwt_condition.t) Hashtbl.t;
   socket : file_descr Mutex.t;
-      (** A store of incoming messages for the node. Stores
-     messages separately by category. *)
-  inbox : Inbox.t;
+  (* Failure detection component ; runs automatically with the server and is responsible
+     for automatically removing dead nodes from the peers table. *)
   failure_detector : failure_detector;
+  (* Hashtable mapping addresses to Peers with statuses according
+     to the SWIM failure-detection protocol *)
   peers : (Address.t, Peer.t) Base.Hashtbl.t;
+  (* Dissemination component ; runs automatically with the server and is responsible
+     for automatically disseminating both new Post messages and received Post messages
+     with other nodes in the network *)
+  mutable disseminator : Disseminator.t;
 }

@@ -20,7 +20,7 @@ type node = {
   current_request_id : int ref Mutex.t;
   request_table : (int, Message.t Lwt_condition.t) Hashtbl.t;
   socket : file_descr Mutex.t;
-  inbox : Inbox.t;
   failure_detector : failure_detector;
   peers : (Address.t, Peer.t) Base.Hashtbl.t;
+  mutable disseminator : Disseminator.t;
 }
