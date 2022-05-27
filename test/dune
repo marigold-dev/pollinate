@@ -1,6 +1,8 @@
 (tests
  (names
   node_tests
+  gossip_tests
+  disseminator_tests
   peer_prop
   address_prop
   util_prop
@@ -8,6 +10,8 @@
   failure_detector_tests)
  (modules
   node_tests
+  gossip_tests
+  disseminator_tests
   messages
   generators
   peer_prop
