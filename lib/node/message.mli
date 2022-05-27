@@ -1,6 +1,6 @@
 (** Messages received by the [node], whether they are requests,
 responses, or protocol-specific messages. For consumer use
-only when implementing a routing function for the
+only when implementing a preprocessing function for the
 node. *)
 
 open Common
@@ -14,18 +14,22 @@ type category =
   | Uncategorized
   | Request
   | Response
+  | Post
   | Failure_detection
   | Custom            of string
-[@@deriving bin_io]
+[@@deriving bin_io, show]
 
 (** Messages received from [peers] which are
-stored in the node's inbox. *)
+processed by the node's message handler. *)
 type t = {
   category : category;
   sub_category_opt : (string * string) option;
   id : int;
+  timestamp : float;
   sender : Address.t;
-  recipient : Address.t;
+  recipients : Address.t list;
   payload : bytes;
 }
 [@@deriving bin_io]
+
+val hash_of : t -> Digest.t
