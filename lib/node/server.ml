@@ -48,8 +48,7 @@ let process_message node preprocessor msg_handler =
         response
         |> Client.create_response node message
         |> Networking.send_to node
-      | None ->
-        Lwt.return ())
+      | None -> Lwt.return ())
     | Failure_detection -> Failure_detector.handle_message node message
     | Post ->
       if not (Disseminator.seen !node.disseminator message) then (
@@ -71,7 +70,7 @@ let process_message node preprocessor msg_handler =
     | _ ->
       let _ = msg_handler message in
       Lwt.return () in
-    Lwt.return ()
+  Lwt.return ()
 
 (** Log some initial information at the beginning of a server iteration.
     See comments for descriptions regarding what is actually being logged. *)

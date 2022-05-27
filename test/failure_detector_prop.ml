@@ -5,8 +5,7 @@ open Pollinate
 module SUT = Pollinate.Node.Failure_detector
 
 let node_a =
-  Lwt_main.run
-    (Node.init Address.{ address = "127.0.0.1"; port = 3002 })
+  Lwt_main.run (Node.init Address.{ address = "127.0.0.1"; port = 3002 })
 
 let knuth_shuffle_size =
   QCheck2.Test.make ~count:1000
