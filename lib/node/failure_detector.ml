@@ -82,27 +82,28 @@ let update_peer_status node peer status =
       (Printf.sprintf "Failed to find peer with address %s:%d in node peer list"
          peer.address.address peer.address.port)
 
-let create_message node message (recipient : Peer.t) =
+let create_message node message (recipients : Peer.t list) =
   Message.
     {
       category = Failure_detection;
       sub_category_opt = None;
       id = -1;
+      timestamp = Unix.gettimeofday ();
       sender = Client.address_of !node;
-      recipient = recipient.address;
+      recipients = List.map (fun p -> p.Peer.address) recipients;
       payload = Encoding.pack bin_writer_message message;
     }
 
-let send_message message node (recipient : Peer.t) =
-  let message = create_message node message recipient in
-  Client.send_to node message
+let send_message message node (recipients : Peer.t list) =
+  let message = create_message node message recipients in
+  Networking.send_to node message
 
-let send_ping_to node peer = send_message Ping node peer
+let send_ping_to node peer = send_message Ping node [peer]
 
-let send_acknowledge_to node peer = send_message Acknowledge node peer
+let send_acknowledge_to node peer = send_message Acknowledge node [peer]
 
 let send_ping_request_to node (recipient : Peer.t) =
-  send_message (PingRequest recipient.address) node recipient
+  send_message (PingRequest recipient.address) node [recipient]
 
 let handle_message node message =
   let open Message in
