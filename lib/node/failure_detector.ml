@@ -70,12 +70,12 @@ let send_message message node recipient =
   let message = create_message node message recipient in
   Networking.send_to node message
 
-let send_ping_to node peer = send_message Ping node peer
+let send_ping_to node peer = send_message Ping node [peer]
 
-let send_acknowledge_to node peer = send_message Acknowledge node peer
+let send_acknowledge_to node peer = send_message Acknowledge node [peer]
 
 let send_ping_request_to node (recipient : Peer.t) =
-  send_message (PingRequest recipient.address) node recipient
+  send_message (PingRequest recipient.address) node [recipient]
 
 let handle_message node message =
   let open Message in
