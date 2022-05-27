@@ -26,7 +26,6 @@ val create_request : node ref -> Address.t -> bytes -> Message.t Lwt.t
 that responds to {i request} whose content is {i payload}. *)
 val create_response : node ref -> Message.t -> bytes -> Message.t
 
-
 (** Sends an encoded {i request} to the specified peer and
 returns a promise holding the response from the peer. This
 function blocks the current thread of execution until a response

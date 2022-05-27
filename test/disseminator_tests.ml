@@ -7,8 +7,8 @@ module Disseminator_tests = struct
   let node =
     Lwt_main.run
       (let%lwt node_a =
-         Node.init ~init_peers:[]
-           Address.{ address = "127.0.0.1"; port = 5000 } in
+         Node.init ~init_peers:[] Address.{ address = "127.0.0.1"; port = 5000 }
+       in
        Lwt.return node_a)
 
   let queue_insertion_test () =

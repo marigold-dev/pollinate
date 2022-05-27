@@ -41,20 +41,14 @@ module Gossip_tests = struct
             local_address 4009 ) in
 
         let%lwt node_a =
-          Node.init
-            ~init_peers:[addr_b; addr_c; addr_e; addr_h]
-            addr_a in
-        let%lwt node_b =
-          Node.init ~init_peers:[addr_a; addr_d; addr_e] addr_b in
-        let%lwt node_c =
-          Node.init ~init_peers:[addr_a; addr_f; addr_g] addr_c in
+          Node.init ~init_peers:[addr_b; addr_c; addr_e; addr_h] addr_a in
+        let%lwt node_b = Node.init ~init_peers:[addr_a; addr_d; addr_e] addr_b in
+        let%lwt node_c = Node.init ~init_peers:[addr_a; addr_f; addr_g] addr_c in
         let%lwt node_d = Node.init ~init_peers:[addr_b] addr_d in
-        let%lwt node_e =
-          Node.init ~init_peers:[addr_a; addr_b] addr_e in
+        let%lwt node_e = Node.init ~init_peers:[addr_a; addr_b] addr_e in
         let%lwt node_f = Node.init ~init_peers:[addr_c] addr_f in
         let%lwt node_g = Node.init ~init_peers:[addr_c] addr_g in
-        let%lwt node_h =
-          Node.init ~init_peers:[addr_a; addr_i; addr_j] addr_h in
+        let%lwt node_h = Node.init ~init_peers:[addr_a; addr_i; addr_j] addr_h in
         let%lwt node_i = Node.init ~init_peers:[addr_h] addr_i in
         let%lwt node_j = Node.init ~init_peers:[addr_h] addr_j in
         Lwt.return

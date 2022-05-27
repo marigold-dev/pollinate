@@ -8,16 +8,12 @@ open Messages
 module Node_tests = struct
   (* Initializes two nodes and the related two peers *)
   let node_a =
-    Lwt_main.run
-      (Node.init
-         Address.{ address = "127.0.0.1"; port = 3000 })
+    Lwt_main.run (Node.init Address.{ address = "127.0.0.1"; port = 3000 })
 
   let peer_a = Client.peer_from !node_a
 
   let node_b =
-    Lwt_main.run
-      (Node.init
-         Address.{ address = "127.0.0.1"; port = 3001 })
+    Lwt_main.run (Node.init Address.{ address = "127.0.0.1"; port = 3001 })
 
   let peer_b = Client.peer_from !node_b
 

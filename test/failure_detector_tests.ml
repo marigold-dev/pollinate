@@ -5,11 +5,9 @@ open Lwt.Infix
 module SUT = Pollinate.Node.Failure_detector
 
 let node_a =
-  Lwt_main.run
-    (Node.init Address.{ address = "127.0.0.1"; port = 3003 })
+  Lwt_main.run (Node.init Address.{ address = "127.0.0.1"; port = 3003 })
 let node_b =
-  Lwt_main.run
-    (Node.init Address.{ address = "127.0.0.1"; port = 3004 })
+  Lwt_main.run (Node.init Address.{ address = "127.0.0.1"; port = 3004 })
 
 let peer_b = Client.peer_from !node_b
 
