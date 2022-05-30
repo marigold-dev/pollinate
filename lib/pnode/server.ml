@@ -46,7 +46,7 @@ let run node router msg_handler
         let response =
           request
           |> msg_handler
-          |> Client.create_response node request ~sign_payload:sign_payload ~key:key in
+          |> Client.create_response node request ~sign_payload ~key in
         let%lwt () = Client.send_to node response in
         Lwt.return ()
       | None -> Lwt.return () in
