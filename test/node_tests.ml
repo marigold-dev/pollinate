@@ -10,8 +10,7 @@ module Node_tests = struct
     Lwt_main.run
       (Pnode.init ~preprocess:Commons.preprocess
          ~msg_handler:Commons.msg_handler
-         ~sign_payload:(fun _p _k -> None)
-         ~key:None ("127.0.0.1", 3000))
+         ("127.0.0.1", 3000))
 
   let peer_a = Client.peer_from !node_a
 
@@ -19,8 +18,7 @@ module Node_tests = struct
     Lwt_main.run
       (Pnode.init ~preprocess:Commons.preprocess
          ~msg_handler:Commons.msg_handler
-         ~sign_payload:(fun _p _k -> None)
-         ~key:None ("127.0.0.1", 3001))
+         ("127.0.0.1", 3001))
 
   let peer_b = Client.peer_from !node_b
 
@@ -28,16 +26,12 @@ module Node_tests = struct
      of the other, returning the first element in the response of each *)
   let trade_messages () =
     let open Messages in
-    let get = Encoding.pack bin_writer_message (Request Get) in
+    let get = (Encoding.pack bin_writer_message (Request Get), None) in
     let%lwt { payload = res_from_b; _ } =
-      Client.request node_a
-        ~sign_payload:(fun _p _k -> None)
-        ~key:None get peer_b.address in
+      Client.request node_a get peer_b.address in
     let res_from_b = Encoding.unpack bin_read_response res_from_b in
     let%lwt { payload = res_from_a; _ } =
-      Client.request node_b
-        ~sign_payload:(fun _p _k -> None)
-        ~key:None get peer_a.address in
+      Client.request node_b get peer_a.address in
     let res_from_a = Encoding.unpack bin_read_response res_from_a in
     let res_from_b, res_from_a =
       match (res_from_b, res_from_a) with
@@ -48,17 +42,13 @@ module Node_tests = struct
   let test_insert () =
     let open Messages in
     let insert_req =
-      Encoding.pack bin_writer_message (Request (Insert "something")) in
+      (Encoding.pack bin_writer_message (Request (Insert "something")), None) in
     let%lwt { payload = res_a; _ } =
-      Client.request node_a
-        ~sign_payload:(fun _p _k -> None)
-        ~key:None insert_req peer_b.address in
+      Client.request node_a insert_req peer_b.address in
     let res_a = Encoding.unpack bin_read_response res_a in
-    let get = Encoding.pack bin_writer_message (Request Get) in
+    let get = (Encoding.pack bin_writer_message (Request Get), None) in
     let%lwt { payload = b_state; _ } =
-      Client.request node_a
-        ~sign_payload:(fun _p _k -> None)
-        ~key:None get peer_b.address in
+      Client.request node_a get peer_b.address in
     let b_state = Encoding.unpack bin_read_response b_state in
     let res_a, b_state =
       match (res_a, b_state) with
@@ -68,11 +58,9 @@ module Node_tests = struct
 
   let ping_pong () =
     let open Messages in
-    let ping = Encoding.pack bin_writer_message (Request Ping) in
+    let ping = (Encoding.pack bin_writer_message (Request Ping), None) in
     let%lwt { payload = pong; _ } =
-      Client.request node_a
-        ~sign_payload:(fun _p _k -> None)
-        ~key:None ping peer_b.address in
+      Client.request node_a ping peer_b.address in
     let pong = Encoding.unpack bin_read_response pong in
     let pong =
       match pong with

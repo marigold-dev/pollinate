@@ -26,5 +26,5 @@ module Commons = struct
       | Ping -> Pong
       | Get -> Success "Ok"
       | Insert _ -> Success "Successfully added value to state" in
-    Encoding.pack bin_writer_message (Response response)
+    (Encoding.pack bin_writer_message (Response response), None)
 end

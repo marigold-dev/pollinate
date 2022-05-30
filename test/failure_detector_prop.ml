@@ -6,8 +6,7 @@ module SUT = Pollinate.PNode.Failure_detector
 let node_a =
   Lwt_main.run
     (Pnode.init ~preprocess:Commons.preprocess ~msg_handler:Commons.msg_handler
-       ~sign_payload:(fun _p _k -> None)
-       ~key:None ("127.0.0.1", 3002))
+       ("127.0.0.1", 3002))
 
 let knuth_shuffle_size =
   QCheck2.Test.make ~count:1000

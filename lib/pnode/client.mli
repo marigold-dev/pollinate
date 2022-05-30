@@ -19,9 +19,7 @@ addressed to {i recipient} containing {i payload}. *)
 val create_request :
   node ref ->
   Address.t ->
-  sign_payload:(bytes -> bytes option -> bytes option) ->
-  key:bytes option ->
-  bytes ->
+  bytes * bytes option ->
   Message.t Lwt.t
 
 (** [create_response node request payload] creates a [Message.t] of the {i Response category}
@@ -29,9 +27,7 @@ that responds to {i request} whose content is {i payload}. *)
 val create_response :
   node ref ->
   Message.t ->
-  sign_payload:(bytes -> bytes option -> bytes option) ->
-  key:bytes option ->
-  bytes ->
+  bytes * bytes option ->
   Message.t
 
 (** Sends a message via datagram from the given [Types.node]
@@ -48,9 +44,7 @@ function blocks the current thread of execution until a response
 arrives. *)
 val request :
   node ref ->
-  sign_payload:(bytes -> bytes option -> bytes option) ->
-  key:bytes option ->
-  bytes ->
+  bytes * bytes option ->
   Address.t ->
   Message.t Lwt.t
 
@@ -59,7 +53,5 @@ of recipients and collects the responses in a list of [Message.t Lwt.t]. *)
 val broadcast_request :
   node ref ->
   Address.t list ->
-  sign_payload:(bytes -> bytes option -> bytes option) ->
-  key:bytes option ->
-  bytes ->
+  bytes * bytes option ->
   Message.t Lwt.t list

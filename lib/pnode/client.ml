@@ -17,7 +17,7 @@ let peer_from { address; peers; _ } =
 let add_peer node (peer : Peer.t) =
   Base.Hashtbl.add node.peers ~key:peer.address ~data:peer
 
-let create_request node recipient ~sign_payload ~key payload =
+let create_request node recipient (payload, payload_signature) =
   Mutex.with_lock !node.current_request_id (fun id ->
       id := !id + 1;
       Lwt.return
@@ -29,10 +29,10 @@ let create_request node recipient ~sign_payload ~key payload =
             sender = !node.address;
             recipient;
             payload;
-            payload_signature = sign_payload payload key;
+            payload_signature;
           })
 
-let create_response node request ~sign_payload ~key payload =
+let create_response node request (payload, payload_signature) =
   Message.
     {
       category = Message.Response;
@@ -41,7 +41,7 @@ let create_response node request ~sign_payload ~key payload =
       sender = !node.address;
       recipient = request.sender;
       payload;
-      payload_signature = sign_payload payload key;
+      payload_signature;
     }
 
 let send_to node message =
@@ -77,12 +77,12 @@ let recv_next node =
   Mutex.unlock !node.socket;
   Lwt.return message
 
-let request node ~sign_payload ~(key : bytes option) request recipient =
-  let%lwt message = create_request node recipient ~sign_payload ~key request in
+let request node (request, payload_signature) recipient =
+  let%lwt message = create_request node recipient (request, payload_signature) in
   let%lwt () = send_to node message in
   let condition_var = Lwt_condition.create () in
   Hashtbl.add !node.request_table message.id condition_var;
   Lwt_condition.wait condition_var
 
-let broadcast_request node recipients ~sign_payload ~(key : bytes option) req =
-  List.map (request node ~sign_payload ~key req) recipients
+let broadcast_request node recipients (req, payload_signature) =
+  List.map (request node (req, payload_signature)) recipients
