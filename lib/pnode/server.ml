@@ -21,8 +21,7 @@ let handle_response request_table res =
    4. Grab the next request if it exists and send it to the message handler along with the
      node's state
    5. Send the encoded response from the message handler to the requester *)
-let run node router (msg_handler: Message.t -> bytes * bytes option)
-    =
+let run node router (msg_handler : Message.t -> bytes * bytes option) =
   let rec server () =
     let%lwt message = Client.recv_next node in
     let%lwt () = route node router message in
