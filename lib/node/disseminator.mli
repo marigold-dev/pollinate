@@ -38,7 +38,7 @@ val seen : t -> Message.t -> bool
 
 (** Returns the 7 digit hashes of all the messages
     that the disseminator has seen. *)
-val all_seen : t -> string list
+val get_seen_messages : t -> string list
 
 (** Returns the current disseminator round. *)
 val current_round : t -> int
