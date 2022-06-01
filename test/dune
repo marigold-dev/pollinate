@@ -6,6 +6,7 @@
   peer_prop
   address_prop
   util_prop
+  networking_prop
   failure_detector_prop
   failure_detector_tests)
  (modules
@@ -18,6 +19,7 @@
   address_prop
   commons
   util_prop
+  networking_prop
   failure_detector_prop
   failure_detector_tests)
  (libraries pollinate bin_prot lwt alcotest-lwt qcheck-core qcheck-alcotest)

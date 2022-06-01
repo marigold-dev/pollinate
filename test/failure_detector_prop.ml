@@ -2,7 +2,7 @@ open QCheck2.Gen
 open Pollinate.Peer
 open Pollinate
 
-module SUT = Pollinate.Node.Failure_detector
+module SUT = Pollinate.Node.Testing.Failure_detector
 
 let node_a =
   Lwt_main.run (Node.init Address.{ address = "127.0.0.1"; port = 3002 })
