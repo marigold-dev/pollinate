@@ -81,7 +81,7 @@ let print_logs node =
   let%lwt () =
     log node
       (Printf.sprintf "Seen: %s\n"
-         (Disseminator.all_seen !node.disseminator |> String.concat " ; "))
+         (Disseminator.get_seen_messages !node.disseminator |> String.concat " ; "))
   in
   (* Check who the current peers of the node are *)
   let%lwt () =
