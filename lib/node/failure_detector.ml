@@ -34,34 +34,6 @@ let wait_ack_timeout t sequence_number timeout =
        Lwt.return @@ Result.Ok "Successfully received acknowledge");
     ]
 
-(** Basic random shuffle, see https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle*)
-let knuth_shuffle known_peers =
-  let shuffled_array = Array.copy (Array.of_list known_peers) in
-  let initial_array_length = Array.length shuffled_array in
-  for i = initial_array_length - 1 downto 1 do
-    let k = Random.int (i + 1) in
-    let x = shuffled_array.(k) in
-    shuffled_array.(k) <- shuffled_array.(i);
-    shuffled_array.(i) <- x
-  done;
-  Array.to_list shuffled_array
-
-(* Regarding the SWIM protocol, if peer A cannot get ACK from peer B (timeout):
-    A sets B as `suspicious`
-    A randomly picks one (or several, should it also be randomly determined?) peer(s) from its list
-    and ask him/them to ping B.*)
-
-(** This function return the random peer, to which we will ask to ping the first peer *)
-let rec pick_random_neighbors neighbors number_of_neighbors =
-  let addresses = neighbors |> Base.Hashtbl.keys |> knuth_shuffle in
-  match addresses with
-  | [] -> failwith "pick_random_peers"
-  | elem :: _ ->
-    if number_of_neighbors = 1 then
-      [elem]
-    else
-      elem :: pick_random_neighbors neighbors (number_of_neighbors - 1)
-
 (** Updates a peer in the node's peer list with
    the given status. Returns a result that contains
    unit if the peer is found in the node's list, and
@@ -150,7 +122,7 @@ let probe_peer t node peer_to_update =
   | Error _ -> (
     let pingers =
       t.config.helpers_size
-      |> pick_random_neighbors !node.peers
+      |> Networking.pick_random_neighbors !node.peers
       |> List.map Peer.from in
     let _ = List.map (send_ping_request_to node) pingers in
     let wait_time = t.config.protocol_period - t.config.round_trip_time in
@@ -172,9 +144,7 @@ let suspicion_detection node =
   match List.length available_peers with
   | 0 -> Lwt.return ()
   | _ ->
-    let random_peer =
-      List.map (fun p -> p.address) available_peers |> knuth_shuffle |> List.hd
-    in
+    let random_peer = Networking.pick_random_neighbors !node.peers 1 |> List.hd in
     let _ =
       Lwt.join
         [
