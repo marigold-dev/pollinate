@@ -63,6 +63,3 @@ let request node request recipient =
 
 let post node message =
   !node.disseminator <- Disseminator.post !node.disseminator message
-
-let broadcast_request node req recipients =
-  List.map (request node req) recipients

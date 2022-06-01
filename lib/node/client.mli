@@ -32,9 +32,4 @@ function blocks the current thread of execution until a response
 arrives. *)
 val request : node ref -> bytes -> Address.t -> Message.t Lwt.t
 
-(** Broadcasts a request containing the given payload to a list
-of recipients and collects the responses in a list of [Message.t Lwt.t]. *)
-val broadcast_request :
-  node ref -> bytes -> Address.t list -> Message.t Lwt.t list
-
 val create_post : node ref -> bytes -> Message.t
