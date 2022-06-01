@@ -8,4 +8,6 @@ val send_to : node ref -> Message.t -> unit Lwt.t
 (** Waits for the next incoming message and returns it. *)
 val recv_next : node ref -> Message.t Lwt.t
 
+(** Advances a node's disseminator by disseminating the messages in the queue
+    and pruning outdated messages from the queue. *)
 val disseminate : node ref -> unit Lwt.t
