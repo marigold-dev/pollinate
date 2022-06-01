@@ -110,42 +110,25 @@ module Gossip_tests = struct
     let seen () =
       nodes |> List.filter (fun n -> Node.seen n message) |> node_ports in
 
-    (* let all_seen () =
-       seen () = node_ports nodes in *)
-
-    (* Note: no matter what, we seem to wait n seconds here.
-       This shouldn't be happening. For some reason, I'm totally
-       unable to print log messages here as well. Really annoying. *)
-    (* let rec wait secs =
-       if secs < n && not (all_seen ()) then
-         let () =
-           seen ()
-           |> List.map string_of_int
-           |> String.concat "; "
-           |> Printf.eprintf "SEEN: %s\n" in
-         let%lwt () = Lwt_unix.sleep 1. in
-         wait (secs +. 1.)
-       else
-         Lwt.return () in *)
-
-    (* let%lwt () = wait 0. in *)
-    (* let secs = ref 1. in
-       let%lwt () =
-         while%lwt !secs < n && not (all_seen ()) do
-           secs := !secs +. 1.;
-           Lwt_unix.sleep 1.
-         done in *)
-
-    (* let rounds = ref 0 in
-
-       let%lwt () =
-         while%lwt !rounds < 7 && not (all_seen ()) do
-           rounds := !rounds + 1;
-           Lwt_unix.sleep 2.
-         done in *)
-    let%lwt () = Lwt_unix.sleep 0.2 in
-
-    seen () |> Lwt.return
+    let%lwt () =
+      let%lwt oc = Lwt_io.open_file ~flags:[Unix.O_WRONLY; Unix.O_APPEND; Unix.O_CREAT] ~mode:Lwt_io.Output "/tmp/log.txt" in
+      let%lwt () = Lwt_io.write oc (Printf.sprintf "%f\n" (Unix.gettimeofday ())) in
+      Lwt_io.close oc in
+    let reg_seen =
+      let%lwt () = Lwt_unix.sleep 0.2 in
+      Lwt.return (seen ()) in
+    let f_seen =
+      let%lwt () = Lwt_unix.sleep 3. in
+      Lwt.return [] in
+    let%lwt res = Lwt.pick [ reg_seen ; f_seen ] in
+    let%lwt () =
+      let%lwt oc =
+        Lwt_io.open_file
+          ~flags:[Unix.O_WRONLY; Unix.O_APPEND; Unix.O_CREAT]
+          ~mode:Lwt_io.Output "/tmp/log.txt" in
+      let%lwt () = Lwt_io.write oc (Printf.sprintf "%d\n" (List.length res)) in
+      Lwt_io.close oc in
+    Lwt.return res
 end
 
 (** Test for dissemination given a specific node. *)
