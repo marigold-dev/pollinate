@@ -86,3 +86,7 @@ let disseminate node =
     |> List.map (fun message -> broadcast node message dissemination_group)
   in
   Lwt.return (!node.disseminator <- Disseminator.next_round !node.disseminator)
+
+module Testing = struct
+  let knuth_shuffle = knuth_shuffle
+end

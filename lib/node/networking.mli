@@ -16,3 +16,7 @@ val disseminate : node ref -> unit Lwt.t
 (** Given a Base.Hashtbl of Addresses to Peers and a number n of peers to be
     randomly chosen, returns a list of addresses corresponding to n  *)
 val pick_random_neighbors : (Address.t, Peer.t) Base.Hashtbl.t -> int -> Address.t list
+
+module Testing : sig
+  val knuth_shuffle : 'a list -> 'a list
+end

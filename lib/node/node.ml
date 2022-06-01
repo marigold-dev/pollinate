@@ -3,7 +3,6 @@ open Types
 
 module Message = Message
 module Client = Client
-module Failure_detector = Failure_detector
 
 type t = Types.node
 
@@ -42,6 +41,8 @@ let run_server ?(preprocessor = fun m -> m) ~msg_handler node =
 let seen node message = Disseminator.seen !node.disseminator message
 
 module Testing = struct
+  module Failure_detector = Failure_detector
+  module Networking = Networking
   let broadcast_queue node = Disseminator.broadcast_queue !node.disseminator
   let disseminator_round node = Disseminator.current_round !node.disseminator
 end

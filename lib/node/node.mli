@@ -2,7 +2,6 @@ open Common
 
 module Message = Message
 module Client = Client
-module Failure_detector = Failure_detector
 
 type t = Types.node
 
@@ -23,6 +22,8 @@ val run_server :
 val seen : t ref -> Message.t -> bool
 
 module Testing : sig
+  module Failure_detector = Failure_detector
+  module Networking = Networking
   val broadcast_queue : t ref -> Message.t list
   val disseminator_round : t ref -> int
 end
