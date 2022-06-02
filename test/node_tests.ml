@@ -1,19 +1,19 @@
 open Lwt.Infix
 open Commons
 open Pollinate
-open Pollinate.Node
+open Pollinate.PNode
 open Pollinate.Util
 open Messages
 
 module Node_tests = struct
   (* Initializes two nodes and the related two peers *)
   let node_a =
-    Lwt_main.run (Node.init Address.{ address = "127.0.0.1"; port = 3000 })
+    Lwt_main.run (PNode.init Address.{ address = "127.0.0.1"; port = 3000 })
 
   let peer_a = Client.peer_from !node_a
 
   let node_b =
-    Lwt_main.run (Node.init Address.{ address = "127.0.0.1"; port = 3001 })
+    Lwt_main.run (PNode.init Address.{ address = "127.0.0.1"; port = 3001 })
 
   let peer_b = Client.peer_from !node_b
 
@@ -23,7 +23,7 @@ module Node_tests = struct
     let open Messages in
     let _ =
       Lwt_list.map_p
-        (Node.run_server ~preprocessor:Commons.preprocessor
+        (PNode.run_server ~preprocessor:Commons.preprocessor
            ~msg_handler:Commons.msg_handler)
         [node_a; node_b] in
     let get = Encoding.pack bin_writer_message (Request Get) in
@@ -47,7 +47,7 @@ module Node_tests = struct
     let open Messages in
     let _ =
       Lwt_list.map_p
-        (Node.run_server ~preprocessor:Commons.preprocessor
+        (PNode.run_server ~preprocessor:Commons.preprocessor
            ~msg_handler:Commons.msg_handler)
         [node_a; node_b] in
     let ping = Encoding.pack bin_writer_message (Request Ping) in

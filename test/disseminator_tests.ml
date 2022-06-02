@@ -1,18 +1,18 @@
 open Lwt.Infix
 open Commons
 open Pollinate
-open Pollinate.Node
+open Pollinate.PNode
 
 module Disseminator_tests = struct
   let node =
     Lwt_main.run
       (let%lwt node_a =
-         Node.init ~init_peers:[] Address.{ address = "127.0.0.1"; port = 5000 }
+         PNode.init ~init_peers:[] Address.{ address = "127.0.0.1"; port = 5000 }
        in
        Lwt.return node_a)
 
   let queue_insertion_test () =
-    let _server = Node.run_server ~msg_handler:Commons.msg_handler node in
+    let _server = PNode.run_server ~msg_handler:Commons.msg_handler node in
     Client.address_of !node
     |> (fun Address.{ port; _ } -> port)
     |> string_of_int
@@ -20,10 +20,10 @@ module Disseminator_tests = struct
     |> Client.create_post node
     |> Client.post node;
 
-    Lwt.return (List.length (Node.Testing.broadcast_queue node))
+    Lwt.return (List.length (PNode.Testing.broadcast_queue node))
 
   let queue_removal_test () =
-    let _server = Node.run_server ~msg_handler:Commons.msg_handler node in
+    let _server = PNode.run_server ~msg_handler:Commons.msg_handler node in
     Client.address_of !node
     |> (fun Address.{ port; _ } -> port)
     |> string_of_int
@@ -32,13 +32,13 @@ module Disseminator_tests = struct
     |> Client.post node;
 
     let%lwt () =
-      while%lwt Node.Testing.disseminator_round node <= 10 do
+      while%lwt PNode.Testing.disseminator_round node <= 10 do
         Lwt_unix.sleep 0.1
       done in
-    Lwt.return (List.length (Node.Testing.broadcast_queue node))
+    Lwt.return (List.length (PNode.Testing.broadcast_queue node))
 
   let seen_message_test () =
-    let _server = Node.run_server ~msg_handler:Commons.msg_handler node in
+    let _server = PNode.run_server ~msg_handler:Commons.msg_handler node in
     let message =
       Client.address_of !node
       |> (fun Address.{ port; _ } -> port)
@@ -47,10 +47,10 @@ module Disseminator_tests = struct
       |> Client.create_post node in
     message |> Client.post node;
 
-    Lwt.return (Node.seen node message)
+    Lwt.return (PNode.seen node message)
 end
 
-(** Test for dissemination given a specific node. *)
+(** Test for dissemination given a specific Pnode. *)
 let test_queue_removal _ () =
   Disseminator_tests.queue_removal_test ()
   >|= Alcotest.(check int)

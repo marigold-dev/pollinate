@@ -1,7 +1,7 @@
 open Lwt.Infix
 open Commons
 open Pollinate
-open Pollinate.Node
+open Pollinate.PNode
 
 module Gossip_tests = struct
   let local_address port = Address.{ address = "127.0.0.1"; port }
@@ -29,28 +29,28 @@ module Gossip_tests = struct
               addr_h,
               addr_i,
               addr_j ) =
-          ( local_address 4000,
-            local_address 4001,
-            local_address 4002,
-            local_address 4003,
-            local_address 4004,
-            local_address 4005,
-            local_address 4006,
-            local_address 4007,
-            local_address 4008,
-            local_address 4009 ) in
+          ( local_address 14000,
+            local_address 14001,
+            local_address 14002,
+            local_address 14003,
+            local_address 14004,
+            local_address 14005,
+            local_address 14006,
+            local_address 14007,
+            local_address 14008,
+            local_address 14009 ) in
 
         let%lwt node_a =
-          Node.init ~init_peers:[addr_b; addr_c; addr_e; addr_h] addr_a in
-        let%lwt node_b = Node.init ~init_peers:[addr_a; addr_d; addr_e] addr_b in
-        let%lwt node_c = Node.init ~init_peers:[addr_a; addr_f; addr_g] addr_c in
-        let%lwt node_d = Node.init ~init_peers:[addr_b] addr_d in
-        let%lwt node_e = Node.init ~init_peers:[addr_a; addr_b] addr_e in
-        let%lwt node_f = Node.init ~init_peers:[addr_c] addr_f in
-        let%lwt node_g = Node.init ~init_peers:[addr_c] addr_g in
-        let%lwt node_h = Node.init ~init_peers:[addr_a; addr_i; addr_j] addr_h in
-        let%lwt node_i = Node.init ~init_peers:[addr_h] addr_i in
-        let%lwt node_j = Node.init ~init_peers:[addr_h] addr_j in
+          PNode.init ~init_peers:[addr_b; addr_c; addr_e; addr_h] addr_a in
+        let%lwt node_b = PNode.init ~init_peers:[addr_a; addr_d; addr_e] addr_b in
+        let%lwt node_c = PNode.init ~init_peers:[addr_a; addr_f; addr_g] addr_c in
+        let%lwt node_d = PNode.init ~init_peers:[addr_b] addr_d in
+        let%lwt node_e = PNode.init ~init_peers:[addr_a; addr_b] addr_e in
+        let%lwt node_f = PNode.init ~init_peers:[addr_c] addr_f in
+        let%lwt node_g = PNode.init ~init_peers:[addr_c] addr_g in
+        let%lwt node_h = PNode.init ~init_peers:[addr_a; addr_i; addr_j] addr_h in
+        let%lwt node_i = PNode.init ~init_peers:[addr_h] addr_i in
+        let%lwt node_j = PNode.init ~init_peers:[addr_h] addr_j in
         Lwt.return
           ( node_a,
             node_b,
@@ -96,7 +96,7 @@ module Gossip_tests = struct
   let disseminate_from _n node =
     let _ =
       List.map
-        (Node.run_server ~preprocessor:Commons.preprocessor
+        (PNode.run_server ~preprocessor:Commons.preprocessor
            ~msg_handler:Commons.msg_handler)
         nodes in
     let message =
@@ -108,7 +108,7 @@ module Gossip_tests = struct
     Client.post node message;
 
     let seen () =
-      nodes |> List.filter (fun n -> Node.seen n message) |> node_ports in
+      nodes |> List.filter (fun n -> PNode.seen n message) |> node_ports in
 
     let%lwt () =
       let%lwt oc =
