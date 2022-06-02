@@ -29,16 +29,16 @@ module Gossip_tests = struct
               addr_h,
               addr_i,
               addr_j ) =
-          ( local_address 14000,
-            local_address 14001,
-            local_address 14002,
-            local_address 14003,
-            local_address 14004,
-            local_address 14005,
-            local_address 14006,
-            local_address 14007,
-            local_address 14008,
-            local_address 14009 ) in
+          ( local_address 4000,
+            local_address 4001,
+            local_address 4002,
+            local_address 4003,
+            local_address 4004,
+            local_address 4005,
+            local_address 4006,
+            local_address 4007,
+            local_address 4008,
+            local_address 4009 ) in
 
         let%lwt node_a =
           PNode.init ~init_peers:[addr_b; addr_c; addr_e; addr_h] addr_a in
