@@ -99,12 +99,12 @@ module Gossip_tests = struct
         (PNode.run_server ~preprocessor:Commons.preprocessor
            ~msg_handler:Commons.msg_handler)
         nodes in
-    let message =
+    let payload =
       Client.address_of !node
       |> (fun Address.{ port; _ } -> port)
       |> string_of_int
-      |> String.to_bytes
-      |> Client.create_post node in
+      |> String.to_bytes in
+    let message =  Client.create_post node (payload, None) in
     Client.post node message;
 
     let seen () =

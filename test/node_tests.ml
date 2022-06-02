@@ -29,11 +29,11 @@ module Node_tests = struct
     let get = Encoding.pack bin_writer_message (Request Get) in
 
     let%lwt { payload = res_from_b; _ } =
-      Client.request node_a get peer_b.address in
+      Client.request node_a (get, None) peer_b.address in
     let res_from_b = Encoding.unpack bin_read_response res_from_b in
 
     let%lwt { payload = res_from_a; _ } =
-      Client.request node_b get peer_a.address in
+      Client.request node_b (get, None) peer_a.address in
     let res_from_a = Encoding.unpack bin_read_response res_from_a in
 
     let res_from_b, res_from_a =
@@ -52,7 +52,7 @@ module Node_tests = struct
         [node_a; node_b] in
     let ping = Encoding.pack bin_writer_message (Request Ping) in
 
-    let%lwt { payload = pong; _ } = Client.request node_a ping peer_b.address in
+    let%lwt { payload = pong; _ } = Client.request node_a (ping, None) peer_b.address in
     let pong = Encoding.unpack bin_read_response pong in
 
     let pong =

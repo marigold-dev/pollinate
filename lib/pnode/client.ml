@@ -15,7 +15,7 @@ let peer_from { address; peers; _ } =
 let add_peer node (peer : Peer.t) =
   Base.Hashtbl.add node.peers ~key:peer.address ~data:peer
 
-let create_request node recipient payload =
+let create_request node recipient (payload, payload_signature) =
   Mutex.with_lock !node.current_request_id (fun id ->
       id := !id + 1;
       Lwt.return
@@ -28,9 +28,10 @@ let create_request node recipient payload =
             sender = !node.address;
             recipients = [recipient];
             payload;
+            payload_signature;
           })
 
-let create_response node request payload =
+let create_response node request (payload, payload_signature) =
   Message.
     {
       category = Message.Response;
@@ -40,9 +41,10 @@ let create_response node request payload =
       sender = !node.address;
       recipients = [request.sender];
       payload;
+      payload_signature;
     }
 
-let create_post node payload =
+let create_post node (payload, payload_signature) =
   Message.
     {
       category = Message.Post;
@@ -52,6 +54,7 @@ let create_post node payload =
       sender = !node.address;
       recipients = [];
       payload;
+      payload_signature;
     }
 
 let request node request recipient =

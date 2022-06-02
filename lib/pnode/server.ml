@@ -44,11 +44,11 @@ let process_message node preprocessor msg_handler =
              !node.address.address !node.address.port message.sender.address
              message.sender.port) in
       match msg_handler message with
-      | Some response ->
-        response
+      | (Some payload, payload_signature) ->
+        (payload, payload_signature)
         |> Client.create_response node message
         |> Networking.send_to node
-      | None -> Lwt.return ())
+      | None, _ -> Lwt.return ())
     | Failure_detection -> Failure_detector.handle_message node message
     | Post ->
       if not (Disseminator.seen !node.disseminator message) then (
