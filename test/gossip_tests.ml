@@ -89,55 +89,55 @@ module Gossip_tests = struct
       nodes
 
   (** Starts the server for each node and constructs a Post message
-      whose author is the specified node, then disseminates it. Checks
-      every 2 seconds to see if all nodes have received the disseminated
-      message. The 2 second wait occurs n times before timing out and returning
-      the ports of the nodes who saw the message. *)
-  let disseminate_from _n node =
+      whose author is the specified node, then disseminates it. Waits
+      0.2 seconds for the message to disseminate fully across
+      the network. *)
+  let disseminate_from node =
+    (* Start the server for each node in a thread *)
     let _ =
       List.map
         (Node.run_server ~preprocessor:Commons.preprocessor
            ~msg_handler:Commons.msg_handler)
         nodes in
+
+    (* Create the message to be posted by node *)
     let message =
       Client.address_of !node
       |> (fun Address.{ port; _ } -> port)
       |> string_of_int
       |> String.to_bytes
       |> Client.create_post node in
+
+    (* Post the created message *)
     Client.post node message;
 
+    (* Function to generate a list of all the nodes who have witnessed
+       the post. *)
     let seen () =
       nodes |> List.filter (fun n -> Node.seen n message) |> node_ports in
 
+    (* Wait 0.2 seconds for the message to spread. *)
+    let%lwt () = Lwt_unix.sleep 0.2 in
+
+    (* Compute the list of nodes who have seen the post. *)
+    let list_of_seen = seen () in
+
+    (* Write the length of list_of_seen to a tmp log file *)
     let%lwt () =
       let%lwt oc =
         Lwt_io.open_file
           ~flags:[Unix.O_WRONLY; Unix.O_APPEND; Unix.O_CREAT]
           ~mode:Lwt_io.Output "/tmp/log.txt" in
       let%lwt () =
-        Lwt_io.write oc (Printf.sprintf "%f\n" (Unix.gettimeofday ())) in
+        Lwt_io.write oc (Printf.sprintf "%d\n" (List.length list_of_seen)) in
       Lwt_io.close oc in
-    let reg_seen =
-      let%lwt () = Lwt_unix.sleep 0.2 in
-      Lwt.return (seen ()) in
-    let f_seen =
-      let%lwt () = Lwt_unix.sleep 3. in
-      Lwt.return [] in
-    let%lwt res = Lwt.pick [reg_seen; f_seen] in
-    let%lwt () =
-      let%lwt oc =
-        Lwt_io.open_file
-          ~flags:[Unix.O_WRONLY; Unix.O_APPEND; Unix.O_CREAT]
-          ~mode:Lwt_io.Output "/tmp/log.txt" in
-      let%lwt () = Lwt_io.write oc (Printf.sprintf "%d\n" (List.length res)) in
-      Lwt_io.close oc in
-    Lwt.return res
+    (* End of logging code *)
+    Lwt.return list_of_seen
 end
 
 (** Test for dissemination given a specific node. *)
 let test_disseminate_from node _ () =
-  Gossip_tests.disseminate_from 15. node
+  Gossip_tests.disseminate_from node
   >|= Alcotest.(check (list int))
         (Printf.sprintf "All nodes have seen the message %d" !node.address.port)
         Gossip_tests.(node_ports nodes)

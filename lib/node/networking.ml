@@ -1,4 +1,3 @@
-open Util
 open Common
 open Common.Util
 open Types
@@ -6,7 +5,7 @@ open Lwt_unix
 
 let send_to node message =
   let open Message in
-  let%lwt () = log node "Sending message\n" in
+  (* let%lwt () = log node "Sending message\n" in *)
   let payload = Encoding.pack Message.bin_writer_t message in
   let len = Bytes.length payload in
   let addrs = List.map Address.to_sockaddr message.recipients in
@@ -64,13 +63,13 @@ let pick_random_neighbors neighbors number_of_neighbors =
 (** Injects the list of recipients into the message and sends it to
     each recipient with a log message. *)
 let broadcast node message (recipients : Address.t list) =
-  let%lwt () =
-    recipients
-    |> List.map (fun Address.{ port; _ } -> string_of_int port)
-    |> String.concat " ; "
-    |> Printf.sprintf "Disseminating post %s from author %d to peers: [%s]\n"
-         (Message.hash_of message) message.sender.port
-    |> log node in
+  (* let%lwt () =
+     recipients
+     |> List.map (fun Address.{ port; _ } -> string_of_int port)
+     |> String.concat " ; "
+     |> Printf.sprintf "Disseminating post %s from author %d to peers: [%s]\n"
+          (Message.hash_of message) message.sender.port
+     |> log node in *)
   let message = Message.{ message with recipients } in
   let%lwt () = send_to node message in
   Lwt.return ()
