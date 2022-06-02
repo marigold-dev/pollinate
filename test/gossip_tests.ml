@@ -42,13 +42,16 @@ module Gossip_tests = struct
 
         let%lwt node_a =
           PNode.init ~init_peers:[addr_b; addr_c; addr_e; addr_h] addr_a in
-        let%lwt node_b = PNode.init ~init_peers:[addr_a; addr_d; addr_e] addr_b in
-        let%lwt node_c = PNode.init ~init_peers:[addr_a; addr_f; addr_g] addr_c in
+        let%lwt node_b =
+          PNode.init ~init_peers:[addr_a; addr_d; addr_e] addr_b in
+        let%lwt node_c =
+          PNode.init ~init_peers:[addr_a; addr_f; addr_g] addr_c in
         let%lwt node_d = PNode.init ~init_peers:[addr_b] addr_d in
         let%lwt node_e = PNode.init ~init_peers:[addr_a; addr_b] addr_e in
         let%lwt node_f = PNode.init ~init_peers:[addr_c] addr_f in
         let%lwt node_g = PNode.init ~init_peers:[addr_c] addr_g in
-        let%lwt node_h = PNode.init ~init_peers:[addr_a; addr_i; addr_j] addr_h in
+        let%lwt node_h =
+          PNode.init ~init_peers:[addr_a; addr_i; addr_j] addr_h in
         let%lwt node_i = PNode.init ~init_peers:[addr_h] addr_i in
         let%lwt node_j = PNode.init ~init_peers:[addr_h] addr_j in
         Lwt.return
@@ -104,7 +107,7 @@ module Gossip_tests = struct
       |> (fun Address.{ port; _ } -> port)
       |> string_of_int
       |> String.to_bytes in
-    let message =  Client.create_post node (payload, None) in
+    let message = Client.create_post node (payload, None) in
     Client.post node message;
 
     let seen () =

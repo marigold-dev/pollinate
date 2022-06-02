@@ -20,7 +20,8 @@ val post : node ref -> Message.t -> unit
 
 (** [create_request node recipient payload] creates a [Message.t] of the {i Request category}
 addressed to {i recipient} containing {i payload}. *)
-val create_request : node ref -> Address.t -> bytes * bytes option-> Message.t Lwt.t
+val create_request :
+  node ref -> Address.t -> bytes * bytes option -> Message.t Lwt.t
 
 (** [create_response node request payload] creates a [Message.t] of the {i Response category}
 that responds to {i request} whose content is {i payload}. *)

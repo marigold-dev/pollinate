@@ -7,29 +7,29 @@ module Disseminator_tests = struct
   let node =
     Lwt_main.run
       (let%lwt node_a =
-         PNode.init ~init_peers:[] Address.{ address = "127.0.0.1"; port = 5000 }
-       in
+         PNode.init ~init_peers:[]
+           Address.{ address = "127.0.0.1"; port = 5000 } in
        Lwt.return node_a)
 
   let queue_insertion_test () =
     let _server = PNode.run_server ~msg_handler:Commons.msg_handler node in
-    let payload = Client.address_of !node
-    |> (fun Address.{ port; _ } -> port)
-    |> string_of_int
-    |> String.to_bytes in
-    Client.create_post node (payload, None)
-    |> Client.post node;
+    let payload =
+      Client.address_of !node
+      |> (fun Address.{ port; _ } -> port)
+      |> string_of_int
+      |> String.to_bytes in
+    Client.create_post node (payload, None) |> Client.post node;
 
     Lwt.return (List.length (PNode.Testing.broadcast_queue node))
 
   let queue_removal_test () =
     let _server = PNode.run_server ~msg_handler:Commons.msg_handler node in
-    let payload = Client.address_of !node
-    |> (fun Address.{ port; _ } -> port)
-    |> string_of_int
-    |> String.to_bytes in
-    Client.create_post node (payload, None)
-    |> Client.post node;
+    let payload =
+      Client.address_of !node
+      |> (fun Address.{ port; _ } -> port)
+      |> string_of_int
+      |> String.to_bytes in
+    Client.create_post node (payload, None) |> Client.post node;
 
     let%lwt () =
       while%lwt PNode.Testing.disseminator_round node <= 10 do
