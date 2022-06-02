@@ -60,6 +60,7 @@ let seen disseminator message =
   else
     false
 
-let get_seen_messages disseminator = disseminator.seen |> DigestSet.to_seq |> List.of_seq
+let get_seen_messages disseminator =
+  disseminator.seen |> DigestSet.to_seq |> List.of_seq
 
 let current_round { round; _ } = round

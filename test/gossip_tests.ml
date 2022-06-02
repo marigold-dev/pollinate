@@ -111,8 +111,12 @@ module Gossip_tests = struct
       nodes |> List.filter (fun n -> Node.seen n message) |> node_ports in
 
     let%lwt () =
-      let%lwt oc = Lwt_io.open_file ~flags:[Unix.O_WRONLY; Unix.O_APPEND; Unix.O_CREAT] ~mode:Lwt_io.Output "/tmp/log.txt" in
-      let%lwt () = Lwt_io.write oc (Printf.sprintf "%f\n" (Unix.gettimeofday ())) in
+      let%lwt oc =
+        Lwt_io.open_file
+          ~flags:[Unix.O_WRONLY; Unix.O_APPEND; Unix.O_CREAT]
+          ~mode:Lwt_io.Output "/tmp/log.txt" in
+      let%lwt () =
+        Lwt_io.write oc (Printf.sprintf "%f\n" (Unix.gettimeofday ())) in
       Lwt_io.close oc in
     let reg_seen =
       let%lwt () = Lwt_unix.sleep 0.2 in
@@ -120,7 +124,7 @@ module Gossip_tests = struct
     let f_seen =
       let%lwt () = Lwt_unix.sleep 3. in
       Lwt.return [] in
-    let%lwt res = Lwt.pick [ reg_seen ; f_seen ] in
+    let%lwt res = Lwt.pick [reg_seen; f_seen] in
     let%lwt () =
       let%lwt oc =
         Lwt_io.open_file

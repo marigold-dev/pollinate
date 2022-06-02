@@ -27,8 +27,5 @@ let pick_random_neighbors =
 let () =
   let networking_prop =
     List.map QCheck_alcotest.to_alcotest
-      [ knuth_shuffle_size
-      ; pick_random_neighbors
-      ] in
-  Alcotest.run "Networking"
-    [("networking.ml", networking_prop)]
+      [knuth_shuffle_size; pick_random_neighbors] in
+  Alcotest.run "Networking" [("networking.ml", networking_prop)]
