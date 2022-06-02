@@ -122,5 +122,5 @@ let rec run node preprocessor msg_handler =
   (* Step 3 *)
   let%lwt () = Networking.disseminate node in
   (* Step 4 *)
-  let%lwt () = Lwt_unix.sleep 0.1 in
+  let%lwt () = Lwt_unix.sleep 0.001 in
   run node preprocessor msg_handler
