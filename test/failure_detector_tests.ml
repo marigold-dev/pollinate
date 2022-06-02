@@ -41,9 +41,9 @@ let () =
        [
          ( "failure_detector.ml",
            [
-             Alcotest_lwt.test_case "Remove Suspicious peer" `Quick
+             Alcotest_lwt.test_case "Remove Suspicious peer" `Slow
                test_suspicion_detection;
-             Alcotest_lwt.test_case "Do nothing on Alive peer" `Quick
+             Alcotest_lwt.test_case "Do nothing on Alive peer" `Slow
                test_failure_detection_nothing_on_alive;
            ] );
        ]
