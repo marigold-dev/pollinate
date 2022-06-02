@@ -62,7 +62,7 @@ let create_message node message recipient =
       id = -1;
       timestamp = Unix.gettimeofday ();
       sender = Client.address_of !node;
-      recipients = [ recipient.Peer.address ];
+      recipients = [recipient.Peer.address];
       payload = Encoding.pack bin_writer_message message;
     }
 
@@ -144,7 +144,8 @@ let suspicion_detection node =
   match List.length available_peers with
   | 0 -> Lwt.return ()
   | _ ->
-    let random_peer = Networking.pick_random_neighbors !node.peers 1 |> List.hd in
+    let random_peer =
+      Networking.pick_random_neighbors !node.peers 1 |> List.hd in
     let _ =
       Lwt.join
         [
