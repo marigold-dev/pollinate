@@ -10,7 +10,8 @@ val ( let* ) : 'a option -> ('a -> 'b option) -> 'b option
 module Encoding : sig
   (** Defines utilities for encoding or decoding messages. *)
 
-  (** The {i int} value of the buffer size. *)
+  (** The {i int} value of the necessary buffer size for storing the size
+      header at the beginning of each Bin_prot payload. *)
   val size_header_length : int
 
   (** Reads the value of the size header prepended

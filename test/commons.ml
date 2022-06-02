@@ -4,7 +4,7 @@ module Commons = struct
   open Pollinate.Util
   open Messages
 
-  let preprocess msg =
+  let preprocessor msg =
     let open Messages in
     match msg.Message.category with
     | Request ->
@@ -17,14 +17,14 @@ module Commons = struct
       { msg with payload = Encoding.pack bin_writer_response r }
     | _ -> msg
 
-  let msg_handler request =
+  let msg_handler message =
     let open Messages in
     let open Pollinate.PNode.Message in
-    let request = Encoding.unpack bin_read_request request.payload in
+    let request = Encoding.unpack bin_read_request message.payload in
     let response =
       match request with
       | Ping -> Pong
       | Get -> Success "Ok"
       | Insert _ -> Success "Successfully added value to state" in
-    (Encoding.pack bin_writer_message (Response response), None)
+    (Some (Encoding.pack bin_writer_message (Response response)), None)
 end

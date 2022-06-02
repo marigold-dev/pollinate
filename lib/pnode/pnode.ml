@@ -3,11 +3,10 @@ open Types
 
 module Message = Message
 module Client = Client
-module Failure_detector = Failure_detector
-module Inbox = Inbox
 
-let init ?(preprocess = fun m -> m) ~msg_handler ?(init_peers = [])
-    (address, port) =
+type t = Types.node
+
+let init ?(init_peers = []) Address.{ address; port } =
   let open Util in
   let%lwt socket = Net.create_socket port in
   let peers =
@@ -23,7 +22,6 @@ let init ?(preprocess = fun m -> m) ~msg_handler ?(init_peers = [])
         current_request_id = Mutex.create (ref 0);
         request_table = Hashtbl.create 20;
         socket = Mutex.create socket;
-        inbox = Inbox.create ();
         failure_detector =
           Failure_detector.make
             {
@@ -33,6 +31,18 @@ let init ?(preprocess = fun m -> m) ~msg_handler ?(init_peers = [])
               helpers_size = 3;
             };
         peers;
+        disseminator = Disseminator.create ~num_rounds:10 ~epoch_length:50.;
       } in
-  Server.run node preprocess msg_handler;
   Lwt.return node
+
+let run_server ?(preprocessor = fun m -> m) ~msg_handler node =
+  Server.run node preprocessor msg_handler
+
+let seen node message = Disseminator.seen !node.disseminator message
+
+module Testing = struct
+  module Failure_detector = Failure_detector
+  module Networking = Networking
+  let broadcast_queue node = Disseminator.broadcast_queue !node.disseminator
+  let disseminator_round node = Disseminator.current_round !node.disseminator
+end

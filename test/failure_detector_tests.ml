@@ -1,17 +1,13 @@
-open Commons
+open Pollinate
 open Pollinate.PNode
 open Lwt.Infix
-
-module SUT = Pollinate.PNode.Failure_detector
+module SUT = Pollinate.PNode.Testing.Failure_detector
 
 let node_a =
-  Lwt_main.run
-    (Pnode.init ~preprocess:Commons.preprocess ~msg_handler:Commons.msg_handler
-       ("127.0.0.1", 3003))
+  Lwt_main.run (PNode.init Address.{ address = "127.0.0.1"; port = 3003 })
+
 let node_b =
-  Lwt_main.run
-    (Pnode.init ~preprocess:Commons.preprocess ~msg_handler:Commons.msg_handler
-       ("127.0.0.1", 3004))
+  Lwt_main.run (PNode.init Address.{ address = "127.0.0.1"; port = 3004 })
 
 let peer_b = Client.peer_from !node_b
 
