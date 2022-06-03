@@ -16,7 +16,10 @@ type message =
   | Ping
   | Acknowledge
   | PingRequest of Address.t
-[@@deriving bin_io]
+  | Alive       of Address.t
+  | Suspicion   of Address.t
+  | Confirm     of Address.t
+[@@deriving bin_io, show { with_path = false }, eq]
 
 (** {1 Constructor} *)
 
