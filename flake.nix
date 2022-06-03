@@ -4,19 +4,21 @@
     flake-utils.url = "github:numtide/flake-utils";
     nix-filter.url = "github:numtide/nix-filter";
 
-    ocaml-overlay.url = "github:anmonteiro/nix-overlays";
-    ocaml-overlay.inputs.nixpkgs.follows = "nixpkgs";
-    ocaml-overlay.inputs.flake-utils.follows = "flake-utils";
+    ocaml-overlays.url = "github:anmonteiro/nix-overlays";
+    ocaml-overlays.inputs = {
+      nixpkgs.follows = "nixpkgs";
+      flake-utils.follows = "flake-utils";
+    };
   };
 
-  outputs = { self, nixpkgs, flake-utils, nix-filter, ocaml-overlay }:
+  outputs = { self, nixpkgs, flake-utils, nix-filter, ocaml-overlays }:
     let
       supported_ocaml_versions = [ "ocamlPackages_4_13" "ocamlPackages_5_00" ];
       out = system:
         let
           pkgs = import nixpkgs {
             inherit system;
-            overlays = [ ocaml-overlay.overlays."${system}".default ];
+            overlays = [ ocaml-overlays.overlays."${system}".default ];
           };
           ocamlPackages_dev = pkgs.ocaml-ng.ocamlPackages_5_00;
           pollinate = (pkgs.callPackage ./nix {
