@@ -30,19 +30,19 @@ let process_message node preprocessor msg_handler =
   let open Message in
   let%lwt message = Networking.recv_next node in
   let message = preprocessor message in
-  let%lwt () =
-    log node
-      (Printf.sprintf "Processing message %s from %d...\n"
-         (Message.hash_of message) message.sender.port) in
+  (* let%lwt () =
+     log node
+       (Printf.sprintf "Processing message %s from %d...\n"
+          (Message.hash_of message) message.sender.port) in *)
   let%lwt () =
     match message.category with
     | Response -> Lwt.return (handle_response node message)
     | Request -> (
-      let%lwt () =
-        log node
-          (Printf.sprintf "%s:%d : Processing request from %s:%d\n"
-             !node.address.address !node.address.port message.sender.address
-             message.sender.port) in
+      (* let%lwt () =
+         log node
+           (Printf.sprintf "%s:%d : Processing request from %s:%d\n"
+              !node.address.address !node.address.port message.sender.address
+              message.sender.port) in *)
       match msg_handler message with
       | Some payload, payload_signature ->
         (payload, payload_signature)
@@ -52,21 +52,22 @@ let process_message node preprocessor msg_handler =
     | Failure_detection -> Failure_detector.handle_message node message
     | Post ->
       if not (Disseminator.seen !node.disseminator message) then (
-        let%lwt () =
-          log node
-            (Printf.sprintf "%s:%d : Processing post %s from %s:%d\n"
-               !node.address.address !node.address.port
-               (Message.hash_of message) message.sender.address
-               message.sender.port) in
+        (* let%lwt () =
+           log node
+             (Printf.sprintf "%s:%d : Processing post %s from %s:%d\n"
+                !node.address.address !node.address.port
+                (Message.hash_of message) message.sender.address
+                message.sender.port) in *)
         let _ = msg_handler message in
-        let%lwt () = log node "Adding message to broadcast queue\n" in
+        (* let%lwt () = log node "Adding message to broadcast queue\n" in *)
         Client.post node message;
         Lwt.return ())
       else
-        log node
-          (Printf.sprintf "Got post %s from %s:%d but saw it already\n"
-             (Message.hash_of message) message.sender.address
-             message.sender.port)
+        (* log node
+           (Printf.sprintf "Got post %s from %s:%d but saw it already\n"
+              (Message.hash_of message) message.sender.address
+              message.sender.port) *)
+        Lwt.return ()
     | _ ->
       let _ = msg_handler message in
       Lwt.return () in
@@ -74,7 +75,7 @@ let process_message node preprocessor msg_handler =
 
 (** Log some initial information at the beginning of a server iteration.
     See comments for descriptions regarding what is actually being logged. *)
-let print_logs node =
+let _print_logs node =
   (* Check that the server is in fact running *)
   let%lwt () = log node "Running server\n" in
   (* Check which posts the node has seen so far *)
@@ -113,7 +114,7 @@ let print_logs node =
    4. Wait 0.001 seconds before restarting the procedure. *)
 let rec run node preprocessor msg_handler =
   (* Step 0 *)
-  let%lwt () = print_logs node in
+  (* let%lwt () = print_logs node in *)
   (* Step 1 *)
   let _ = process_message node preprocessor msg_handler in
   (* Step 2 *)
