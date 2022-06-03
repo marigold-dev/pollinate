@@ -80,26 +80,6 @@ let () =
                test_queue_insertion;
              Alcotest_lwt.test_case
                "Messages that are posted are immediately seen" `Quick
-               test_seen_message
-             (* Alcotest_lwt.test_case "Dissemination from A" `Quick
-                (test_disseminate_from Gossip_tests.node_a); *)
-             (* Alcotest_lwt.test_case "Dissemination from B" `Quick
-                  (test_disseminate_from Gossip_tests.node_b);
-                Alcotest_lwt.test_case "Dissemination from C" `Quick
-                  (test_disseminate_from Gossip_tests.node_c);
-                Alcotest_lwt.test_case "Dissemination from D" `Quick
-                  (test_disseminate_from Gossip_tests.node_d); *)
-             (* Alcotest_lwt.test_case "Dissemination from E" `Quick
-                (test_disseminate_from Gossip_tests.node_e); *)
-             (* Alcotest_lwt.test_case "Dissemination from F" `Quick
-                (test_disseminate_from Gossip_tests.node_f); *)
-             (* Alcotest_lwt.test_case "Dissemination from G" `Quick
-                (test_disseminate_from Gossip_tests.node_g); *)
-             (* Alcotest_lwt.test_case "Dissemination from H" `Quick
-                (test_disseminate_from Gossip_tests.node_h); *)
-             (* Alcotest_lwt.test_case "Dissemination from I" `Quick
-                (test_disseminate_from Gossip_tests.node_i); *)
-             (* Alcotest_lwt.test_case "Dissemination from J" `Quick
-                (test_disseminate_from Gossip_tests.node_j); ;*);
+               test_seen_message;
            ] );
        ]
