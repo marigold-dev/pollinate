@@ -14,8 +14,8 @@ val peer_from : node -> Peer.t
 (** Add a peer to the known peers. *)
 val add_peer : node -> Peer.t -> [`Duplicate | `Ok]
 
-(** Begins disseminating an encoded message meant to be witnessed by as many
-    nodes in the network as possible. *)
+(** Begins disseminating an encoded message meant to be witnessed by the
+    entire network. *)
 val post : node ref -> Message.t -> unit
 
 (** [create_request node recipient payload] creates a [Message.t] of the {i Request category}
@@ -32,4 +32,7 @@ function blocks the current thread of execution until a response
 arrives. *)
 val request : node ref -> bytes -> Address.t -> Message.t Lwt.t
 
+(** [create_post node payload] creates a [Message.t] of the {i Post category}
+    containing {i payload} for eventual gossip dissemination across the
+    entire network. *)
 val create_post : node ref -> bytes -> Message.t
