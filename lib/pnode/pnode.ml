@@ -8,6 +8,7 @@ type t = Types.node
 
 let init ?(init_peers = []) Address.{ address; port } =
   let open Util in
+  Printf.printf "Opening port: %d" port;
   let%lwt socket = Net.create_socket port in
   let peers =
     Base.Hashtbl.create ~growth_allowed:true ~size:0 (module Address) in
