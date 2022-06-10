@@ -105,22 +105,14 @@ let _print_logs node =
   else
     Lwt.return ()
 
-(* Sever procedure:
-   0. Log pertinent information about the current node.
-   1. Start a new thread for handling any incoming message.
-   2. Run the failure detector.
-   3. Run the disseminator, this includes actually sending messages to be
-      disseminated across the network.
-   4. Wait 0.001 seconds before restarting the procedure. *)
+let run_background_processes node ~period =
+  let rec run_recursively () =
+    let%lwt () = Failure_detector.failure_detection node in
+    let%lwt () = Networking.disseminate node in
+    let%lwt () = Lwt_unix.sleep period in
+    run_recursively () in
+  Lwt.async run_recursively
+
 let rec run node preprocessor msg_handler =
-  (* Step 0 *)
-  (* let%lwt () = print_logs node in *)
-  (* Step 1 *)
-  let _ = process_message node preprocessor msg_handler in
-  (* Step 2 *)
-  let%lwt () = Failure_detector.failure_detection node in
-  (* Step 3 *)
-  let%lwt () = Networking.disseminate node in
-  (* Step 4 *)
-  let%lwt () = Lwt_unix.sleep 0.001 in
+  let%lwt () = process_message node preprocessor msg_handler in
   run node preprocessor msg_handler
