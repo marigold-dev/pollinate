@@ -6,3 +6,5 @@ val run :
   (Message.t -> Message.t) ->
   (Message.t -> bytes option) ->
   'b Lwt.t
+
+val run_background_processes : Types.node ref -> period:float -> unit

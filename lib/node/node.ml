@@ -36,6 +36,7 @@ let init ?(init_peers = []) Address.{ address; port } =
   Lwt.return node
 
 let run_server ?(preprocessor = fun m -> m) ~msg_handler node =
+  Server.run_background_processes node ~period:0.001;
   Server.run node preprocessor msg_handler
 
 let seen node message = Disseminator.seen !node.disseminator message
