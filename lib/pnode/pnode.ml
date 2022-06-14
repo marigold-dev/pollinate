@@ -8,7 +8,7 @@ type t = Types.node
 
 let init ?(init_peers = []) Address.{ address; port } =
   let open Util in
-  Printf.printf "Opening port: %d" port;
+  Printf.printf "Opening port: %d\n%!" port;
   let%lwt socket = Net.create_socket port in
   let peers =
     Base.Hashtbl.create ~growth_allowed:true ~size:0 (module Address) in
@@ -37,6 +37,7 @@ let init ?(init_peers = []) Address.{ address; port } =
   Lwt.return node
 
 let run_server ?(preprocessor = fun m -> m) ~msg_handler node =
+  let _ = Printf.sprintf "I am inside run_server\n%!" in
   Server.run node preprocessor msg_handler
 
 let seen node message = Disseminator.seen !node.disseminator message
