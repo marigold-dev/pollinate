@@ -45,10 +45,13 @@ let process_message node preprocessor msg_handler =
               message.sender.port) in *)
       match msg_handler message with
       | Some payload, payload_signature ->
+        let _ = Printf.sprintf "I am inside msg_handler, found payload" in
         (payload, payload_signature)
         |> Client.create_response node message
         |> Networking.send_to node
-      | None, _ -> Lwt.return ())
+      | None, _ -> 
+        let _ = Printf.sprintf "I am inside msg_handler, missing payload" in
+        Lwt.return ())
     | Failure_detection -> Failure_detector.handle_message node message
     | Post ->
       if not (Disseminator.seen !node.disseminator message) then (
