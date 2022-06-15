@@ -12,7 +12,11 @@ let peer_from { address; peers; _ } =
       neighbors = peers;
     }
 
-let add_peer node (peer : Peer.t) =
+let add_peer node address =
+  let peer = Peer.from address in
+  Base.Hashtbl.add node.peers ~key:address ~data:peer
+
+let add_peer_as_is node (peer : Peer.t) =
   Base.Hashtbl.add node.peers ~key:peer.address ~data:peer
 
 let create_request node recipient payload =

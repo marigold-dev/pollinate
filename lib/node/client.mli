@@ -11,8 +11,11 @@ val address_of : node -> Address.t
 (** Constructs a [Peer.t] from a [Types.node]. *)
 val peer_from : node -> Peer.t
 
-(** Add a peer to the known peers. *)
-val add_peer : node -> Peer.t -> [`Duplicate | `Ok]
+(** Add a peer to the known peers by the peer's address. *)
+val add_peer : node -> Address.t -> [`Duplicate | `Ok]
+
+(** Add a peer, along with all its existing state, to the known peers. *)
+val add_peer_as_is : node -> Peer.t -> [`Duplicate | `Ok]
 
 (** Begins disseminating an encoded message meant to be witnessed by the
     entire network. *)

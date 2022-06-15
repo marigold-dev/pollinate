@@ -14,7 +14,7 @@ let peer_b = Client.peer_from !node_b
 let failure_detection () =
   let open Common.Peer in
   let open Client in
-  let _ = add_peer !node_a peer_b in
+  let _ = add_peer_as_is !node_a peer_b in
   let _ = Pollinate.Node.Client.peer_from !node_a in
   let _ = SUT.update_peer_status node_a peer_b Suspicious in
   (* Need to wait for the timeout to be reached An other way to do, would be to change the `last_suspicious_status` of the peer *)
