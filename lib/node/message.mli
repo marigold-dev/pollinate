@@ -12,6 +12,7 @@ determining how they are stored and
 where they are handled. *)
 type category =
   | Uncategorized
+  | Acknowledgment
   | Request
   | Response
   | Post
@@ -24,6 +25,7 @@ processed by the node's message handler. *)
 type t = {
   category : category;
   sub_category_opt : (string * string) option;
+  request_ack : bool;
   id : int;
   timestamp : float;
   sender : Address.t;
