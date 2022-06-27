@@ -106,21 +106,25 @@ module Gossip_tests = struct
       |> (fun Address.{ port; _ } -> port)
       |> string_of_int
       |> String.to_bytes
-      |> Client.create_post node in
+      |> Client.create_post ~request_ack:true node in
 
     (* Post the created message *)
     Client.post node message;
 
     (* Function to generate a list of all the nodes who have witnessed
        the post. *)
-    let seen () =
-      nodes |> List.filter (fun n -> Node.seen n message) |> node_ports in
+    (* let seen () =
+       nodes |> List.filter (fun n -> Node.seen n message) |> node_ports in *)
 
     (* Wait 0.2 seconds for the message to spread. *)
     let%lwt () = Lwt_unix.sleep 0.2 in
 
     (* Compute the list of nodes who have seen the post. *)
-    let list_of_seen = seen () in
+    let list_of_seen =
+      Hashtbl.find !node.acknowledgments (Message.hash_of message)
+      |> Testing.AddressSet.to_seq
+      |> Seq.map (fun address -> address.Address.port)
+      |> List.of_seq in
 
     (* Write the length of list_of_seen to a tmp log file *)
     let%lwt () =
