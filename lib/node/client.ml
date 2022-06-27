@@ -21,7 +21,7 @@ let add_peer_as_is node (peer : Peer.t) =
 
 let peers node = Base.Hashtbl.keys node.peers
 
-let create_request node ?(request_ack=false) recipient payload =
+let create_request node ?(request_ack = false) recipient payload =
   Mutex.with_lock !node.current_request_id (fun id ->
       id := !id + 1;
       Lwt.return
@@ -37,7 +37,7 @@ let create_request node ?(request_ack=false) recipient payload =
             payload;
           })
 
-let create_response node ?(request_ack=false) request payload =
+let create_response node ?(request_ack = false) request payload =
   Message.
     {
       category = Message.Response;
@@ -50,7 +50,7 @@ let create_response node ?(request_ack=false) request payload =
       payload;
     }
 
-let create_post node ?(request_ack=false) payload =
+let create_post node ?(request_ack = false) payload =
   Message.
     {
       category = Message.Post;
@@ -63,18 +63,18 @@ let create_post node ?(request_ack=false) payload =
       payload;
     }
 
-
 let create_ack node incoming_message =
-  Message.{
-    category = Message.Acknowledgment;
-    sub_category_opt = None;
-    request_ack = false;
-    id = -1;
-    timestamp = Unix.gettimeofday ();
-    sender = !node.address;
-    recipients = [incoming_message.sender];
-    payload = incoming_message |> Message.hash_of |> Bytes.of_string
-  }
+  Message.
+    {
+      category = Message.Acknowledgment;
+      sub_category_opt = None;
+      request_ack = false;
+      id = -1;
+      timestamp = Unix.gettimeofday ();
+      sender = !node.address;
+      recipients = [incoming_message.sender];
+      payload = incoming_message |> Message.hash_of |> Bytes.of_string;
+    }
 
 let request node request recipient =
   let%lwt message = create_request node recipient request in
