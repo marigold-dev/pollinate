@@ -22,6 +22,7 @@ val run_server :
 val seen : t ref -> Message.t -> bool
 
 module Testing : sig
+  module AddressSet = Types.AddressSet
   module Failure_detector = Failure_detector
   module Networking = Networking
   val broadcast_queue : t ref -> Message.t list

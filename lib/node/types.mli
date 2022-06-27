@@ -36,6 +36,8 @@ type failure_detector = {
   mutable sequence_number : int;
 }
 
+module AddressSet : Set.S with type elt = Address.t
+
 (** Represents a node with some state in a peer-to-peer network *)
 type node = {
   address : Address.t;
@@ -54,6 +56,9 @@ type node = {
   (* Failure detection component ; runs automatically with the server and is responsible
      for automatically removing dead nodes from the peers table. *)
   failure_detector : failure_detector;
+  (* Hashtable mapping message hashes to
+     peers who have acknowledged the corresponding message. *)
+  acknowledgments : (string, AddressSet.t) Hashtbl.t;
   (* Hashtable mapping addresses to Peers with statuses according
      to the SWIM failure-detection protocol *)
   peers : (Address.t, Peer.t) Base.Hashtbl.t;
