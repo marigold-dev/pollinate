@@ -12,8 +12,14 @@ let peer_from { address; peers; _ } =
       neighbors = peers;
     }
 
-let add_peer node (peer : Peer.t) =
+let add_peer node address =
+  let peer = Peer.from address in
+  Base.Hashtbl.add node.peers ~key:address ~data:peer
+
+let add_peer_as_is node (peer : Peer.t) =
   Base.Hashtbl.add node.peers ~key:peer.address ~data:peer
+
+let peers node = Base.Hashtbl.keys node.peers
 
 let create_request node recipient payload =
   Mutex.with_lock !node.current_request_id (fun id ->
