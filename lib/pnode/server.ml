@@ -27,7 +27,7 @@ let handle_response node res =
    Otherwise, we just apply the message handler and that's it.
 *)
 let process_message node preprocessor msg_handler =
-  let _ = Printf.sprintf "I am inside process_message\n%!" in
+  (* let _ = Printf.sprintf "I am inside process_message\n%!" in *)
   let open Message in
   let%lwt message = Networking.recv_next node in
   let message = preprocessor message in
@@ -46,12 +46,12 @@ let process_message node preprocessor msg_handler =
               message.sender.port) in *)
       match msg_handler message with
       | Some payload, payload_signature ->
-        let _ = Printf.sprintf "I am inside msg_handler, found payload\n%!" in
+        (* let _ = Printf.sprintf "I am inside msg_handler, found payload\n%!" in *)
         (payload, payload_signature)
         |> Client.create_response node message
         |> Networking.send_to node
       | None, _ -> 
-        let _ = Printf.sprintf "I am inside msg_handler, missing payload\n%!" in
+        (* let _ = Printf.sprintf "I am inside msg_handler, missing payload\n%!" in *)
         Lwt.return ())
     | Failure_detection -> Failure_detector.handle_message node message
     | Post ->

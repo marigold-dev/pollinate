@@ -46,7 +46,7 @@ module Net = struct
   let create_socket port =
     let open Lwt_unix in
     let ssock = socket ~cloexec:false PF_INET SOCK_DGRAM 0 in
-    Printf.printf "Socket successfully opened on port: %d" port;
+    (* Printf.printf "Socket successfully opened on port: %d" port; *)
     let addr = ADDR_INET (Unix.inet_addr_loopback, port) in
     let%lwt () = bind ssock addr in
     return ssock
