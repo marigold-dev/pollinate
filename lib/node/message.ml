@@ -3,6 +3,7 @@ open Bin_prot.Std
 
 type category =
   | Uncategorized
+  | Acknowledgment
   | Request
   | Response
   | Post
@@ -13,6 +14,7 @@ type category =
 type t = {
   category : category;
   sub_category_opt : (string * string) option;
+  request_ack : bool;
   id : int;
   timestamp : float;
   sender : Address.t;

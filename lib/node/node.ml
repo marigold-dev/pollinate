@@ -30,6 +30,7 @@ let init ?(init_peers = []) Address.{ address; port } =
               suspicion_time = 9;
               helpers_size = 3;
             };
+        acknowledgments = Hashtbl.create 20;
         peers;
         disseminator = Disseminator.create ~num_rounds:10 ~epoch_length:50.;
       } in
@@ -41,6 +42,7 @@ let run_server ?(preprocessor = fun m -> m) ~msg_handler node =
 let seen node message = Disseminator.seen !node.disseminator message
 
 module Testing = struct
+  module AddressSet = Types.AddressSet
   module Failure_detector = Failure_detector
   module Networking = Networking
   let broadcast_queue node = Disseminator.broadcast_queue !node.disseminator

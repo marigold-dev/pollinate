@@ -15,12 +15,15 @@ type failure_detector = {
   mutable sequence_number : int;
 }
 
+module AddressSet = Set.Make (Address)
+
 type node = {
   address : Address.t;
   current_request_id : int ref Mutex.t;
   request_table : (int, Message.t Lwt_condition.t) Hashtbl.t;
   socket : file_descr Mutex.t;
   failure_detector : failure_detector;
+  acknowledgments : (string, AddressSet.t) Hashtbl.t;
   peers : (Address.t, Peer.t) Base.Hashtbl.t;
   mutable disseminator : Disseminator.t;
 }

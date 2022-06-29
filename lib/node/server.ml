@@ -10,6 +10,13 @@ let handle_response node res =
   | Some waiting_request -> Lwt_condition.signal waiting_request res
   | None -> ()
 
+let handle_ack node msg =
+  if msg.Message.request_ack then
+    let ack_msg = Client.create_ack node msg in
+    Networking.send_to node ack_msg
+  else
+    Lwt.return ()
+
 (* Preprocess a message, log some information about it, then handle it
    based on its category. The "rules" are as follows:
 
@@ -30,6 +37,7 @@ let process_message node preprocessor msg_handler =
   let open Message in
   let%lwt message = Networking.recv_next node in
   let message = preprocessor message in
+  let _ = handle_ack node message in
   (* let%lwt () =
      log node
        (Printf.sprintf "Processing message %s from %d...\n"
@@ -49,6 +57,14 @@ let process_message node preprocessor msg_handler =
         |> Client.create_response node message
         |> Networking.send_to node
       | None -> Lwt.return ())
+    | Acknowledgment ->
+      let msg_hash = Bytes.to_string message.payload in
+      let new_addrs =
+        match Hashtbl.find_opt !node.acknowledgments msg_hash with
+        | Some addrs -> AddressSet.add message.sender addrs
+        | None -> AddressSet.add message.sender AddressSet.empty in
+      Hashtbl.add !node.acknowledgments msg_hash new_addrs;
+      Lwt.return ()
     | Failure_detection -> Failure_detector.handle_message node message
     | Post ->
       if not (Disseminator.seen !node.disseminator message) then (

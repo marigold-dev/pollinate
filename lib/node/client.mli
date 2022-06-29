@@ -24,21 +24,15 @@ val peers : node -> Address.t list
     entire network. *)
 val post : node ref -> Message.t -> unit
 
-(** Begins disseminating an encoded message meant to be witnessed by the
-    entire network. *)
-val post : node ref -> Message.t -> unit
-
-(** Begins disseminating an encoded message meant to be witnessed by the
-    entire network. *)
-val post : node ref -> Message.t -> unit
-
 (** [create_request node recipient payload] creates a [Message.t] of the {i Request category}
 addressed to {i recipient} containing {i payload}. *)
-val create_request : node ref -> Address.t -> bytes -> Message.t Lwt.t
+val create_request :
+  node ref -> ?request_ack:bool -> Address.t -> bytes -> Message.t Lwt.t
 
 (** [create_response node request payload] creates a [Message.t] of the {i Response category}
 that responds to {i request} whose content is {i payload}. *)
-val create_response : node ref -> Message.t -> bytes -> Message.t
+val create_response :
+  node ref -> ?request_ack:bool -> Message.t -> bytes -> Message.t
 
 (** Sends an encoded {i request} to the specified peer and
 returns a promise holding the response from the peer. This
@@ -49,4 +43,6 @@ val request : node ref -> bytes -> Address.t -> Message.t Lwt.t
 (** [create_post node payload] creates a [Message.t] of the {i Post category}
     containing {i payload} for eventual gossip dissemination across the
     entire network. *)
-val create_post : node ref -> bytes -> Message.t
+val create_post : node ref -> ?request_ack:bool -> bytes -> Message.t
+
+val create_ack : node ref -> Message.t -> Message.t
