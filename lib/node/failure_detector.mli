@@ -40,10 +40,6 @@ val failure_detection : node ref -> unit Lwt.t
 
 (**/**)
 
-val knuth_shuffle : Peer.t list -> Peer.t list
-
-val pick_random_neighbors : ('a, 'b) Base.Hashtbl.t -> int -> 'a list
-
 val update_peer_status :
   Types.node ref -> Common.Peer.t -> Common.Peer.status -> (unit, string) result
 

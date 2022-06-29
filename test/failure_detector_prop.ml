@@ -1,19 +1,10 @@
 open QCheck2.Gen
 open Pollinate.Peer
-open Commons
-
-module SUT = Pollinate.Node.Failure_detector
+open Pollinate
+module SUT = Pollinate.Node.Testing.Failure_detector
 
 let node_a =
-  Lwt_main.run
-    (Node.init ~preprocess:Commons.preprocess ~msg_handler:Commons.msg_handler
-       ("127.0.0.1", 3002))
-
-let knuth_shuffle_size =
-  QCheck2.Test.make ~count:1000
-    ~name:"Knuth_shuffle does not change the size of the list"
-    (QCheck2.Gen.list Generators.peer_gen) (fun peers ->
-      List.length (SUT.knuth_shuffle peers) == List.length peers)
+  Lwt_main.run (Node.init Address.{ address = "127.0.0.1"; port = 3002 })
 
 let update_peer =
   QCheck2.Test.make ~count:1000
@@ -24,20 +15,8 @@ let update_peer =
       let _ = SUT.update_peer_status node_a neighbor neighbor_status in
       neighbor.status = neighbor_status)
 
-let pick_random_neighbors =
-  QCheck2.Test.make ~count:1000
-    ~name:
-      "pick_random_neighbors on a peer with a single neighbor, returns this \
-       neighbors" (pair Generators.peer_gen Generators.peer_gen)
-    (fun (peer, neighbor) ->
-      let _ = add_neighbor peer neighbor in
-      let random_neighbor =
-        List.hd @@ SUT.pick_random_neighbors peer.neighbors 1 in
-      random_neighbor == neighbor.address)
-
 let () =
   let failure_detector_prop =
-    List.map QCheck_alcotest.to_alcotest
-      [knuth_shuffle_size; update_peer; pick_random_neighbors] in
+    List.map QCheck_alcotest.to_alcotest [update_peer] in
   Alcotest.run "Failure detector"
     [("failure_detector.ml", failure_detector_prop)]

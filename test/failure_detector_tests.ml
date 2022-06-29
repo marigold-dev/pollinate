@@ -1,17 +1,13 @@
-open Commons
+open Pollinate
 open Pollinate.Node
 open Lwt.Infix
-
-module SUT = Pollinate.Node.Failure_detector
+module SUT = Pollinate.Node.Testing.Failure_detector
 
 let node_a =
-  Lwt_main.run
-    (Node.init ~preprocess:Commons.preprocess ~msg_handler:Commons.msg_handler
-       ("127.0.0.1", 3003))
+  Lwt_main.run (Node.init Address.{ address = "127.0.0.1"; port = 3003 })
+
 let node_b =
-  Lwt_main.run
-    (Node.init ~preprocess:Commons.preprocess ~msg_handler:Commons.msg_handler
-       ("127.0.0.1", 3004))
+  Lwt_main.run (Node.init Address.{ address = "127.0.0.1"; port = 3004 })
 
 let peer_b = Client.peer_from !node_b
 
@@ -45,9 +41,9 @@ let () =
        [
          ( "failure_detector.ml",
            [
-             Alcotest_lwt.test_case "Remove Suspicious peer" `Quick
+             Alcotest_lwt.test_case "Remove Suspicious peer" `Slow
                test_suspicion_detection;
-             Alcotest_lwt.test_case "Do nothing on Alive peer" `Quick
+             Alcotest_lwt.test_case "Do nothing on Alive peer" `Slow
                test_failure_detection_nothing_on_alive;
            ] );
        ]
