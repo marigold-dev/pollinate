@@ -28,14 +28,6 @@ val post : node ref -> Message.t -> unit
     entire network. *)
 val post : node ref -> Message.t -> unit
 
-(** Begins disseminating an encoded message meant to be witnessed by the
-    entire network. *)
-val post : node ref -> Message.t -> unit
-
-(** Begins disseminating an encoded message meant to be witnessed by the
-    entire network. *)
-val post : node ref -> Message.t -> unit
-
 (** [create_request node recipient payload] creates a [Message.t] of the {i Request category}
 addressed to {i recipient} containing {i payload}. *)
 val create_request : node ref -> Address.t -> bytes -> Message.t Lwt.t
