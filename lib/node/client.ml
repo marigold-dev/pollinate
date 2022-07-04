@@ -21,7 +21,7 @@ let add_peer_as_is node (peer : Peer.t) =
 
 let peers node = Base.Hashtbl.keys node.peers
 
-let create_request node ?(request_ack = false) recipient payload =
+let create_request node ?(request_ack = false) recipient (payload, payload_signature) =
   Mutex.with_lock !node.current_request_id (fun id ->
       id := !id + 1;
       Lwt.return
@@ -35,9 +35,10 @@ let create_request node ?(request_ack = false) recipient payload =
             sender = !node.address;
             recipients = [recipient];
             payload;
+            payload_signature;
           })
 
-let create_response node ?(request_ack = false) request payload =
+let create_response node ?(request_ack = false) request (payload, payload_signature) =
   Message.
     {
       category = Message.Response;
@@ -48,9 +49,10 @@ let create_response node ?(request_ack = false) request payload =
       sender = !node.address;
       recipients = [request.sender];
       payload;
+      payload_signature;
     }
 
-let create_post node ?(request_ack = false) payload =
+let create_post node ?(request_ack = false) (payload, payload_signature) =
   Message.
     {
       category = Message.Post;
@@ -61,6 +63,7 @@ let create_post node ?(request_ack = false) payload =
       sender = !node.address;
       recipients = [];
       payload;
+      payload_signature;
     }
 
 let create_ack node incoming_message =
@@ -74,6 +77,7 @@ let create_ack node incoming_message =
       sender = !node.address;
       recipients = [incoming_message.sender];
       payload = incoming_message |> Message.hash_of |> Bytes.of_string;
+      payload_signature = None;
     }
 
 let request node request recipient =

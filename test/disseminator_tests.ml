@@ -13,23 +13,23 @@ module Disseminator_tests = struct
 
   let queue_insertion_test () =
     let _server = Node.run_server ~msg_handler:Commons.msg_handler node in
-    Client.address_of !node
-    |> (fun Address.{ port; _ } -> port)
-    |> string_of_int
-    |> String.to_bytes
-    |> Client.create_post node
-    |> Client.post node;
+    let payload =
+      Client.address_of !node
+      |> (fun Address.{ port; _ } -> port)
+      |> string_of_int
+      |> String.to_bytes in
+    Client.create_post node (payload, None) |> Client.post node;
 
     Lwt.return (List.length (Node.Testing.broadcast_queue node))
 
   let queue_removal_test () =
     let _server = Node.run_server ~msg_handler:Commons.msg_handler node in
-    Client.address_of !node
-    |> (fun Address.{ port; _ } -> port)
-    |> string_of_int
-    |> String.to_bytes
-    |> Client.create_post node
-    |> Client.post node;
+    let payload =
+      Client.address_of !node
+      |> (fun Address.{ port; _ } -> port)
+      |> string_of_int
+      |> String.to_bytes in
+    Client.create_post node (payload, None) |> Client.post node;
 
     let%lwt () =
       while%lwt Node.Testing.disseminator_round node <= 10 do
@@ -39,12 +39,12 @@ module Disseminator_tests = struct
 
   let seen_message_test () =
     let _server = Node.run_server ~msg_handler:Commons.msg_handler node in
-    let message =
+    let payload =
       Client.address_of !node
       |> (fun Address.{ port; _ } -> port)
       |> string_of_int
-      |> String.to_bytes
-      |> Client.create_post node in
+      |> String.to_bytes in
+    let message = Client.create_post node (payload, None) in
     message |> Client.post node;
 
     Lwt.return (Node.seen node message)

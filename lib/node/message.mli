@@ -31,6 +31,7 @@ type t = {
   sender : Address.t;
   recipients : Address.t list;
   payload : bytes;
+  payload_signature : bytes option;
 }
 [@@deriving bin_io]
 
