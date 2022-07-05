@@ -3,6 +3,8 @@ open Lwt_unix
 
 (** {1 Types} *)
 
+(** Configurable parameters that affect various aspects of the failure
+detector *)
 type failure_detector_config = {
   (* The period of time within which peers may be randomly chosen
      to be pinged, and within which any peer who has been pinged must
@@ -23,9 +25,8 @@ type failure_detector_config = {
      has failed to respond with acknowledgement during the round_trip_time. *)
   helpers_size : int;
 }
-(** Configurable parameters that affect various aspects of the failure
-detector *)
 
+(** The state of a failure detection component. *)
 type failure_detector = {
   config : failure_detector_config;
   (* Table mapping sequence numbers to condition variables that get
@@ -34,22 +35,22 @@ type failure_detector = {
   acknowledges : (int, unit Lwt_condition.t) Base.Hashtbl.t;
   mutable sequence_number : int;
 }
-(** The state of a failure detection component. *)
 
 module AddressSet : Set.S with type elt = Address.t
 
+(** Represents a node with some state in a peer-to-peer network *)
 type node = {
   address : Address.t;
-      (* An ID that is incremented whenever a request is
-         made from this node. The response matching this
-         request will carry the same ID, allowing the response
-         to be identified and thus stopping the request from
-         blocking. *)
+  (* An ID that is incremented whenever a request is
+     made from this node. The response matching this
+     request will carry the same ID, allowing the response
+     to be identified and thus stopping the request from
+     blocking. *)
   current_request_id : int ref Mutex.t;
-      (* A hashtable that pairs request IDs with condition variables.
-         When a response is received by the server, it checks this table
-         for a waiting request and signals the request's condition variable
-         with the incoming response. *)
+  (* A hashtable that pairs request IDs with condition variables.
+     When a response is received by the server, it checks this table
+     for a waiting request and signals the request's condition variable
+     with the incoming response. *)
   request_table : (int, Message.t Lwt_condition.t) Hashtbl.t;
   socket : file_descr Mutex.t;
   (* Failure detection component ; runs automatically with the server and is responsible
@@ -66,4 +67,3 @@ type node = {
      with other nodes in the network *)
   mutable disseminator : Disseminator.t;
 }
-(** Represents a node with some state in a peer-to-peer network *)

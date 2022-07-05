@@ -13,32 +13,32 @@ type status =
   | Faulty
 [@@deriving show { with_path = false }, eq]
 
+(** The type of a peer. [Neighbors] are represented
+internally by a [Base.Hashtbl], so look-ups, insertions,
+and removals are all approximately constant-time. *)
 type t = {
   address : Address.t;
   mutable status : status;
   mutable last_suspicious_status : float option;
   neighbors : (Address.t, t) Base.Hashtbl.t;
 }
-(** The type of a peer. [Neighbors] are represented
-internally by a [Base.Hashtbl], so look-ups, insertions,
-and removals are all approximately constant-time. *)
 
 (** {1 API} *)
 
-val from : Address.t -> t
 (** Constructs a [Peer.t] from an [Address.t]. This
 is the recommended way to create a Peer {i from scratch}. *)
+val from : Address.t -> t
 
-val from_socket_address : Unix.sockaddr -> t
 (** Constructs an [Address.t] from a [Unix.sockaddr] *)
+val from_socket_address : Unix.sockaddr -> t
 
-val add_neighbor : t -> t -> [`Duplicate | `Ok]
 (** Adds a neighbor to the given peer's neighbors *)
+val add_neighbor : t -> t -> [`Duplicate | `Ok]
 
-val add_neighbors : t -> t list -> [`Duplicate | `Ok] list
 (** Adds a list of neighbors to the given peer's neighbors *)
+val add_neighbors : t -> t list -> [`Duplicate | `Ok] list
 
-val get_neighbor : t -> Address.t -> t option
 (** Looks up a neighbor of the given peer by address
 and returns a [Peer.t option] containing the
 neighbor if this address is found. *)
+val get_neighbor : t -> Address.t -> t option

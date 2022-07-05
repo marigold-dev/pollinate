@@ -33,7 +33,7 @@
               buildInputs = with pkgs;
                 with ocamlPackages_dev; [
                   ocaml-lsp
-                  ocamlformat
+                  ocamlformat_0_20_1
                   odoc
                   ocaml
                   dune_3

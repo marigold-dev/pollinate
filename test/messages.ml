@@ -14,13 +14,13 @@ module Messages = struct
 
   type response =
     | Pong
-    | List of string list
+    | List    of string list
     | Success of string
-    | Error of string
+    | Error   of string
   [@@deriving bin_io, show { with_path = false }]
 
   type message =
-    | Request of request
+    | Request  of request
     | Response of response
   [@@deriving bin_io, show { with_path = false }]
 end

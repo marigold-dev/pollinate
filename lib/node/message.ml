@@ -8,7 +8,7 @@ type category =
   | Response
   | Post
   | Failure_detection
-  | Custom of string
+  | Custom            of string
 [@@deriving bin_io, show]
 
 type t = {

@@ -3,9 +3,9 @@ type pool_elt = {
   remaining : int;
 }
 
-module DigestSet = Set.Make (Digest)
 (** Set of md5 message hashes in hex-string form
     for storing "seen" messages *)
+module DigestSet = Set.Make (Digest)
 
 type t = {
   round : int;
