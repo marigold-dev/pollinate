@@ -1,7 +1,7 @@
 open Lwt.Infix
 open Commons
 open Pollinate
-open Pollinate.Node
+open Pollinate.PNode
 
 module Gossip_tests = struct
   let local_address port = Address.{ address = "127.0.0.1"; port }

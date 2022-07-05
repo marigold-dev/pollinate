@@ -1,7 +1,7 @@
 open QCheck2.Gen
 open Pollinate.Peer
 open Pollinate
-module SUT = Pollinate.Node.Testing.Networking
+module SUT = Pollinate.PNode.Testing.Networking
 
 let node_a =
   Lwt_main.run (Node.init Address.{ address = "127.0.0.1"; port = 2002 })

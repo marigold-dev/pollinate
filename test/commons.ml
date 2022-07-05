@@ -1,6 +1,6 @@
 (** Utils function shared by the different tests modules *)
 module Commons = struct
-  open Pollinate.Node
+  open Pollinate.PNode
   open Pollinate.Util
   open Messages
 

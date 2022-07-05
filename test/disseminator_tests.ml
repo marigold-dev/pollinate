@@ -1,7 +1,7 @@
 open Lwt.Infix
 open Commons
 open Pollinate
-open Pollinate.Node
+open Pollinate.PNode
 
 module Disseminator_tests = struct
   let node =
