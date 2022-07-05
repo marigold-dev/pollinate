@@ -3,8 +3,6 @@ open Lwt_unix
 
 (** {1 Types} *)
 
-(** Configurable parameters that affect various aspects of the failure
-detector *)
 type failure_detector_config = {
   (* The period of time within which peers may be randomly chosen
      to be pinged, and within which any peer who has been pinged must
@@ -25,8 +23,9 @@ type failure_detector_config = {
      has failed to respond with acknowledgement during the round_trip_time. *)
   helpers_size : int;
 }
+(** Configurable parameters that affect various aspects of the failure
+detector *)
 
-(** The state of a failure detection component. *)
 type failure_detector = {
   config : failure_detector_config;
   (* Table mapping sequence numbers to condition variables that get
@@ -35,10 +34,10 @@ type failure_detector = {
   acknowledges : (int, unit Lwt_condition.t) Base.Hashtbl.t;
   mutable sequence_number : int;
 }
+(** The state of a failure detection component. *)
 
 module AddressSet : Set.S with type elt = Address.t
 
-(** Represents a node with some state in a peer-to-peer network *)
 type node = {
   address : Address.t;
       (* An ID that is incremented whenever a request is
@@ -67,3 +66,4 @@ type node = {
      with other nodes in the network *)
   mutable disseminator : Disseminator.t;
 }
+(** Represents a node with some state in a peer-to-peer network *)

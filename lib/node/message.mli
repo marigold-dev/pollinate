@@ -17,11 +17,9 @@ type category =
   | Response
   | Post
   | Failure_detection
-  | Custom            of string
+  | Custom of string
 [@@deriving bin_io, show]
 
-(** Messages received from [peers] which are
-processed by the node's message handler. *)
 type t = {
   category : category;
   sub_category_opt : (string * string) option;
@@ -34,5 +32,7 @@ type t = {
   payload_signature : bytes option;
 }
 [@@deriving bin_io]
+(** Messages received from [peers] which are
+processed by the node's message handler. *)
 
 val hash_of : t -> Digest.t

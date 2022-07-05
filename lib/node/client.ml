@@ -21,7 +21,8 @@ let add_peer_as_is node (peer : Peer.t) =
 
 let peers node = Base.Hashtbl.keys node.peers
 
-let create_request node ?(request_ack = false) recipient (payload, payload_signature) =
+let create_request node ?(request_ack = false) recipient
+    (payload, payload_signature) =
   Mutex.with_lock !node.current_request_id (fun id ->
       id := !id + 1;
       Lwt.return
@@ -38,7 +39,8 @@ let create_request node ?(request_ack = false) recipient (payload, payload_signa
             payload_signature;
           })
 
-let create_response node ?(request_ack = false) request (payload, payload_signature) =
+let create_response node ?(request_ack = false) request
+    (payload, payload_signature) =
   Message.
     {
       category = Message.Response;
