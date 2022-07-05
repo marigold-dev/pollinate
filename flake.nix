@@ -30,19 +30,18 @@
           devShells = {
             default = (pkgs.mkShell {
               inputsFrom = [ pollinate ];
+
               buildInputs = with pkgs;
                 with ocamlPackages_dev; [
                   ocaml-lsp
-                  ocamlformat
+                  ocamlformat_0_20_1
                   odoc
                   ocaml
                   dune_3
-                  nixfmt
+                  treefmt
                 ];
             });
           };
-
-          formatter = pkgs.nixfmt;
 
           packages = builtins.foldl' (prev: ocamlVersion:
             prev // {

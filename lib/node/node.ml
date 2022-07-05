@@ -1,6 +1,5 @@
 open Common
 open Types
-
 module Message = Message
 module Client = Client
 
@@ -45,6 +44,8 @@ module Testing = struct
   module AddressSet = Types.AddressSet
   module Failure_detector = Failure_detector
   module Networking = Networking
+
   let broadcast_queue node = Disseminator.broadcast_queue !node.disseminator
+
   let disseminator_round node = Disseminator.current_round !node.disseminator
 end

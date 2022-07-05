@@ -1,7 +1,6 @@
 open QCheck2.Gen
 open Pollinate.Peer
 open Pollinate
-
 module SUT = Pollinate.Node.Testing.Networking
 
 let node_a =
