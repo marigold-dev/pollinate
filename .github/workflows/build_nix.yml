@@ -16,8 +16,20 @@ jobs:
       # Broken by upstream
       # - name: "Run nix flake check"
       #   run: nix flake check
-      - name: "Check nix formatting"
-        run: find . -iname '*.nix' | xargs nix fmt -- --check
+      - name: "Check formatting"
+        run: |
+          nix fmt -- --no-cache
+          if [[ -n "$(git status --porcelain -unormal)" ]]; then
+            echo "-----------------------------"
+            echo "ERROR: The project is dirty!"
+            echo "-----------------------------"
+            git status -unormal
+            exit 1
+          else
+            echo "--------------"
+            echo "OK: All good!"
+            echo "--------------"
+          fi
       - name: "Test building"
         run: |
           nix build .#

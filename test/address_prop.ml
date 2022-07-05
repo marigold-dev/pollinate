@@ -1,5 +1,4 @@
 open QCheck2.Gen
-
 module SUT = Pollinate.Address
 
 let create =

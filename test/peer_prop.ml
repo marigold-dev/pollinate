@@ -1,5 +1,4 @@
 open QCheck2.Gen
-
 module SUT = Pollinate.Peer
 
 let add_peer =

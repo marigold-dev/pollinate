@@ -1,5 +1,4 @@
 open Common
-
 module Message = Message
 module Client = Client
 
@@ -25,6 +24,8 @@ module Testing : sig
   module AddressSet = Types.AddressSet
   module Failure_detector = Failure_detector
   module Networking = Networking
+
   val broadcast_queue : t ref -> Message.t list
+
   val disseminator_round : t ref -> int
 end
