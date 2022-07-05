@@ -17,7 +17,7 @@ jobs:
       # - name: "Run nix flake check"
       #   run: nix flake check
       - name: "Check nix formatting"
-        run: find . -iname '*.nix' | xargs nix fmt -- --check
+        run: nix fmt -- --fail-on-change
       - name: "Test building"
         run: |
           nix build .#
