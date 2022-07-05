@@ -27,6 +27,7 @@
             ocamlPackages = ocamlPackages_dev;
           });
         in {
+          formatter = pkgs.callPackage ./nix/formatter.nix { };
           devShells = {
             default = (pkgs.mkShell {
               inputsFrom = [ pollinate ];
