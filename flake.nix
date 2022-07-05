@@ -39,6 +39,7 @@
                   odoc
                   ocaml
                   dune_3
+                  nixfmt
                   treefmt
                 ];
             });
