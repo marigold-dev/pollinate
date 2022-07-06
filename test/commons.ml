@@ -29,5 +29,6 @@ module Commons = struct
         | Get -> Pong
         | Insert _ -> Success "Successfully added value to state" in
       (Response response |> Encoding.pack bin_writer_message, None)
-    | _ -> failwith "unhandled case"
+    | Post -> (message.payload, None) (* ugly fix for tests. In case of a *)
+    | _ -> failwith "unhandled in tests"
 end
