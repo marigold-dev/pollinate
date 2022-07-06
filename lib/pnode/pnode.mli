@@ -2,6 +2,7 @@ open Common
 
 module Message = Message
 module Client = Client
+module Networking = Networking
 
 type t = Types.node
 
