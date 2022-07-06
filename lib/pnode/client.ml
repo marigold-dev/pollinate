@@ -21,8 +21,8 @@ let add_peer_as_is node (peer : Peer.t) =
 
 let peers node = Base.Hashtbl.keys node.peers
 
-let create_request node ?(request_ack = false) recipient
-    (payload, payload_signature) =
+let create_request node ?(request_ack = false) recipient ?payload_signature
+    payload =
   Mutex.with_lock !node.current_request_id (fun id ->
       id := !id + 1;
       Lwt.return
@@ -36,11 +36,11 @@ let create_request node ?(request_ack = false) recipient
             sender = !node.address;
             recipients = [recipient];
             payload;
-            payload_signature;
+            payload_signature_opt = payload_signature;
           })
 
-let create_response node ?(request_ack = false) request
-    (payload, payload_signature) =
+let create_response node ?(request_ack = false) request ?payload_signature
+    payload =
   Message.
     {
       category = Message.Response;
@@ -51,10 +51,10 @@ let create_response node ?(request_ack = false) request
       sender = !node.address;
       recipients = [request.sender];
       payload;
-      payload_signature;
+      payload_signature_opt = payload_signature;
     }
 
-let create_post node ?(request_ack = false) (payload, payload_signature) =
+let create_post node ?(request_ack = false) ?payload_signature payload =
   Message.
     {
       category = Message.Post;
@@ -65,7 +65,7 @@ let create_post node ?(request_ack = false) (payload, payload_signature) =
       sender = !node.address;
       recipients = [];
       payload;
-      payload_signature;
+      payload_signature_opt = payload_signature;
     }
 
 let create_ack node incoming_message =
@@ -79,11 +79,11 @@ let create_ack node incoming_message =
       sender = !node.address;
       recipients = [incoming_message.sender];
       payload = incoming_message |> Message.hash_of |> Bytes.of_string;
-      payload_signature = None;
+      payload_signature_opt = None;
     }
 
-let request node request recipient =
-  let%lwt message = create_request node recipient request in
+let request node recipient ?payload_signature payload =
+  let%lwt message = create_request node recipient ?payload_signature payload in
   let%lwt () = Networking.send_to node message in
   let condition_var = Lwt_condition.create () in
   Hashtbl.add !node.request_table message.id condition_var;

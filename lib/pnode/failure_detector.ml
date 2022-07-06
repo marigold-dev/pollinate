@@ -65,7 +65,7 @@ let create_message node message recipient =
       sender = Client.address_of !node;
       recipients = [recipient.Peer.address];
       payload = Encoding.pack bin_writer_message message;
-      payload_signature = None;
+      payload_signature_opt = None;
     }
 
 let send_message message node recipient =

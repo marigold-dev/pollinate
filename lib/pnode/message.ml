@@ -20,7 +20,7 @@ type t = {
   sender : Address.t;
   recipients : Address.t list;
   payload : bytes;
-  payload_signature : bytes option;
+  payload_signature_opt : bytes option;
 }
 [@@deriving bin_io]
 

@@ -106,7 +106,9 @@ module Gossip_tests = struct
       |> (fun Address.{ port; _ } -> port)
       |> string_of_int
       |> String.to_bytes in
-    let message = Client.create_post node (payload, None) ~request_ack:true in
+    let message =
+      Client.create_post node payload ?payload_signature:None ~request_ack:true
+    in
     Client.post node message;
 
     (* Post the created message *)

@@ -18,7 +18,7 @@ module Disseminator_tests = struct
       |> (fun Address.{ port; _ } -> port)
       |> string_of_int
       |> String.to_bytes in
-    Client.create_post node (payload, None) |> Client.post node;
+    Client.create_post node payload ?payload_signature:None |> Client.post node;
 
     Lwt.return (List.length (Node.Testing.broadcast_queue node))
 
@@ -29,7 +29,7 @@ module Disseminator_tests = struct
       |> (fun Address.{ port; _ } -> port)
       |> string_of_int
       |> String.to_bytes in
-    Client.create_post node (payload, None) |> Client.post node;
+    Client.create_post node payload ?payload_signature:None |> Client.post node;
 
     let%lwt () =
       while%lwt Node.Testing.disseminator_round node <= 10 do
@@ -44,7 +44,7 @@ module Disseminator_tests = struct
       |> (fun Address.{ port; _ } -> port)
       |> string_of_int
       |> String.to_bytes in
-    let message = Client.create_post node (payload, None) in
+    let message = Client.create_post node payload ?payload_signature:None in
     message |> Client.post node;
 
     Lwt.return (Node.seen node message)
