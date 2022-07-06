@@ -59,13 +59,13 @@ let create_message node message recipient =
     {
       category = Failure_detection;
       request_ack = false;
-      sub_category_opt = None;
+      sub_category = None;
       id = -1;
       timestamp = Unix.gettimeofday ();
       sender = Client.address_of !node;
       recipients = [recipient.Peer.address];
       payload = Encoding.pack bin_writer_message message;
-      payload_signature_opt = None;
+      payload_signature = None;
     }
 
 let send_message message node recipient =

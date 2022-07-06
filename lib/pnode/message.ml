@@ -13,14 +13,14 @@ type category =
 
 type t = {
   category : category;
-  sub_category_opt : (string * string) option;
+  sub_category : (string * string) option;
   request_ack : bool;
   id : int;
   timestamp : float;
   sender : Address.t;
   recipients : Address.t list;
   payload : bytes;
-  payload_signature_opt : bytes option;
+  payload_signature : bytes option;
 }
 [@@deriving bin_io]
 
