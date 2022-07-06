@@ -46,3 +46,7 @@ val request : node ref -> bytes -> Address.t -> Message.t Lwt.t
 val create_post : node ref -> ?request_ack:bool -> bytes -> Message.t
 
 val create_ack : node ref -> Message.t -> Message.t
+
+(** [broadcast node message] immediately sends a [Message.t] of the {i Post category}
+    to all the peers of the given node. The message is sent only once. *)
+val broadcast : node ref -> Message.t -> unit Lwt.t

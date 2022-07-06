@@ -85,3 +85,6 @@ let request node request recipient =
 
 let post node message =
   !node.disseminator <- Disseminator.post !node.disseminator message
+
+let broadcast node message =
+  Message.{ message with recipients = peers !node } |> Networking.send_to node
