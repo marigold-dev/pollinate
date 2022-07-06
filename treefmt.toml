@@ -1,0 +1,14 @@
+[formatter.nix]
+command = "nixfmt"
+includes = ["*.nix"]
+
+[formatter.dune]
+command = "dune"
+options = ["build", "@fmt", "--auto-promote"]
+includes = ["dune", "dune-project"]
+
+[formatter.ocaml]
+command = "ocamlformat"
+options = ["--inplace"]
+includes = ["*.ml"]
+

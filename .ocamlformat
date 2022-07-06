@@ -1,7 +1,7 @@
 # We're using a patched version of 0.20.1 provided
 # by the ocaml-overlay in flake.nix
 
-version = 0.20.1
+# version = 0.20.1
 
 profile = conventional
 
@@ -24,5 +24,5 @@ if-then-else = fit-or-vertical
 let-and = sparse
 type-decl = sparse
 sequence-blank-line=preserve-one
-module-item-spacing=preserve
+module-item-spacing=sparse
 doc-comments=before
