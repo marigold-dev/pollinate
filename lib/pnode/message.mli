@@ -35,4 +35,10 @@ type t = {
 }
 [@@deriving bin_io]
 
+type msg = {
+  payload : bytes;
+  payload_signature : bytes option;
+}
+[@@deriving bin_io]
+
 val hash_of : t -> Digest.t

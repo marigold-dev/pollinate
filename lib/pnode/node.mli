@@ -14,7 +14,7 @@ val init : ?init_peers:Address.t list -> Address.t -> t ref Lwt.t
 
 val run_server :
   ?preprocessor:(Message.t -> Message.t) ->
-  msg_handler:(Message.t -> bytes * bytes option) ->
+  msg_handler:(Message.t -> Message.msg option) ->
   t ref ->
   'b Lwt.t
 

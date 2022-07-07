@@ -3,6 +3,7 @@ module Commons = struct
   open Pollinate.PNode
   open Pollinate.Util
   open Messages
+  open Message
 
   let preprocessor msg =
     let open Messages in
@@ -19,7 +20,6 @@ module Commons = struct
 
   let msg_handler message =
     let open Messages in
-    let open Message in
     match message.category with
     | Request ->
       let request = Encoding.unpack bin_read_request message.payload in
@@ -28,7 +28,13 @@ module Commons = struct
         | Ping -> Pong
         | Get -> Pong
         | Insert _ -> Success "Successfully added value to state" in
-      (Response response |> Encoding.pack bin_writer_message, None)
-    | Post -> (message.payload, None) (* ugly fix for tests. In case of a *)
+      let msg =
+        Message.
+          {
+            payload = Response response |> Encoding.pack bin_writer_message;
+            payload_signature = None;
+          } in
+      Some msg
+    | Post -> None
     | _ -> failwith "unhandled in tests"
 end

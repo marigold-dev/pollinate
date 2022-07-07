@@ -91,3 +91,6 @@ let request node message =
 
 let post node message =
   !node.disseminator <- Disseminator.post !node.disseminator message
+
+let broadcast node message recipients =
+  Networking.broadcast node message recipients

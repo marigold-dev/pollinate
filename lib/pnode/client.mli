@@ -64,3 +64,5 @@ val create_post :
   Message.t
 
 val create_ack : node ref -> Message.t -> Message.t
+
+val broadcast : node ref -> Message.t -> Address.t list -> unit Lwt.t
