@@ -1,10 +1,11 @@
 open QCheck2.Gen
 open Pollinate.Peer
 open Pollinate
-module SUT = Pollinate.PNode.Testing.Networking
+module SUT = Pollinate.PNode.Pnode.Testing.Networking
 
 let node_a =
-  Lwt_main.run (Node.init Address.{ address = "127.0.0.1"; port = 2002 })
+  Lwt_main.run
+    (Pollinate.PNode.Pnode.init Address.{ address = "127.0.0.1"; port = 2002 })
 
 let knuth_shuffle_size =
   QCheck2.Test.make ~count:1000

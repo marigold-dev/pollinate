@@ -1,10 +1,11 @@
 open QCheck2.Gen
 open Pollinate.Peer
 open Pollinate
-module SUT = Pollinate.PNode.Testing.Failure_detector
+module SUT = Pollinate.PNode.Pnode.Testing.Failure_detector
 
 let node_a =
-  Lwt_main.run (Node.init Address.{ address = "127.0.0.1"; port = 3002 })
+  Lwt_main.run
+    (Pollinate.PNode.Pnode.init Address.{ address = "127.0.0.1"; port = 3002 })
 
 let update_peer =
   QCheck2.Test.make ~count:1000
