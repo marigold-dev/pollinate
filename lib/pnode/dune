@@ -1,5 +1,5 @@
 (library
- (name node)
+ (name pnode)
  (public_name pollinate.pnode)
  (libraries bin_prot lwt lwt.unix pollinate.common)
  (preprocess
