@@ -35,8 +35,7 @@ let create_request node ?(request_ack = false) recipient ?payload_signature
             timestamp = Unix.gettimeofday ();
             sender = !node.address;
             recipients = [recipient];
-            payload;
-            payload_signature;
+            payload = { data = payload; signature = payload_signature };
           })
 
 let create_response node ?(request_ack = false) request ?payload_signature
@@ -50,8 +49,7 @@ let create_response node ?(request_ack = false) request ?payload_signature
       timestamp = Unix.gettimeofday ();
       sender = !node.address;
       recipients = [request.sender];
-      payload;
-      payload_signature;
+      payload = { data = payload; signature = payload_signature };
     }
 
 let create_post node ?(request_ack = false) ?payload_signature ?sub_category
@@ -65,8 +63,7 @@ let create_post node ?(request_ack = false) ?payload_signature ?sub_category
       timestamp = Unix.gettimeofday ();
       sender = !node.address;
       recipients = [];
-      payload;
-      payload_signature;
+      payload = { data = payload; signature = payload_signature };
     }
 
 let create_ack node incoming_message =
@@ -79,8 +76,11 @@ let create_ack node incoming_message =
       timestamp = Unix.gettimeofday ();
       sender = !node.address;
       recipients = [incoming_message.sender];
-      payload = incoming_message |> Message.hash_of |> Bytes.of_string;
-      payload_signature = None;
+      payload =
+        {
+          data = incoming_message |> Message.hash_of |> Bytes.of_string;
+          signature = None;
+        };
     }
 
 let request node message =

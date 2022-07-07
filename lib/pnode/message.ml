@@ -11,6 +11,12 @@ type category =
   | Custom            of string
 [@@deriving bin_io, show]
 
+type payload = {
+  data : bytes;
+  signature : bytes option;
+}
+[@@deriving bin_io]
+
 type t = {
   category : category;
   sub_category : (string * string) option;
@@ -19,14 +25,7 @@ type t = {
   timestamp : float;
   sender : Address.t;
   recipients : Address.t list;
-  payload : bytes;
-  payload_signature : bytes option;
-}
-[@@deriving bin_io]
-
-type msg = {
-  payload : bytes;
-  payload_signature : bytes option;
+  payload : payload;
 }
 [@@deriving bin_io]
 
@@ -35,7 +34,7 @@ let hash_of m =
     m.sender.address;
     string_of_int m.sender.port;
     string_of_float m.timestamp;
-    Bytes.to_string m.payload;
+    Bytes.to_string m.payload.data;
   ]
   |> String.concat ""
   |> Digest.string

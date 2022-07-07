@@ -20,6 +20,12 @@ type category =
   | Custom            of string
 [@@deriving bin_io, show]
 
+type payload = {
+  data : bytes;
+  signature : bytes option;
+}
+[@@deriving bin_io]
+
 (** Messages received from [peers] which are
 processed by the node's message handler. *)
 type t = {
@@ -30,14 +36,7 @@ type t = {
   timestamp : float;
   sender : Address.t;
   recipients : Address.t list;
-  payload : bytes;
-  payload_signature : bytes option;
-}
-[@@deriving bin_io]
-
-type msg = {
-  payload : bytes;
-  payload_signature : bytes option;
+  payload : payload;
 }
 [@@deriving bin_io]
 
