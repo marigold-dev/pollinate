@@ -59,7 +59,7 @@ let create_message node message recipient =
     {
       pollinate_category = Failure_detection;
       request_ack = false;
-      category = None;
+      operation = None;
       id = -1;
       timestamp = Unix.gettimeofday ();
       sender = Client.address_of !node;

@@ -22,14 +22,14 @@ let add_peer_as_is node (peer : Peer.t) =
 let peers node = Base.Hashtbl.keys node.peers
 
 let create_request node ?(request_ack = false) recipient ?payload_signature
-    ?category payload =
+    ?operation payload =
   Mutex.with_lock !node.current_request_id (fun id ->
       id := !id + 1;
       Lwt.return
         Message.
           {
             pollinate_category = Message.Request;
-            category;
+            operation;
             request_ack;
             id = !id;
             timestamp = Unix.gettimeofday ();
@@ -39,11 +39,11 @@ let create_request node ?(request_ack = false) recipient ?payload_signature
           })
 
 let create_response node ?(request_ack = false) request ?payload_signature
-    ?category payload =
+    ?operation payload =
   Message.
     {
       pollinate_category = Message.Response;
-      category;
+      operation;
       request_ack;
       id = request.id;
       timestamp = Unix.gettimeofday ();
@@ -52,14 +52,14 @@ let create_response node ?(request_ack = false) request ?payload_signature
       payload = { data = payload; signature = payload_signature };
     }
 
-let create_post node ?(request_ack = false) ?payload_signature ?category payload
-    =
+let create_post node ?(request_ack = false) ?payload_signature ?operation
+    payload =
   Message.
     {
       pollinate_category = Message.Post;
       request_ack;
       id = -1;
-      category;
+      operation;
       timestamp = Unix.gettimeofday ();
       sender = !node.address;
       recipients = [];
@@ -70,7 +70,7 @@ let create_ack node incoming_message =
   Message.
     {
       pollinate_category = Message.Acknowledgment;
-      category = None;
+      operation = None;
       request_ack = false;
       id = -1;
       timestamp = Unix.gettimeofday ();

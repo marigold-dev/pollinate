@@ -26,9 +26,9 @@ type payload = {
 }
 [@@deriving bin_io]
 
-type category = {
+type operation = {
   category : string;
-  sub_category : string option;
+  name : string option;
 }
 [@@deriving bin_io]
 
@@ -36,7 +36,7 @@ type category = {
 processed by the node's message handler. *)
 type t = {
   pollinate_category : pollinate_category;
-  category : category option;
+  operation : operation option;
   request_ack : bool;
   id : int;
   timestamp : float;
