@@ -1,7 +1,7 @@
 open Common
 open Bin_prot.Std
 
-type category =
+type pollinate_category =
   | Uncategorized
   | Acknowledgment
   | Request
@@ -17,9 +17,15 @@ type payload = {
 }
 [@@deriving bin_io]
 
+type category = {
+  category : string;
+  sub_category : string option;
+}
+[@@deriving bin_io]
+
 type t = {
-  category : category;
-  sub_category : (string * string) option;
+  pollinate_category : pollinate_category;
+  category : category option;
   request_ack : bool;
   id : int;
   timestamp : float;

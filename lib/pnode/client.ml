@@ -22,14 +22,14 @@ let add_peer_as_is node (peer : Peer.t) =
 let peers node = Base.Hashtbl.keys node.peers
 
 let create_request node ?(request_ack = false) recipient ?payload_signature
-    ?sub_category payload =
+    ?category payload =
   Mutex.with_lock !node.current_request_id (fun id ->
       id := !id + 1;
       Lwt.return
         Message.
           {
-            category = Message.Request;
-            sub_category;
+            pollinate_category = Message.Request;
+            category;
             request_ack;
             id = !id;
             timestamp = Unix.gettimeofday ();
@@ -39,11 +39,11 @@ let create_request node ?(request_ack = false) recipient ?payload_signature
           })
 
 let create_response node ?(request_ack = false) request ?payload_signature
-    ?sub_category payload =
+    ?category payload =
   Message.
     {
-      category = Message.Response;
-      sub_category;
+      pollinate_category = Message.Response;
+      category;
       request_ack;
       id = request.id;
       timestamp = Unix.gettimeofday ();
@@ -52,14 +52,14 @@ let create_response node ?(request_ack = false) request ?payload_signature
       payload = { data = payload; signature = payload_signature };
     }
 
-let create_post node ?(request_ack = false) ?payload_signature ?sub_category
-    payload =
+let create_post node ?(request_ack = false) ?payload_signature ?category payload
+    =
   Message.
     {
-      category = Message.Post;
+      pollinate_category = Message.Post;
       request_ack;
       id = -1;
-      sub_category;
+      category;
       timestamp = Unix.gettimeofday ();
       sender = !node.address;
       recipients = [];
@@ -69,8 +69,8 @@ let create_post node ?(request_ack = false) ?payload_signature ?sub_category
 let create_ack node incoming_message =
   Message.
     {
-      category = Message.Acknowledgment;
-      sub_category = None;
+      pollinate_category = Message.Acknowledgment;
+      category = None;
       request_ack = false;
       id = -1;
       timestamp = Unix.gettimeofday ();

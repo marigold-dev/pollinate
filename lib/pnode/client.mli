@@ -31,7 +31,7 @@ val create_request :
   ?request_ack:bool ->
   Address.t ->
   ?payload_signature:bytes ->
-  ?sub_category:string * string ->
+  ?category:Message.category ->
   bytes ->
   Message.t Lwt.t
 
@@ -42,7 +42,7 @@ val create_response :
   ?request_ack:bool ->
   Message.t ->
   ?payload_signature:bytes ->
-  ?sub_category:string * string ->
+  ?category:Message.category ->
   bytes ->
   Message.t
 
@@ -59,7 +59,7 @@ val create_post :
   node ref ->
   ?request_ack:bool ->
   ?payload_signature:bytes ->
-  ?sub_category:string * string ->
+  ?category:Message.category ->
   bytes ->
   Message.t
 

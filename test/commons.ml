@@ -7,7 +7,7 @@ module Commons = struct
 
   let preprocessor msg =
     let open Messages in
-    match msg.Message.category with
+    match msg.Message.pollinate_category with
     | Request ->
       let[@warning "-8"] (Request r) =
         Encoding.unpack bin_read_message msg.Message.payload.data in
@@ -28,7 +28,7 @@ module Commons = struct
 
   let msg_handler message =
     let open Messages in
-    match message.category with
+    match message.pollinate_category with
     | Request ->
       let request = Encoding.unpack bin_read_request message.payload.data in
       let response =

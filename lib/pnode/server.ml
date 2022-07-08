@@ -44,7 +44,7 @@ let process_message node preprocessor
        (Printf.sprintf "Processing message %s from %d...\n"
           (Message.hash_of message) message.sender.port) in *)
   let%lwt () =
-    match message.category with
+    match message.pollinate_category with
     | Response -> Lwt.return (handle_response node message)
     | Request -> (
       (* let%lwt () =
