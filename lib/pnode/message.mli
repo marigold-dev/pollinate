@@ -27,8 +27,8 @@ type payload = {
 [@@deriving bin_io]
 
 type operation = {
-  category : string;
-  name : string option;
+  category : bytes;
+  name : bytes option;
 }
 [@@deriving bin_io]
 
