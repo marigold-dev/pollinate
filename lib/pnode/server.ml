@@ -53,10 +53,9 @@ let process_message node preprocessor
               !node.address.address !node.address.port message.sender.address
               message.sender.port) in *)
       match msg_handler message with
-      | Some msg ->
+      | Some Message.{ data; signature = payload_signature } ->
         (* let _ = Printf.sprintf "I am inside msg_handler, found payload\n%!" in *)
-        Client.create_response node message ?payload_signature:msg.signature
-          msg.data
+        Client.create_response node message ?payload_signature data
         |> Networking.send_to node
       | None ->
         failwith "received request without payload nor payload_signature")
