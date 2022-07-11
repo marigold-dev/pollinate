@@ -129,14 +129,14 @@ module Gossip_tests = struct
       |> List.of_seq in
 
     (* Write the length of list_of_seen to a tmp log file *)
-    let%lwt () =
-      let%lwt oc =
-        Lwt_io.open_file
-          ~flags:[Unix.O_WRONLY; Unix.O_APPEND; Unix.O_CREAT]
-          ~mode:Lwt_io.Output "/tmp/log.txt" in
-      let%lwt () =
-        Lwt_io.write oc (Printf.sprintf "%d\n" (List.length list_of_seen)) in
-      Lwt_io.close oc in
+    (* let%lwt () =
+       let%lwt oc =
+         Lwt_io.open_file
+           ~flags:[Unix.O_WRONLY; Unix.O_APPEND; Unix.O_CREAT]
+           ~mode:Lwt_io.Output "/tmp/log.txt" in
+       let%lwt () =
+         Lwt_io.write oc (Printf.sprintf "%d\n" (List.length list_of_seen)) in
+       Lwt_io.close oc in *)
     (* End of logging code *)
     Lwt.return list_of_seen
 end
