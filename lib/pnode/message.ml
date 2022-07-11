@@ -1,7 +1,7 @@
 open Common
 open Bin_prot.Std
 
-type category =
+type pollinate_category =
   | Uncategorized
   | Acknowledgment
   | Request
@@ -12,8 +12,7 @@ type category =
 [@@deriving bin_io, show]
 
 type t = {
-  category : category;
-  sub_category_opt : (string * string) option;
+  pollinate_category : pollinate_category;
   request_ack : bool;
   id : int;
   timestamp : float;

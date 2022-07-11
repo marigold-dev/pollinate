@@ -57,9 +57,8 @@ let update_peer_status node peer status =
 let create_message node message recipient =
   Message.
     {
-      category = Failure_detection;
+      pollinate_category = Failure_detection;
       request_ack = false;
-      sub_category_opt = None;
       id = -1;
       timestamp = Unix.gettimeofday ();
       sender = Client.address_of !node;

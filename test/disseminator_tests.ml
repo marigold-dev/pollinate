@@ -1,53 +1,53 @@
 open Lwt.Infix
 open Commons
 open Pollinate
-open Pollinate.Node
+open Pollinate.PNode
 
 module Disseminator_tests = struct
   let node =
     Lwt_main.run
       (let%lwt node_a =
-         Node.init ~init_peers:[] Address.{ address = "127.0.0.1"; port = 5000 }
-       in
+         Pnode.init ~init_peers:[]
+           Address.{ address = "127.0.0.1"; port = 5000 } in
        Lwt.return node_a)
 
   let queue_insertion_test () =
-    let _server = Node.run_server ~msg_handler:Commons.msg_handler node in
-    Client.address_of !node
-    |> (fun Address.{ port; _ } -> port)
-    |> string_of_int
-    |> String.to_bytes
-    |> Client.create_post node
-    |> Client.post node;
-
-    Lwt.return (List.length (Node.Testing.broadcast_queue node))
-
-  let queue_removal_test () =
-    let _server = Node.run_server ~msg_handler:Commons.msg_handler node in
-    Client.address_of !node
-    |> (fun Address.{ port; _ } -> port)
-    |> string_of_int
-    |> String.to_bytes
-    |> Client.create_post node
-    |> Client.post node;
-
-    let%lwt () =
-      while%lwt Node.Testing.disseminator_round node <= 10 do
-        Lwt_unix.sleep 0.1
-      done in
-    Lwt.return (List.length (Node.Testing.broadcast_queue node))
-
-  let seen_message_test () =
-    let _server = Node.run_server ~msg_handler:Commons.msg_handler node in
-    let message =
+    let _server = Pnode.run_server ~msg_handler:Commons.msg_handler node in
+    let payload =
       Client.address_of !node
       |> (fun Address.{ port; _ } -> port)
       |> string_of_int
-      |> String.to_bytes
-      |> Client.create_post node in
+      |> String.to_bytes in
+    Client.create_post node payload |> Client.post node;
+
+    Lwt.return (List.length (Pnode.Testing.broadcast_queue node))
+
+  let queue_removal_test () =
+    let _server = Pnode.run_server ~msg_handler:Commons.msg_handler node in
+    let payload =
+      Client.address_of !node
+      |> (fun Address.{ port; _ } -> port)
+      |> string_of_int
+      |> String.to_bytes in
+    Client.create_post node payload |> Client.post node;
+
+    let%lwt () =
+      while%lwt Pnode.Testing.disseminator_round node <= 10 do
+        Lwt_unix.sleep 0.1
+      done in
+    Lwt.return (List.length (Pnode.Testing.broadcast_queue node))
+
+  let seen_message_test () =
+    let _server = Pnode.run_server ~msg_handler:Commons.msg_handler node in
+    let payload =
+      Client.address_of !node
+      |> (fun Address.{ port; _ } -> port)
+      |> string_of_int
+      |> String.to_bytes in
+    let message = Client.create_post node payload in
     message |> Client.post node;
 
-    Lwt.return (Node.seen node message)
+    Lwt.return (Pnode.seen node message)
 end
 
 (** Test for dissemination given a specific node. *)

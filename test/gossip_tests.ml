@@ -1,7 +1,7 @@
 open Lwt.Infix
 open Commons
 open Pollinate
-open Pollinate.Node
+open Pollinate.PNode
 
 module Gossip_tests = struct
   let local_address port = Address.{ address = "127.0.0.1"; port }
@@ -41,16 +41,19 @@ module Gossip_tests = struct
             local_address 4009 ) in
 
         let%lwt node_a =
-          Node.init ~init_peers:[addr_b; addr_c; addr_e; addr_h] addr_a in
-        let%lwt node_b = Node.init ~init_peers:[addr_a; addr_d; addr_e] addr_b in
-        let%lwt node_c = Node.init ~init_peers:[addr_a; addr_f; addr_g] addr_c in
-        let%lwt node_d = Node.init ~init_peers:[addr_b] addr_d in
-        let%lwt node_e = Node.init ~init_peers:[addr_a; addr_b] addr_e in
-        let%lwt node_f = Node.init ~init_peers:[addr_c] addr_f in
-        let%lwt node_g = Node.init ~init_peers:[addr_c] addr_g in
-        let%lwt node_h = Node.init ~init_peers:[addr_a; addr_i; addr_j] addr_h in
-        let%lwt node_i = Node.init ~init_peers:[addr_h] addr_i in
-        let%lwt node_j = Node.init ~init_peers:[addr_h] addr_j in
+          Pnode.init ~init_peers:[addr_b; addr_c; addr_e; addr_h] addr_a in
+        let%lwt node_b =
+          Pnode.init ~init_peers:[addr_a; addr_d; addr_e] addr_b in
+        let%lwt node_c =
+          Pnode.init ~init_peers:[addr_a; addr_f; addr_g] addr_c in
+        let%lwt node_d = Pnode.init ~init_peers:[addr_b] addr_d in
+        let%lwt node_e = Pnode.init ~init_peers:[addr_a; addr_b] addr_e in
+        let%lwt node_f = Pnode.init ~init_peers:[addr_c] addr_f in
+        let%lwt node_g = Pnode.init ~init_peers:[addr_c] addr_g in
+        let%lwt node_h =
+          Pnode.init ~init_peers:[addr_a; addr_i; addr_j] addr_h in
+        let%lwt node_i = Pnode.init ~init_peers:[addr_h] addr_i in
+        let%lwt node_j = Pnode.init ~init_peers:[addr_h] addr_j in
         Lwt.return
           ( node_a,
             node_b,
@@ -96,18 +99,17 @@ module Gossip_tests = struct
     (* Start the server for each node in a thread *)
     let _ =
       List.map
-        (Node.run_server ~preprocessor:Commons.preprocessor
+        (Pnode.run_server ~preprocessor:Commons.preprocessor
            ~msg_handler:Commons.msg_handler)
         nodes in
 
     (* Create the message to be posted by node *)
-    let message =
+    let payload =
       Client.address_of !node
       |> (fun Address.{ port; _ } -> port)
       |> string_of_int
-      |> String.to_bytes
-      |> Client.create_post ~request_ack:true node in
-
+      |> String.to_bytes in
+    let message = Client.create_post node ~request_ack:true payload in
     (* Post the created message *)
     Client.post node message;
 
@@ -122,19 +124,19 @@ module Gossip_tests = struct
     (* Compute the list of nodes who have seen the post. *)
     let list_of_seen =
       Hashtbl.find !node.acknowledgments (Message.hash_of message)
-      |> Testing.AddressSet.to_seq
+      |> Pnode.Testing.AddressSet.to_seq
       |> Seq.map (fun address -> address.Address.port)
       |> List.of_seq in
 
     (* Write the length of list_of_seen to a tmp log file *)
-    let%lwt () =
-      let%lwt oc =
-        Lwt_io.open_file
-          ~flags:[Unix.O_WRONLY; Unix.O_APPEND; Unix.O_CREAT]
-          ~mode:Lwt_io.Output "/tmp/log.txt" in
-      let%lwt () =
-        Lwt_io.write oc (Printf.sprintf "%d\n" (List.length list_of_seen)) in
-      Lwt_io.close oc in
+    (* let%lwt () =
+       let%lwt oc =
+         Lwt_io.open_file
+           ~flags:[Unix.O_WRONLY; Unix.O_APPEND; Unix.O_CREAT]
+           ~mode:Lwt_io.Output "/tmp/log.txt" in
+       let%lwt () =
+         Lwt_io.write oc (Printf.sprintf "%d\n" (List.length list_of_seen)) in
+       Lwt_io.close oc in *)
     (* End of logging code *)
     Lwt.return list_of_seen
 end

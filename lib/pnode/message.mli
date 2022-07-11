@@ -10,7 +10,7 @@ open Common
 (** Messages are {i requests} or {i responses},
 determining how they are stored and
 where they are handled. *)
-type category =
+type pollinate_category =
   | Uncategorized
   | Acknowledgment
   | Request
@@ -23,8 +23,7 @@ type category =
 (** Messages received from [peers] which are
 processed by the node's message handler. *)
 type t = {
-  category : category;
-  sub_category_opt : (string * string) option;
+  pollinate_category : pollinate_category;
   request_ack : bool;
   id : int;
   timestamp : float;

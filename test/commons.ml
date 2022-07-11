@@ -1,12 +1,13 @@
 (** Utils function shared by the different tests modules *)
 module Commons = struct
-  open Pollinate.Node
+  open Pollinate.PNode
   open Pollinate.Util
   open Messages
+  open Message
 
   let preprocessor msg =
     let open Messages in
-    match msg.Message.category with
+    match msg.Message.pollinate_category with
     | Request ->
       let[@warning "-8"] (Request r) =
         Encoding.unpack bin_read_message msg.Message.payload in
@@ -19,8 +20,7 @@ module Commons = struct
 
   let msg_handler message =
     let open Messages in
-    let open Message in
-    match message.category with
+    match message.pollinate_category with
     | Request ->
       let request = Encoding.unpack bin_read_request message.payload in
       let response =
@@ -28,6 +28,8 @@ module Commons = struct
         | Ping -> Pong
         | Get -> Pong
         | Insert _ -> Success "Successfully added value to state" in
-      Response response |> Encoding.pack bin_writer_message |> Option.some
-    | _ -> None
+      let msg = Response response |> Encoding.pack bin_writer_message in
+      Some msg
+    | Post -> None
+    | _ -> failwith "unhandled in tests"
 end

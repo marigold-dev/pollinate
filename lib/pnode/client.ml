@@ -27,8 +27,7 @@ let create_request node ?(request_ack = false) recipient payload =
       Lwt.return
         Message.
           {
-            category = Message.Request;
-            sub_category_opt = None;
+            pollinate_category = Message.Request;
             request_ack;
             id = !id;
             timestamp = Unix.gettimeofday ();
@@ -40,8 +39,7 @@ let create_request node ?(request_ack = false) recipient payload =
 let create_response node ?(request_ack = false) request payload =
   Message.
     {
-      category = Message.Response;
-      sub_category_opt = None;
+      pollinate_category = Message.Response;
       request_ack;
       id = request.id;
       timestamp = Unix.gettimeofday ();
@@ -53,10 +51,9 @@ let create_response node ?(request_ack = false) request payload =
 let create_post node ?(request_ack = false) payload =
   Message.
     {
-      category = Message.Post;
+      pollinate_category = Message.Post;
       request_ack;
       id = -1;
-      sub_category_opt = None;
       timestamp = Unix.gettimeofday ();
       sender = !node.address;
       recipients = [];
@@ -66,8 +63,7 @@ let create_post node ?(request_ack = false) payload =
 let create_ack node incoming_message =
   Message.
     {
-      category = Message.Acknowledgment;
-      sub_category_opt = None;
+      pollinate_category = Message.Acknowledgment;
       request_ack = false;
       id = -1;
       timestamp = Unix.gettimeofday ();
@@ -76,8 +72,7 @@ let create_ack node incoming_message =
       payload = incoming_message |> Message.hash_of |> Bytes.of_string;
     }
 
-let request node request recipient =
-  let%lwt message = create_request node recipient request in
+let request node message =
   let%lwt () = Networking.send_to node message in
   let condition_var = Lwt_condition.create () in
   Hashtbl.add !node.request_table message.id condition_var;
@@ -85,3 +80,6 @@ let request node request recipient =
 
 let post node message =
   !node.disseminator <- Disseminator.post !node.disseminator message
+
+let broadcast node message recipients =
+  Networking.broadcast node message recipients
