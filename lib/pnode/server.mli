@@ -4,5 +4,5 @@
 val run :
   Types.node ref ->
   (Message.t -> Message.t) ->
-  (Message.t -> Message.payload option) ->
+  (Message.t -> bytes option) ->
   'b Lwt.t

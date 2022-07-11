@@ -20,29 +20,16 @@ type pollinate_category =
   | Custom            of string
 [@@deriving bin_io, show]
 
-type payload = {
-  data : bytes;
-  signature : bytes option;
-}
-[@@deriving bin_io]
-
-type operation = {
-  category : bytes;
-  name : bytes option;
-}
-[@@deriving bin_io]
-
 (** Messages received from [peers] which are
 processed by the node's message handler. *)
 type t = {
   pollinate_category : pollinate_category;
-  operation : operation option;
   request_ack : bool;
   id : int;
   timestamp : float;
   sender : Address.t;
   recipients : Address.t list;
-  payload : payload;
+  payload : bytes;
 }
 [@@deriving bin_io]
 

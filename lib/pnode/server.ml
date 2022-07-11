@@ -33,8 +33,8 @@ let handle_ack node msg =
 
    Otherwise, we just apply the message handler and that's it.
 *)
-let process_message node preprocessor
-    (msg_handler : Message.t -> Message.payload option) =
+let process_message node preprocessor (msg_handler : Message.t -> bytes option)
+    =
   let open Message in
   let%lwt message = Networking.recv_next node in
   let message = preprocessor message in
@@ -53,14 +53,13 @@ let process_message node preprocessor
               !node.address.address !node.address.port message.sender.address
               message.sender.port) in *)
       match msg_handler message with
-      | Some Message.{ data; signature = payload_signature } ->
+      | Some payload ->
         (* let _ = Printf.sprintf "I am inside msg_handler, found payload\n%!" in *)
-        Client.create_response node message ?payload_signature data
-        |> Networking.send_to node
+        Client.create_response node message payload |> Networking.send_to node
       | None ->
         failwith "received request without payload nor payload_signature")
     | Acknowledgment ->
-      let msg_hash = Bytes.to_string message.payload.data in
+      let msg_hash = Bytes.to_string message.payload in
       let new_addrs =
         match Hashtbl.find_opt !node.acknowledgments msg_hash with
         | Some addrs -> AddressSet.add message.sender addrs
@@ -130,8 +129,7 @@ let _print_logs node =
    3. Run the disseminator, this includes actually sending messages to be
       disseminated across the network.
    4. Wait 0.001 seconds before restarting the procedure. *)
-let rec run node preprocessor
-    (msg_handler : Message.t -> Message.payload option) =
+let rec run node preprocessor (msg_handler : Message.t -> bytes option) =
   (* Step 0 *)
   (* let%lwt () = print_logs node in *)
   (* Step 1 *)

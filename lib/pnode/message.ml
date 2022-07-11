@@ -11,27 +11,14 @@ type pollinate_category =
   | Custom            of string
 [@@deriving bin_io, show]
 
-type payload = {
-  data : bytes;
-  signature : bytes option;
-}
-[@@deriving bin_io]
-
-type operation = {
-  category : bytes;
-  name : bytes option;
-}
-[@@deriving bin_io]
-
 type t = {
   pollinate_category : pollinate_category;
-  operation : operation option;
   request_ack : bool;
   id : int;
   timestamp : float;
   sender : Address.t;
   recipients : Address.t list;
-  payload : payload;
+  payload : bytes;
 }
 [@@deriving bin_io]
 
@@ -40,7 +27,7 @@ let hash_of m =
     m.sender.address;
     string_of_int m.sender.port;
     string_of_float m.timestamp;
-    Bytes.to_string m.payload.data;
+    Bytes.to_string m.payload;
   ]
   |> String.concat ""
   |> Digest.string

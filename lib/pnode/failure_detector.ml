@@ -59,13 +59,11 @@ let create_message node message recipient =
     {
       pollinate_category = Failure_detection;
       request_ack = false;
-      operation = None;
       id = -1;
       timestamp = Unix.gettimeofday ();
       sender = Client.address_of !node;
       recipients = [recipient.Peer.address];
-      payload =
-        { data = Encoding.pack bin_writer_message message; signature = None };
+      payload = Encoding.pack bin_writer_message message;
     }
 
 let send_message message node recipient =
@@ -82,7 +80,7 @@ let send_ping_request_to node (recipient : Peer.t) =
 let handle_message node message =
   let open Message in
   let sender = Peer.from message.sender in
-  let msg = Encoding.unpack bin_read_message message.payload.data in
+  let msg = Encoding.unpack bin_read_message message.payload in
   let t = !node.failure_detector in
   match msg with
   | Ping -> send_acknowledge_to node sender

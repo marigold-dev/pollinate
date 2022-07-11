@@ -30,11 +30,11 @@ module Node_tests = struct
 
     let%lwt message = Client.create_request node_a peer_b.address get in
     let%lwt { payload = res_from_b; _ } = Client.request node_a message in
-    let res_from_b = Encoding.unpack bin_read_response res_from_b.data in
+    let res_from_b = Encoding.unpack bin_read_response res_from_b in
 
     let%lwt message = Client.create_request node_b peer_a.address get in
     let%lwt { payload = res_from_a; _ } = Client.request node_b message in
-    let res_from_a = Encoding.unpack bin_read_response res_from_a.data in
+    let res_from_a = Encoding.unpack bin_read_response res_from_a in
 
     let res_from_b, res_from_a =
       match (res_from_b, res_from_a) with
@@ -54,7 +54,7 @@ module Node_tests = struct
 
     let%lwt message = Client.create_request node_a peer_b.address ping in
     let%lwt { payload = pong; _ } = Client.request node_a message in
-    let pong = Encoding.unpack bin_read_response pong.data in
+    let pong = Encoding.unpack bin_read_response pong in
 
     let pong =
       match pong with
